@@ -3,7 +3,7 @@ var playlist = WaveformPlaylist.init({
   zoomLevels: [1000, 5000, 9000],
   waveHeight: 100,
   container: document.getElementById("playlist"),
-  state: 'cursor',
+  state: 'interactive',
   colors: {
     waveOutlineColor: '#E0EFF1',
     timeColor: 'grey',

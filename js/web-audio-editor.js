@@ -2,7 +2,9 @@ var playlist = WaveformPlaylist.init({
   samplesPerPixel: 3000,
   waveHeight: 100,
   container: document.getElementById("playlist"),
-  state: 'cursor',
+  state: 'interactive',
+  bpm:121,
+  quantize:1,
   colors: {
     waveOutlineColor: '#E0EFF1',
     timeColor: 'grey',
@@ -48,7 +50,7 @@ playlist.load([
   {
     "src": "media/audio/Guitar30.mp3",
     "name": "Guitar",
-    "start": 23.5,
+    "start": 53.5,
     "fadeOut": {
       "shape": "linear",
       "duration": 0.5
