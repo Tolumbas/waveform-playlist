@@ -5,6 +5,14 @@ var playlist = WaveformPlaylist.init({
   state: 'interactive',
   bpm:121,
   quantize:1,
+  tracks:[
+    {
+      name:"Vocals & Guitar",
+    },
+    {
+      name:"Drums"
+    }
+  ],
   colors: {
     waveOutlineColor: '#E0EFF1',
     timeColor: 'grey',
@@ -23,6 +31,7 @@ playlist.load([
   {
     "src": "media/audio/Vocals30.mp3",
     "name": "Vocals",
+    "track" : "Vocals & Guitar",
     "fadeIn": {
       "duration": 0.5
     },
@@ -37,6 +46,7 @@ playlist.load([
   {
     "src": "media/audio/BassDrums30.mp3",
     "name": "Drums",
+    "track":"Drums",
     "start": 8.5,
     "fadeIn": {
       "shape": "logarithmic",
@@ -50,7 +60,8 @@ playlist.load([
   {
     "src": "media/audio/Guitar30.mp3",
     "name": "Guitar",
-    "start": 53.5,
+    "track" : "Vocals & Guitar",
+    "start": 35.5,
     "fadeOut": {
       "shape": "linear",
       "duration": 0.5
