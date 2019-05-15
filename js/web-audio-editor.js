@@ -44,6 +44,22 @@ playlist.load([
     "waveOutlineColor": '#c0dce0'
   },
   {
+    "src": "media/audio/Vocals30.mp3",
+    "name": "Vocals 2",
+    "track" : "Vocals & Guitar",
+    "fadeIn": {
+      "duration": 0.5
+    },
+    "fadeOut": {
+      "duration": 0.5
+    },
+    "cuein": 14.5,
+    "cueout": 16.5,
+    "start": 9.5,
+    "customClass": "vocals",
+    "waveOutlineColor": '#c0dce0'
+  },
+  {
     "src": "media/audio/BassDrums30.mp3",
     "name": "Drums",
     "track":"Drums",
