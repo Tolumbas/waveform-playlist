@@ -9416,8 +9416,6 @@ var WaveformPlaylist =
 	  playlist.setEventEmitter(ee);
 	  playlist.setUpEventEmitter();
 	
-	  playlist.setTracks(config.tracks);
-	
 	  playlist.setTimeSelection(0, 0);
 	  playlist.setState(config.state);
 	  playlist.setControlOptions(config.controls);
@@ -9436,6 +9434,8 @@ var WaveformPlaylist =
 	
 	  playlist.bpm = config.bpm; //GH  Galen
 	  playlist.quantize = config.quantize; //GH Galen
+	
+	  playlist.setTracks(config.tracks);
 	
 	  // take care of initial virtual dom rendering.
 	  var tree = playlist.render();
@@ -10886,27 +10886,27 @@ var WaveformPlaylist =
 	
 	var _Track2 = _interopRequireDefault(_Track);
 	
-	var _Clip = __webpack_require__(400);
+	var _Clip = __webpack_require__(401);
 	
 	var _Clip2 = _interopRequireDefault(_Clip);
 	
-	var _Playout = __webpack_require__(415);
+	var _Playout = __webpack_require__(416);
 	
 	var _Playout2 = _interopRequireDefault(_Playout);
 	
-	var _AnnotationList = __webpack_require__(416);
+	var _AnnotationList = __webpack_require__(417);
 	
 	var _AnnotationList2 = _interopRequireDefault(_AnnotationList);
 	
-	var _recorderWorker = __webpack_require__(422);
+	var _recorderWorker = __webpack_require__(423);
 	
 	var _recorderWorker2 = _interopRequireDefault(_recorderWorker);
 	
-	var _exportWavWorker = __webpack_require__(423);
+	var _exportWavWorker = __webpack_require__(424);
 	
 	var _exportWavWorker2 = _interopRequireDefault(_exportWavWorker);
 	
-	var _states = __webpack_require__(406);
+	var _states = __webpack_require__(407);
 	
 	var _states2 = _interopRequireDefault(_states);
 	
@@ -11096,6 +11096,8 @@ var WaveformPlaylist =
 	
 	          var newTrack = new _Track2.default();
 	          newTrack.setName(name);
+	          newTrack.quantize = this.quantize;
+	          newTrack.bpm = this.bpm;
 	          newTrack.setEventEmitter(this.ee);
 	          this.tracks.push(newTrack);
 	        }
@@ -11297,30 +11299,9 @@ var WaveformPlaylist =
 	          _this2.isScrolling = false;
 	        }, 200);
 	      });
-	      ee.on('scrolldragging', function (amount) {
-	        if (!_this2.scrolldragging) return;
-	        _this2.seekClicking = false;
-	        // console.log("scrolldragging",amount);
-	        _this2.scrollLeft -= (0, _conversions.pixelsToSeconds)(amount, _this2.samplesPerPixel, _this2.sampleRate);
-	        _this2.ee.emit('scroll');
-	      });
-	      ee.on('scrolldraggingstart', function () {
-	        _this2.scrolldragging = true;
-	        _this2.seekClicking = true;
-	        document.body.style.cursor = "grabbing";
-	      });
-	      ee.on('scrolldraggingend', function (e) {
-	        _this2.scrolldragging = false;
-	        if (_this2.seekClicking) {
-	          var startX = e.offsetX;
-	          var startTime = (0, _conversions.pixelsToSeconds)(startX, _this2.samplesPerPixel, _this2.sampleRate);
-	          if (e.from == "TimeScale") {
-	            startTime += _this2.scrollLeft;
-	          }
-	
-	          _this2.ee.emit('select', startTime, startTime);
-	        }
-	        document.body.style.cursor = "auto";
+	      ee.on('seek', function (where) {
+	        _this2.seek(where);
+	        // console.log('yo',where);
 	      });
 	    }
 	  }, {
@@ -11379,6 +11360,9 @@ var WaveformPlaylist =
 	      if (!track) {
 	        track = new _Track2.default();
 	        track.name = trackname;
+	        track.quantize = this.quantize;
+	        track.bpm = this.bpm;
+	
 	        this.tracks.push(track);
 	      }
 	
@@ -11420,6 +11404,25 @@ var WaveformPlaylist =
 	
 	      // extract peaks with AudioContext for now.
 	      clip.calculatePeaks(this.samplesPerPixel, this.sampleRate);
+	
+	      var curPeak = clip.peaks.data[0];
+	      var startX = 0;
+	      for (var i = 0; i < clip.peaks.length; i += 1) {
+	        if (curPeak[i * 2] != 0) {
+	          startX = i;break;
+	        }
+	      }
+	      if (startX > 0) {
+	        var startSec = (0, _conversions.samplesToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	        console.log('startX', startX, startSec, startSec, cueOut, clip.peaks);
+	        console.log('(startSec + start + cueIn)', startSec, start, cueIn, startSec + start + cueIn);
+	        // if(start < startSec) {
+	        clip.setStartTime(startSec + start);
+	        // clip.setStartTime(start);
+	        clip.setCues(startSec + cueIn, cueOut);
+	        // clip.calculatePeaks(this.samplesPerPixel, this.sampleRate);
+	        // }
+	      }
 	
 	      return clip;
 	    }
@@ -11678,8 +11681,11 @@ var WaveformPlaylist =
 	
 	      this.samplesPerPixel = zoom;
 	      this.zoomIndex = this.zoomLevels.indexOf(zoom);
+	      this.stateObj.setup(this.samplesPerPixel, this.sampleRate);
 	      this.tracks.forEach(function (track) {
-	        track.calculatePeaks(zoom, _this5.sampleRate);
+	        track.clips.forEach(function (clip) {
+	          return clip.calculatePeaks(zoom, _this5.sampleRate);
+	        });
 	      });
 	    }
 	  }, {
@@ -14999,6 +15005,10 @@ var WaveformPlaylist =
 	
 	var _PanKnobHook2 = _interopRequireDefault(_PanKnobHook);
 	
+	var _GridHook = __webpack_require__(400);
+	
+	var _GridHook2 = _interopRequireDefault(_GridHook);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -15015,6 +15025,8 @@ var WaveformPlaylist =
 	    this.gain = 1; //Track
 	    this._pan = 0; // Track
 	    this.ee = undefined;
+	    this.bpm = 100;
+	    this.quantize = 1;
 	
 	    this.clips = [];
 	  }
@@ -15251,6 +15263,16 @@ var WaveformPlaylist =
 	          style: 'position: absolute; width: 1px; margin: 0; padding: 0; top: 0; left: ' + playbackX + 'px; bottom: 0; z-index: 5;'
 	        }
 	      })];
+	
+	      var grid = (0, _h2.default)('canvas.grid', {
+	        attributes: {
+	          width: width,
+	          height: data.height,
+	          style: 'position:absolute;pointer-events:none'
+	        },
+	        hook: new _GridHook2.default(this.quantize, this.bpm, 'lightgray', data.resolution, data.sampleRate)
+	      });
+	      waveformChildren.push(grid);
 	
 	      waveformChildren.push(this.clips.map(function (clip) {
 	        return clip.render(data);
@@ -15975,6 +15997,69 @@ var WaveformPlaylist =
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	    function _class(quantizeValue, bpm, color, resolution, sampleRate) {
+	        _classCallCheck(this, _class);
+	
+	        this.quantizeValue = quantizeValue;
+	        this.bpm = bpm;
+	        this.color = color;
+	        this.resolution = resolution;
+	        this.sampleRate = sampleRate;
+	    }
+	
+	    _createClass(_class, [{
+	        key: 'draw',
+	        value: function draw(g, canvas) {
+	            var step = (0, _conversions.secondsToPixels)(60 / this.bpm * this.quantizeValue, this.resolution, this.sampleRate);
+	            g.clearRect(0, 0, canvas.width, canvas.height);
+	            g.strokeStyle = this.color;
+	            g.beginPath();
+	            for (var a = 0; a < canvas.width; a += step) {
+	                g.moveTo(a, 0);
+	                g.lineTo(a, canvas.height);
+	            }
+	            g.stroke();
+	        }
+	    }, {
+	        key: 'hook',
+	        value: function hook(canvas, _, prev) {
+	            var g = canvas.getContext('2d');
+	            this.width = canvas.width;
+	            this.height = canvas.height;
+	            if (!prev) {
+	                this.draw(g, canvas);
+	                return;
+	            } else for (var prop in this) {
+	                if (this[prop] != prev[prop]) {
+	                    this.draw(g, canvas);
+	                    return;
+	                }
+	            }
+	        }
+	    }]);
+
+	    return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 401 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
@@ -15988,7 +16073,7 @@ var WaveformPlaylist =
 	
 	var _lodash4 = _interopRequireDefault(_lodash3);
 	
-	var _uuid = __webpack_require__(401);
+	var _uuid = __webpack_require__(402);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
@@ -15996,23 +16081,23 @@ var WaveformPlaylist =
 	
 	var _h2 = _interopRequireDefault(_h);
 	
-	var _webaudioPeaks = __webpack_require__(403);
+	var _webaudioPeaks = __webpack_require__(404);
 	
 	var _webaudioPeaks2 = _interopRequireDefault(_webaudioPeaks);
 	
-	var _fadeMaker = __webpack_require__(404);
+	var _fadeMaker = __webpack_require__(405);
 	
 	var _conversions = __webpack_require__(388);
 	
-	var _states = __webpack_require__(406);
+	var _states = __webpack_require__(407);
 	
 	var _states2 = _interopRequireDefault(_states);
 	
-	var _CanvasHook = __webpack_require__(413);
+	var _CanvasHook = __webpack_require__(414);
 	
 	var _CanvasHook2 = _interopRequireDefault(_CanvasHook);
 	
-	var _FadeCanvasHook = __webpack_require__(414);
+	var _FadeCanvasHook = __webpack_require__(415);
 	
 	var _FadeCanvasHook2 = _interopRequireDefault(_FadeCanvasHook);
 	
@@ -16218,6 +16303,12 @@ var WaveformPlaylist =
 	    value: function calculatePeaks(samplesPerPixel, sampleRate) {
 	      var cueIn = (0, _conversions.secondsToSamples)(this.cueIn, sampleRate);
 	      var cueOut = (0, _conversions.secondsToSamples)(this.cueOut, sampleRate);
+	      if (samplesPerPixel != this.samplesPerPixel || sampleRate != this.sampleRate) {
+	        this.images = [];
+	
+	        this.sampleRate = sampleRate;
+	        this.samplesPerPixel = samplesPerPixel;
+	      }
 	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono));
 	      console.log(this.peaks);
 	    }
@@ -16459,36 +16550,24 @@ var WaveformPlaylist =
 	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
 	      };
 	
-	      var width = this.peaks.length;
+	      var sampleWidth = this.peaks.length;
 	      var peaks = this.peaks.data[0];
 	
-	      var offset = 0;
-	      var totalWidth = width;
 	      var waveformChildren = [];
+	      var canvasColor = this.waveOutlineColor ? this.waveOutlineColor : data.colors.waveOutlineColor;
 	
-	      var i = 0;
-	      while (totalWidth > 0) {
-	        var currentWidth = Math.min(totalWidth, MAX_CANVAS_WIDTH);
-	        var canvasColor = this.waveOutlineColor ? this.waveOutlineColor : data.colors.waveOutlineColor;
-	
-	        var canvashook = new _CanvasHook2.default(peaks, offset, this.peaks.bits, canvasColor, this.cueIn, data.resolution, data.sampleRate, this.images[i]);
-	        if (!this.images[i]) {
-	          this.images[i] = canvashook.setupImage(currentWidth, data.height);
-	        }
-	
-	        waveformChildren.push((0, _h2.default)('canvas', {
-	          attributes: {
-	            width: convert(this.duration),
-	            height: data.height,
-	            style: '\n            float: left;\n            position: relative;\n            margin: 0;\n            padding: 0;\n            z-index: 3;\n            pointer-events: none;\n          '
-	          },
-	          hook: canvashook
-	        }));
-	
-	        totalWidth -= currentWidth;
-	        offset += MAX_CANVAS_WIDTH;
-	        i++;
+	      var canvashook = new _CanvasHook2.default(peaks, 0, this.peaks.bits, canvasColor, this.cueIn, data.resolution, data.sampleRate, this.images[0]);
+	      if (!this.images[0]) {
+	        this.images[0] = canvashook.setupImage(sampleWidth, data.height);
 	      }
+	      waveformChildren.push((0, _h2.default)('canvas', {
+	        attributes: {
+	          width: convert(this.duration),
+	          height: data.height,
+	          style: '\n          float: left;\n          position: relative;\n          margin: 0;\n          padding: 0;\n          z-index: 3;\n          pointer-events: none;\n        '
+	        },
+	        hook: canvashook
+	      }));
 	
 	      return (0, _h2.default)('div.clipwaveform', {
 	        attributes: {
@@ -16517,6 +16596,9 @@ var WaveformPlaylist =
 	      // clipChildren.push(this.renderOverlay(data));
 	
 	      return (0, _h2.default)('div.clip', {
+	        onmouseleave: function onmouseleave() {
+	          return _this2.ee.emit("activeclip", { name: '_none', startTime: 0 });
+	        },
 	        onmouseover: function onmouseover() {
 	          return _this2.ee.emit("activeclip", _this2);
 	        },
@@ -16576,7 +16658,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 401 */
+/* 402 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -16587,7 +16669,7 @@ var WaveformPlaylist =
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(402);
+	var _rng = __webpack_require__(403);
 	
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -16765,7 +16847,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 402 */
+/* 403 */
 /***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -16804,7 +16886,7 @@ var WaveformPlaylist =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 403 */
+/* 404 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -16963,7 +17045,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 404 */
+/* 405 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16975,7 +17057,7 @@ var WaveformPlaylist =
 	exports.createFadeIn = createFadeIn;
 	exports.createFadeOut = createFadeOut;
 	
-	var _fadeCurves = __webpack_require__(405);
+	var _fadeCurves = __webpack_require__(406);
 	
 	var SCURVE = exports.SCURVE = "sCurve";
 	var LINEAR = exports.LINEAR = "linear";
@@ -17065,7 +17147,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 405 */
+/* 406 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -17145,7 +17227,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 406 */
+/* 407 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17154,27 +17236,27 @@ var WaveformPlaylist =
 	  value: true
 	});
 	
-	var _CursorState = __webpack_require__(407);
+	var _CursorState = __webpack_require__(408);
 	
 	var _CursorState2 = _interopRequireDefault(_CursorState);
 	
-	var _SelectState = __webpack_require__(408);
+	var _SelectState = __webpack_require__(409);
 	
 	var _SelectState2 = _interopRequireDefault(_SelectState);
 	
-	var _ShiftState = __webpack_require__(409);
+	var _ShiftState = __webpack_require__(410);
 	
 	var _ShiftState2 = _interopRequireDefault(_ShiftState);
 	
-	var _FadeInState = __webpack_require__(410);
+	var _FadeInState = __webpack_require__(411);
 	
 	var _FadeInState2 = _interopRequireDefault(_FadeInState);
 	
-	var _FadeOutState = __webpack_require__(411);
+	var _FadeOutState = __webpack_require__(412);
 	
 	var _FadeOutState2 = _interopRequireDefault(_FadeOutState);
 	
-	var _InteractiveState = __webpack_require__(412);
+	var _InteractiveState = __webpack_require__(413);
 	
 	var _InteractiveState2 = _interopRequireDefault(_InteractiveState);
 	
@@ -17190,7 +17272,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 407 */
+/* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17252,7 +17334,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 408 */
+/* 409 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17350,7 +17432,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 409 */
+/* 410 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17468,7 +17550,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 410 */
+/* 411 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17524,7 +17606,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 411 */
+/* 412 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17580,7 +17662,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 412 */
+/* 413 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17611,7 +17693,8 @@ var WaveformPlaylist =
 	    // 0 : not dragging; 1 : dragging the end; -1 : dragging the begining
 	    this.draggingFrom = 0;
 	    this.action = null;
-	    this._activeClip = undefined;
+	    this.bufferedMovement = 0;
+	    this._activeClip = { name: '_none', startTime: 0 };
 	    this.setupEventListeners();
 	  }
 	
@@ -17655,10 +17738,13 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'mousedown',
 	    value: function mousedown(e) {
-	      if (this.action == "fadedraggable") this.action = "dragginghandle";else if (this.action == "resizeableleft") this.action = "resizingleft";else if (this.action == "resizeableright") this.action = "resizingright";else if (this.action == "shiftable") this.action = "shifting";else if (this.action == "scrolldraggable" && e.target.className == "waveform") {
-	        this.action = "scrolldraggingcandidate";
-	        this.clip.ee.emit("scrolldraggingstart");
+	      if (this.action == "fadedraggable") this.action = "dragginghandle";else if (this.action == "resizeableleft") this.action = "resizingleft";else if (this.action == "resizeableright") this.action = "resizingright";else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
+	        this.seekTo(e);
 	      }
+	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
+	      //this.action = "scrolldraggingcandidate";
+	      //this.clip.ee.emit("scrolldraggingstart");
+	      // }
 	      // console.log(this.clip);
 	    }
 	  }, {
@@ -17668,7 +17754,6 @@ var WaveformPlaylist =
 	      // if (!mousepos)return;
 	      var mousepos = this.getMousepos(e);
 	      var movementX = (0, _conversions.pixelsToSeconds)(e.movementX, this.samplesPerPixel, this.sampleRate);
-	      // console.log(this.action);
 	      if (this.action == "dragginghandle") {
 	        // console.log(mousepos,this.clip.getStartTime(),this.clip.startTime);
 	        // console.log(mousepos,this.activeClip.duration)
@@ -17680,31 +17765,41 @@ var WaveformPlaylist =
 	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
 	        this.updateResizing(e);
 	      } else if (this.action == "shifting") {
-	        this.ee.emit("shift", movementX, this.activeClip);
+	        var blocklength = 60 / this.activeClip.bpm * this.activeClip.quantize; //in seconds
+	        this.bufferedMovement += movementX; //in seconds
+	        var snaps = Math.round(this.bufferedMovement / blocklength);
+	        if (snaps != 0) {
+	          this.ee.emit("shift", snaps * blocklength, this.activeClip);
+	          this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
+	        }
 	      } else if (e.target.classList.contains('fadehandle')) {
 	        this.action = "fadedraggable";
 	        this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
 	
 	        document.body.style.cursor = "pointer";
-	      } else if (this.action == "scrolldragging" || this.action == "scrolldraggingcandidate") {
-	        this.ee.emit("scrolldragging", e.movementX);
-	        this.action = "scrolldragging";
-	      } else if (e.target.className == "clip" && e.layerX > e.target.offsetWidth - 10) {
-	        this.action = "resizeableright";
-	        document.body.style.cursor = "e-resize";
-	      } else if (e.target.className == "clip" && e.layerX < 10) {
-	        this.action = "resizeableleft";
-	        document.body.style.cursor = "w-resize";
-	      } else if (e.target.className == "clip") {
-	        this.action = "shiftable";
-	        document.body.style.cursor = "grab";
-	      } else if (e.target.className == "waveform") {
-	        document.body.style.cursor = "auto";
-	        this.action = "scrolldraggable";
-	      } else {
-	        this.action = null;
-	        document.body.style.cursor = "auto";
 	      }
+	      // else if (this.action == "scrolldragging" || this.action == "scrolldraggingcandidate"){
+	      //   this.ee.emit("scrolldragging",e.movementX);
+	      //   this.action = "scrolldragging";
+	      // }
+	      else if (e.target.className == "clip" && e.layerX > e.target.offsetWidth - 10) {
+	          this.action = "resizeableright";
+	          document.body.style.cursor = "e-resize";
+	        } else if (e.target.className == "clip" && e.layerX < 10) {
+	          this.action = "resizeableleft";
+	          document.body.style.cursor = "w-resize";
+	        } else if (e.target.className == "clip") {
+	          this.action = "shiftable";
+	          document.body.style.cursor = "grab";
+	        }
+	        // else if (e.target.className == "waveform"){
+	        //   document.body.style.cursor = "auto";
+	        //   this.action = "scrolldraggable";
+	        // }
+	        else {
+	            this.action = null;
+	            document.body.style.cursor = "auto";
+	          }
 	      // console.log(this.action);
 	    }
 	  }, {
@@ -17712,14 +17807,13 @@ var WaveformPlaylist =
 	    value: function seekTo(e) {
 	      e.preventDefault();
 	      // console.log("seek");
-	      var startX = e.offsetX;
-	      var startTime = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	      var startTime = this.getMousepos(e);
+	      // const startTime = pixelsToSeconds(startX, this.samplesPerPixel, this.sampleRate);
 	      this.clip.ee.emit('select', startTime, startTime, this.clip);
 	    }
 	  }, {
 	    key: 'getMousepos',
 	    value: function getMousepos(e) {
-	      if (!this.activeClip) return null;
 	      var waveform = document.body.querySelector(".waveform");
 	      if (!waveform) return null;
 	      var relative = e.pageX - waveform.getBoundingClientRect().left;
@@ -17759,19 +17853,23 @@ var WaveformPlaylist =
 	    value: function mouseup(e) {
 	      if (this.action == "dragginghandle" || this.action == "shifting") {
 	        this.action = null;
-	      } else if (this.action == "scrolldraggingcandidate") {
-	        // this.seekTo(e);
-	        this.clip.ee.emit("scrolldraggingend", e);
-	        this.action = null;
-	      } else if (this.action == "scrolldragging") {
-	        this.action = null;
-	        this.clip.ee.emit("scrolldraggingend", e);
-	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
-	        e.preventDefault();
-	        this.updateResizing(e);
-	        this.action = null;
-	        // console.log("dropped");
+	        this.bufferedMovement = 0;
 	      }
+	      // else if (this.action == "scrolldraggingcandidate"){
+	      //   // this.seekTo(e);
+	      //   this.clip.ee.emit("scrolldraggingend",e);
+	      //   this.action = null;
+	      // }
+	      // else if (this.action == "scrolldragging"){
+	      //   this.action = null;
+	      //   this.clip.ee.emit("scrolldraggingend",e);
+	      // }
+	      else if (this.action == "resizingleft" || this.action == "resizingright") {
+	          e.preventDefault();
+	          this.updateResizing(e);
+	          this.action = null;
+	          // console.log("dropped");
+	        }
 	    }
 	  }, {
 	    key: 'activeClip',
@@ -17799,7 +17897,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 413 */
+/* 414 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17843,10 +17941,9 @@ var WaveformPlaylist =
 	      // cc.fillRect(0,0,len,h2*2);
 	      cc.fillStyle = this.color;
 	      // console.log(this.color);
-	
 	      for (var i = 0; i < len; i += 1) {
-	        var minPeak = this.peaks[(i + this.offset) * 2] / maxValue;
-	        var maxPeak = this.peaks[(i + this.offset) * 2 + 1] / maxValue;
+	        var minPeak = this.peaks[i * 2] / maxValue;
+	        var maxPeak = this.peaks[i * 2 + 1] / maxValue;
 	        CanvasHook.drawFrame(cc, h2, i, minPeak, maxPeak);
 	      }
 	    }
@@ -17876,11 +17973,11 @@ var WaveformPlaylist =
 	      var cc = canvas.getContext('2d');
 	      var h2 = canvas.height / 2;
 	
-	      if (!this.bufferedwaveform) this.setupImage(len, h2 * 2);
+	      if (!this.bufferedwaveform) this.setupImage(this.peaks.length, h2 * 2);
 	
 	      cc.clearRect(0, 0, canvas.width, canvas.height);
 	      var offsettotal = (0, _conversions.secondsToPixels)(-this.cueIn, this.resolution, this.sampleRate);
-	      // console.log(offsettotal);
+	
 	      cc.drawImage(this.bufferedwaveform, offsettotal, 0);
 	    }
 	  }], [{
@@ -17902,7 +17999,7 @@ var WaveformPlaylist =
 	exports.default = CanvasHook;
 
 /***/ }),
-/* 414 */
+/* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17913,9 +18010,9 @@ var WaveformPlaylist =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _fadeMaker = __webpack_require__(404);
+	var _fadeMaker = __webpack_require__(405);
 	
-	var _fadeCurves = __webpack_require__(405);
+	var _fadeCurves = __webpack_require__(406);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -18018,7 +18115,7 @@ var WaveformPlaylist =
 	exports.default = FadeCanvasHook;
 
 /***/ }),
-/* 415 */
+/* 416 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18029,7 +18126,7 @@ var WaveformPlaylist =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _fadeMaker = __webpack_require__(404);
+	var _fadeMaker = __webpack_require__(405);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -18185,7 +18282,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 416 */
+/* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18200,25 +18297,25 @@ var WaveformPlaylist =
 	
 	var _h2 = _interopRequireDefault(_h);
 	
-	var _aeneas = __webpack_require__(417);
+	var _aeneas = __webpack_require__(418);
 	
 	var _aeneas2 = _interopRequireDefault(_aeneas);
 	
-	var _aeneas3 = __webpack_require__(418);
+	var _aeneas3 = __webpack_require__(419);
 	
 	var _aeneas4 = _interopRequireDefault(_aeneas3);
 	
 	var _conversions = __webpack_require__(388);
 	
-	var _DragInteraction = __webpack_require__(419);
+	var _DragInteraction = __webpack_require__(420);
 	
 	var _DragInteraction2 = _interopRequireDefault(_DragInteraction);
 	
-	var _ScrollTopHook = __webpack_require__(420);
+	var _ScrollTopHook = __webpack_require__(421);
 	
 	var _ScrollTopHook2 = _interopRequireDefault(_ScrollTopHook);
 	
-	var _timeformat = __webpack_require__(421);
+	var _timeformat = __webpack_require__(422);
 	
 	var _timeformat2 = _interopRequireDefault(_timeformat);
 	
@@ -18487,7 +18584,7 @@ var WaveformPlaylist =
 	exports.default = AnnotationList;
 
 /***/ }),
-/* 417 */
+/* 418 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18508,14 +18605,14 @@ var WaveformPlaylist =
 	  return annotation;
 	};
 	
-	var _uuid = __webpack_require__(401);
+	var _uuid = __webpack_require__(402);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 418 */
+/* 419 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -18535,7 +18632,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 419 */
+/* 420 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18626,7 +18723,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 420 */
+/* 421 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -18652,7 +18749,7 @@ var WaveformPlaylist =
 	exports.default = Hook;
 
 /***/ }),
-/* 421 */
+/* 422 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -18700,7 +18797,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 422 */
+/* 423 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -18815,7 +18912,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 423 */
+/* 424 */
 /***/ (function(module, exports) {
 
 	'use strict';
