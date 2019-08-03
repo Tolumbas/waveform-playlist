@@ -11303,6 +11303,39 @@ var WaveformPlaylist =
 	        _this2.seek(where);
 	        // console.log('yo',where);
 	      });
+	      ee.on('splitStart', function (clip) {
+	        _this2.stateObj.action = "split";
+	      });
+	      ee.on('splitAt', function (_ref) {
+	        var clip = _ref.clip,
+	            at = _ref.at;
+	
+	        var info = clip.getTrackDetails();
+	        info.track = info.track.name;
+	        info.name = "Copy of " + info.name;
+	        info.start = clip.startTime + at;
+	        info.cuein = clip.cueIn + at;
+	        info.cueout = clip.cueOut;
+	        _this2.createClip(clip.buffer, info);
+	
+	        clip.endTime = clip.startTime + at;
+	
+	        _this2.ee.emit('interactive');
+	      });
+	      ee.on('duplicate', function (clip) {
+	        var info = clip.getTrackDetails();
+	        info.track = info.track.name;
+	        info.name = "Copy of " + info.name;
+	        info.start = clip.endTime;
+	        info.end = clip.endTime + clip.duration;
+	        _this2.createClip(clip.buffer, info);
+	        _this2.ee.emit('interactive');
+	      });
+	      ee.on('delete', function (clip) {
+	        var t = clip.track.clips.indexOf(clip);
+	        clip.track.clips.splice(t, 1);
+	        _this2.ee.emit('interactive');
+	      });
 	    }
 	  }, {
 	    key: 'getTrackByName',
@@ -11429,7 +11462,7 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'load',
 	    value: function () {
-	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(clipList) {
+	      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(clipList) {
 	        var _this3 = this;
 	
 	        var loadPromises, audioBuffers, clips;
@@ -11477,7 +11510,7 @@ var WaveformPlaylist =
 	      }));
 	
 	      function load(_x) {
-	        return _ref.apply(this, arguments);
+	        return _ref2.apply(this, arguments);
 	      }
 	
 	      return load;
@@ -14870,18 +14903,7 @@ var WaveformPlaylist =
 	
 	      return (0, _h2.default)('div.playlist-time-scale', {
 	        onmousedown: function onmousedown(e) {
-	          _this.ee.emit('scrolldraggingstart');
-	          e.from = "TimeScale";
-	          _this.ee.emit('scrolldraggingend', e);
-	        },
-	        onmousemove: function onmousemove(_ref) {
-	          // this.ee.emit('scrolldragging',movementX);
-	
-	          var movementX = _ref.movementX;
-	        },
-	        onmouseup: function onmouseup(e) {
-	          e.from = "TimeScale";
-	          // this.ee.emit('scrolldraggingend',e);
+	          _this.seekTo(e);
 	        },
 	        attributes: {
 	          style: 'position: relative; left: 0; right: 0; margin-left: ' + this.marginLeft + 'px;'
@@ -16133,6 +16155,8 @@ var WaveformPlaylist =
 	    this.startTime = 0; // Clip
 	    this.images = []; // Clip
 	
+	    this.showMenu = false;
+	
 	    console.log(this);
 	  }
 	
@@ -16499,15 +16523,30 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'renderFadeOut',
 	    value: function renderFadeOut(data) {
+	      var _this2 = this;
+	
 	      var fadeOut = this.fades[this.fadeOut];
 	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeOut.end - fadeOut.start, data.resolution, data.sampleRate);
 	      return (0, _h2.default)('div.wp-fade.wp-fadeout', {
+	        onmousedown: function onmousedown(e) {
+	          _this2.clickhandle = true;
+	        },
+	        onmosemove: function onmosemove(e) {
+	          _this2.clickhandle = false;
+	        },
+	        onmouseup: function onmouseup(e) {
+	          console.log(fadeOut.end - fadeOut.start);
+	          if (_this2.clickhandle && fadeOut.end - fadeOut.start < 0.2) {
+	            _this2.setFadeOut(2);
+	            _this2.ee.emit("interactive", _this2);
+	          }
+	        },
 	        attributes: {
 	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; right: 0; z-index: 10;pointer-events:none;'
 	        }
 	      }, [(0, _h2.default)('div.fadeout.fadehandle', {
 	        attributes: {
-	          style: 'position: absolute; \n                    height: 10px; \n                    width: 10px; \n                    z-index: 10; \n                    top:0; \n                    left: -5px; \n                    background-color: black;\n                    border-radius: 10px;\n                    pointer-events:initial;\n                    '
+	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    right: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 10px;\n                    pointer-events:initial;\n                    '
 	        }
 	      }), (0, _h2.default)('canvas', {
 	        attributes: {
@@ -16522,6 +16561,8 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'renderFadeIn',
 	    value: function renderFadeIn(data) {
+	      var _this3 = this;
+	
 	      var fadeIn = this.fades[this.fadeIn];
 	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeIn.end - fadeIn.start, data.resolution, data.sampleRate);
 	
@@ -16530,14 +16571,27 @@ var WaveformPlaylist =
 	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; left: 0; z-index: 10;pointer-events:none;'
 	        }
 	      }, [(0, _h2.default)('div.fadein.fadehandle', {
+	        onmousedown: function onmousedown(e) {
+	          _this3.clickhandle = true;
+	        },
+	        onmosemove: function onmosemove(e) {
+	          _this3.clickhandle = false;
+	        },
+	        onmouseup: function onmouseup(e) {
+	          console.log(fadeIn.end - fadeIn.start);
+	          if (_this3.clickhandle && fadeIn.end - fadeIn.start < 0.2) {
+	            _this3.setFadeIn(2);
+	            _this3.ee.emit("interactive", _this3);
+	          }
+	        },
 	        attributes: {
-	          style: 'position: absolute; \n                    height: 10px; \n                    width: 10px; \n                    z-index: 10; \n                    top:0; \n                    right: -5px; \n                    background-color: black;\n                    border-radius: 10px;\n                    pointer-events:initial;\n                    '
+	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    left: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 15px;\n                    pointer-events:initial;\n                    '
 	        }
 	      }), (0, _h2.default)('canvas', {
 	        attributes: {
 	          width: fadeWidth,
 	          height: data.height,
-	          style: 'pointer-events: none;'
+	          style: 'pointer-events: none;\n                ' + (fadeWidth < 0.2 ? 'display:none;' : '') + '\n                '
 	
 	        },
 	        hook: new _FadeCanvasHook2.default(fadeIn.type, fadeIn.shape, fadeIn.end - fadeIn.start, data.resolution)
@@ -16577,9 +16631,95 @@ var WaveformPlaylist =
 	      }, waveformChildren);
 	    }
 	  }, {
+	    key: 'renderHandle',
+	    value: function renderHandle() {
+	      return (0, _h2.default)('div.handle', {
+	        attributes: {
+	          style: '\n          width:5px;\n          height:100%;\n          margin-left:2px;\n          display:inline-block;\n          background-color:black;\n          border-radius:15px;\n          pointer-events:none;\n        '
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'renderLeftShiftHandles',
+	    value: function renderLeftShiftHandles(data) {
+	      var handles = [this.renderHandle(), this.renderHandle()];
+	      return (0, _h2.default)('div.handleContainer.left', {
+	        attributes: {
+	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          left:9.8px;\n        '
+	        }
+	      }, handles);
+	    }
+	  }, {
+	    key: 'renderRightShiftHandles',
+	    value: function renderRightShiftHandles(data) {
+	      var handles = [this.renderHandle(), this.renderHandle()];
+	      // const endPixel = secondsToPixels(this.endTime,data.resolution,data.sampleRate);
+	      return (0, _h2.default)('div.handleContainer.right', {
+	        attributes: {
+	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          right:12px;\n        '
+	        }
+	      }, handles);
+	    }
+	  }, {
+	    key: 'renderMenuButton',
+	    value: function renderMenuButton(data) {
+	      var _this4 = this;
+	
+	      return (0, _h2.default)('div.menuButton', {
+	        onclick: function onclick(e) {
+	          console.log('showMenu', _this4.showMenu);
+	          _this4.showMenu = !_this4.showMenu;
+	          _this4.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: '\n          z-index:3;\n          text-align:center;\n          font-size:1em;\n          line-height:7px;\n          color:white;\n          background-color:black;\n          position:absolute;\n          bottom:10px;\n          left: 10px;\n          width:15px;\n          height:15px;\n          border-radius:15px;\n          user-select: none;\n          cursor:pointer;\n        '
+	        }
+	      }, '..');
+	    }
+	  }, {
+	    key: 'renderMenu',
+	    value: function renderMenu(data) {
+	      var _this5 = this;
+	
+	      var buttonStyle = '\n          height:20px;\n          cursor:pointer;\n          user-select:none;\n    ';
+	
+	      return (0, _h2.default)('div.menuContainer', {
+	        attributes: {
+	          style: '\n        position:absolute;\n        z-index:4;\n        width:70px;\n        background-color: darkgray;\n\n        '
+	        }
+	      }, [(0, _h2.default)('div.buttonSplit', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('splitStart', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Split"), (0, _h2.default)('div.buttonDuplicate', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('duplicate', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Duplicate"), (0, _h2.default)('div.buttonDelete', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('delete', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Delete")]);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render(data) {
-	      var _this2 = this;
+	      var _this6 = this;
 	
 	      var convert = function convert(w) {
 	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
@@ -16593,17 +16733,24 @@ var WaveformPlaylist =
 	
 	      if (this.fadeOut) clipChildren.push(this.renderFadeOut(data));
 	
+	      clipChildren.push(this.renderLeftShiftHandles(data));
+	      clipChildren.push(this.renderRightShiftHandles(data));
+	
+	      clipChildren.push(this.renderMenuButton(data));
+	
+	      if (this.showMenu) clipChildren.push(this.renderMenu(data));
+	
 	      // clipChildren.push(this.renderOverlay(data));
 	
 	      return (0, _h2.default)('div.clip', {
 	        onmouseleave: function onmouseleave() {
-	          return _this2.ee.emit("activeclip", { name: '_none', startTime: 0 });
+	          return _this6.ee.emit("activeclip", { name: '_none', startTime: 0 });
 	        },
 	        onmouseover: function onmouseover() {
-	          return _this2.ee.emit("activeclip", _this2);
+	          return _this6.ee.emit("activeclip", _this6);
 	        },
 	        attributes: {
-	          style: 'left:' + convert(this.startTime) + 'px;height: ' + data.height + 'px; position: absolute;z-index:1'
+	          style: '\n            left:' + convert(this.startTime) + 'px;\n            height: ' + data.height + 'px; \n            position: absolute;\n            z-index:' + (this.showMenu ? 2 : 1) + ';\n            overflow:visible;\n          '
 	        }
 	      }, clipChildren);
 	    }
@@ -16615,6 +16762,8 @@ var WaveformPlaylist =
 	        start: this.startTime,
 	        end: this.endTime,
 	        name: this.name,
+	        track: this.track,
+	
 	        customClass: this.customClass,
 	        cuein: this.cueIn,
 	        cueout: this.cueOut
@@ -16649,6 +16798,10 @@ var WaveformPlaylist =
 	    key: 'endTime',
 	    get: function get() {
 	      return this.startTime + this.duration;
+	    },
+	    set: function set(time) {
+	      var duration = time - this.startTime;
+	      this.cueOut = this.cueIn + duration;
 	    }
 	  }]);
 
@@ -17772,6 +17925,8 @@ var WaveformPlaylist =
 	          this.ee.emit("shift", snaps * blocklength, this.activeClip);
 	          this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
 	        }
+	      } else if (this.action == "split") {
+	        document.body.style.cursor = "text";
 	      } else if (e.target.classList.contains('fadehandle')) {
 	        this.action = "fadedraggable";
 	        this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
@@ -17782,10 +17937,10 @@ var WaveformPlaylist =
 	      //   this.ee.emit("scrolldragging",e.movementX);
 	      //   this.action = "scrolldragging";
 	      // }
-	      else if (e.target.className == "clip" && e.layerX > e.target.offsetWidth - 10) {
+	      else if (e.target.className == "handleContainer right") {
 	          this.action = "resizeableright";
 	          document.body.style.cursor = "e-resize";
-	        } else if (e.target.className == "clip" && e.layerX < 10) {
+	        } else if (e.target.className == "handleContainer left") {
 	          this.action = "resizeableleft";
 	          document.body.style.cursor = "w-resize";
 	        } else if (e.target.className == "clip") {
@@ -17851,25 +18006,22 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'mouseup',
 	    value: function mouseup(e) {
-	      if (this.action == "dragginghandle" || this.action == "shifting") {
+	      if (this.action == "split") {
+	        if (e.target.className == 'clip') {
+	          var time = this.getMousepos(e);
+	          this.ee.emit('splitAt', { clip: this.activeClip, at: time });
+	        }
+	
+	        this.action = null;
+	      } else if (this.action == "dragginghandle" || this.action == "shifting") {
 	        this.action = null;
 	        this.bufferedMovement = 0;
+	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
+	        e.preventDefault();
+	        this.updateResizing(e);
+	        this.action = null;
+	        // console.log("dropped");
 	      }
-	      // else if (this.action == "scrolldraggingcandidate"){
-	      //   // this.seekTo(e);
-	      //   this.clip.ee.emit("scrolldraggingend",e);
-	      //   this.action = null;
-	      // }
-	      // else if (this.action == "scrolldragging"){
-	      //   this.action = null;
-	      //   this.clip.ee.emit("scrolldraggingend",e);
-	      // }
-	      else if (this.action == "resizingleft" || this.action == "resizingright") {
-	          e.preventDefault();
-	          this.updateResizing(e);
-	          this.action = null;
-	          // console.log("dropped");
-	        }
 	    }
 	  }, {
 	    key: 'activeClip',
