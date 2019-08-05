@@ -20237,7 +20237,7 @@ var WaveformPlaylist =
 	        // console.log(mousepos,this.clip.getStartTime(),this.clip.startTime);
 	        // console.log(mousepos,this.activeClip.duration)
 	        var clampped = Math.min(Math.max(mousepos, 0), this.activeClip.duration);
-	        if (this.hoveringover == "fadein") this.ee.emit('fadein', clampped, this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - clampped);
+	        if (this.hoveringover == "fadein") this.ee.emit('fadein', clampped, this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - clampped, this.activeClip);
 	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
 	        this.updateResizing(e);
 	      } else if (this.action == "shifting") {
