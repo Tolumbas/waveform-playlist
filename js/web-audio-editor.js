@@ -54,7 +54,7 @@ playlist.load([
       "duration": 0.5
     },
     "cuein": 14.5,
-    "cueout": 16.5,
+    "cueout": 18.5,
     "start": 9.5,
     "customClass": "vocals",
     "waveOutlineColor": '#c0dce0'

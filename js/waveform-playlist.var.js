@@ -10868,33 +10868,29 @@ var WaveformPlaylist =
 	
 	var _inlineWorker2 = _interopRequireDefault(_inlineWorker);
 	
-	var _tunajs = __webpack_require__(388);
+	var _conversions = __webpack_require__(388);
 	
-	var _tunajs2 = _interopRequireDefault(_tunajs);
-	
-	var _conversions = __webpack_require__(389);
-	
-	var _LoaderFactory = __webpack_require__(390);
+	var _LoaderFactory = __webpack_require__(389);
 	
 	var _LoaderFactory2 = _interopRequireDefault(_LoaderFactory);
 	
-	var _ScrollHook = __webpack_require__(394);
+	var _ScrollHook = __webpack_require__(393);
 	
 	var _ScrollHook2 = _interopRequireDefault(_ScrollHook);
 	
-	var _TimeScale = __webpack_require__(395);
+	var _TimeScale = __webpack_require__(394);
 	
 	var _TimeScale2 = _interopRequireDefault(_TimeScale);
 	
-	var _Track = __webpack_require__(397);
+	var _Track = __webpack_require__(396);
 	
 	var _Track2 = _interopRequireDefault(_Track);
 	
-	var _Clip = __webpack_require__(402);
+	var _Clip = __webpack_require__(401);
 	
 	var _Clip2 = _interopRequireDefault(_Clip);
 	
-	var _Playout = __webpack_require__(417);
+	var _Playout = __webpack_require__(416);
 	
 	var _Playout2 = _interopRequireDefault(_Playout);
 	
@@ -10910,7 +10906,7 @@ var WaveformPlaylist =
 	
 	var _exportWavWorker2 = _interopRequireDefault(_exportWavWorker);
 	
-	var _states = __webpack_require__(408);
+	var _states = __webpack_require__(407);
 	
 	var _states2 = _interopRequireDefault(_states);
 	
@@ -10924,7 +10920,6 @@ var WaveformPlaylist =
 	  function _class() {
 	    _classCallCheck(this, _class);
 	
-	    console.log(_tunajs2.default);
 	    this.tracks = [];
 	    this.buffers = new Map();
 	    this.clips = [];
@@ -14368,6 +14363,4186 @@ var WaveformPlaylist =
 
 /***/ }),
 /* 388 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.samplesToSeconds = samplesToSeconds;
+	exports.secondsToSamples = secondsToSamples;
+	exports.samplesToPixels = samplesToPixels;
+	exports.pixelsToSamples = pixelsToSamples;
+	exports.pixelsToSeconds = pixelsToSeconds;
+	exports.secondsToPixels = secondsToPixels;
+	function samplesToSeconds(samples, sampleRate) {
+	  return samples / sampleRate;
+	}
+	
+	function secondsToSamples(seconds, sampleRate) {
+	  return Math.ceil(seconds * sampleRate);
+	}
+	
+	function samplesToPixels(samples, resolution) {
+	  return Math.floor(samples / resolution);
+	}
+	
+	function pixelsToSamples(pixels, resolution) {
+	  return Math.floor(pixels * resolution);
+	}
+	
+	function pixelsToSeconds(pixels, resolution, sampleRate) {
+	  return pixels * resolution / sampleRate;
+	}
+	
+	function secondsToPixels(seconds, resolution, sampleRate) {
+	  return Math.ceil(seconds * sampleRate / resolution);
+	}
+
+/***/ }),
+/* 389 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _BlobLoader = __webpack_require__(390);
+	
+	var _BlobLoader2 = _interopRequireDefault(_BlobLoader);
+	
+	var _XHRLoader = __webpack_require__(392);
+	
+	var _XHRLoader2 = _interopRequireDefault(_XHRLoader);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class() {
+	    _classCallCheck(this, _class);
+	  }
+	
+	  _createClass(_class, null, [{
+	    key: 'createLoader',
+	    value: function createLoader(src, audioContext, ee) {
+	      if (src instanceof Blob) {
+	        return new _BlobLoader2.default(src, audioContext, ee);
+	      } else if (typeof src === 'string') {
+	        return new _XHRLoader2.default(src, audioContext, ee);
+	      }
+	
+	      throw new Error('Unsupported src type');
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 390 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _Loader2 = __webpack_require__(391);
+	
+	var _Loader3 = _interopRequireDefault(_Loader2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _class = function (_Loader) {
+	  _inherits(_class, _Loader);
+	
+	  function _class() {
+	    _classCallCheck(this, _class);
+	
+	    return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'load',
+	
+	
+	    /*
+	    * Loads an audio file via a FileReader
+	    */
+	    value: function load() {
+	      var _this2 = this;
+	
+	      return new Promise(function (resolve, reject) {
+	        if (_this2.src.type.match(/audio.*/) ||
+	        // added for problems with Firefox mime types + ogg.
+	        _this2.src.type.match(/video\/ogg/)) {
+	          var fr = new FileReader();
+	
+	          fr.readAsArrayBuffer(_this2.src);
+	
+	          fr.addEventListener('progress', function (e) {
+	            _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileProgress', _this2).call(_this2, e);
+	          });
+	
+	          fr.addEventListener('load', function (e) {
+	            var decoderPromise = _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileLoad', _this2).call(_this2, e);
+	
+	            decoderPromise.then(function (audioBuffer) {
+	              resolve(audioBuffer);
+	            });
+	          });
+	
+	          fr.addEventListener('error', function (err) {
+	            reject(err);
+	          });
+	        } else {
+	          reject(Error('Unsupported file type ' + _this2.src.type));
+	        }
+	      });
+	    }
+	  }]);
+	
+	  return _class;
+	}(_Loader3.default);
+	
+	exports.default = _class;
+
+/***/ }),
+/* 391 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.STATE_FINISHED = exports.STATE_DECODING = exports.STATE_LOADING = exports.STATE_UNINITIALIZED = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _eventEmitter = __webpack_require__(347);
+	
+	var _eventEmitter2 = _interopRequireDefault(_eventEmitter);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var STATE_UNINITIALIZED = exports.STATE_UNINITIALIZED = 0;
+	var STATE_LOADING = exports.STATE_LOADING = 1;
+	var STATE_DECODING = exports.STATE_DECODING = 2;
+	var STATE_FINISHED = exports.STATE_FINISHED = 3;
+	
+	var _class = function () {
+	  function _class(src, audioContext) {
+	    var ee = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : (0, _eventEmitter2.default)();
+	
+	    _classCallCheck(this, _class);
+	
+	    this.src = src;
+	    this.ac = audioContext;
+	    this.audioRequestState = STATE_UNINITIALIZED;
+	    this.ee = ee;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setStateChange',
+	    value: function setStateChange(state) {
+	      this.audioRequestState = state;
+	      this.ee.emit('audiorequeststatechange', this.audioRequestState, this.src);
+	    }
+	  }, {
+	    key: 'fileProgress',
+	    value: function fileProgress(e) {
+	      var percentComplete = 0;
+	
+	      if (this.audioRequestState === STATE_UNINITIALIZED) {
+	        this.setStateChange(STATE_LOADING);
+	      }
+	
+	      if (e.lengthComputable) {
+	        percentComplete = e.loaded / e.total * 100;
+	      }
+	
+	      this.ee.emit('loadprogress', percentComplete, this.src);
+	    }
+	  }, {
+	    key: 'fileLoad',
+	    value: function fileLoad(e) {
+	      var _this = this;
+	
+	      var audioData = e.target.response || e.target.result;
+	
+	      this.setStateChange(STATE_DECODING);
+	
+	      return new Promise(function (resolve, reject) {
+	        _this.ac.decodeAudioData(audioData, function (audioBuffer) {
+	          _this.audioBuffer = audioBuffer;
+	          _this.setStateChange(STATE_FINISHED);
+	
+	          resolve(audioBuffer);
+	        }, function (err) {
+	          reject(err);
+	        });
+	      });
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 392 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _Loader2 = __webpack_require__(391);
+	
+	var _Loader3 = _interopRequireDefault(_Loader2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _class = function (_Loader) {
+	  _inherits(_class, _Loader);
+	
+	  function _class() {
+	    _classCallCheck(this, _class);
+	
+	    return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'load',
+	
+	
+	    /**
+	     * Loads an audio file via XHR.
+	     */
+	    value: function load() {
+	      var _this2 = this;
+	
+	      return new Promise(function (resolve, reject) {
+	        var xhr = new XMLHttpRequest();
+	
+	        xhr.open('GET', _this2.src, true);
+	        xhr.responseType = 'arraybuffer';
+	        xhr.send();
+	
+	        xhr.addEventListener('progress', function (e) {
+	          _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileProgress', _this2).call(_this2, e);
+	        });
+	
+	        xhr.addEventListener('load', function (e) {
+	          var decoderPromise = _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileLoad', _this2).call(_this2, e);
+	
+	          decoderPromise.then(function (audioBuffer) {
+	            resolve(audioBuffer);
+	          });
+	        });
+	
+	        xhr.addEventListener('error', function () {
+	          reject(Error('Track ' + _this2.src + ' failed to load'));
+	        });
+	      });
+	    }
+	  }]);
+	
+	  return _class;
+	}(_Loader3.default);
+	
+	exports.default = _class;
+
+/***/ }),
+/* 393 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/*
+	* virtual-dom hook for scrolling the track container.
+	*/
+	var _class = function () {
+	  function _class(playlist) {
+	    _classCallCheck(this, _class);
+	
+	    this.playlist = playlist;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'hook',
+	    value: function hook(node) {
+	      var playlist = this.playlist;
+	      var el = node;
+	      if (!playlist.isScrolling) {
+	        if (playlist.isAutomaticScroll) {
+	          var rect = node.getBoundingClientRect();
+	          var cursorRect = node.querySelector('.cursor').getBoundingClientRect();
+	
+	          if (cursorRect.right > rect.right || cursorRect.right < 0) {
+	            playlist.scrollLeft = playlist.playbackSeconds;
+	          }
+	        }
+	      }
+	      var left = (0, _conversions.secondsToPixels)(playlist.scrollLeft, playlist.samplesPerPixel, playlist.sampleRate);
+	
+	      el.scrollLeft = left;
+	      // el.addEventListener('mouseleave',e => playlist.ee.emit('scrolldraggingend',e));
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 394 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _h = __webpack_require__(366);
+	
+	var _h2 = _interopRequireDefault(_h);
+	
+	var _conversions = __webpack_require__(388);
+	
+	var _TimeScaleHook = __webpack_require__(395);
+	
+	var _TimeScaleHook2 = _interopRequireDefault(_TimeScaleHook);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var TimeScale = function () {
+	  function TimeScale(ee, duration, offset, samplesPerPixel, sampleRate) {
+	    var marginLeft = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
+	
+	    _classCallCheck(this, TimeScale);
+	
+	    this.ee = ee;
+	    this.duration = duration;
+	    this.offset = offset;
+	    this.samplesPerPixel = samplesPerPixel;
+	    this.sampleRate = sampleRate;
+	    this.marginLeft = marginLeft;
+	
+	    this.dragging = false;
+	
+	    this.timeinfo = {
+	      20000: {
+	        marker: 30000,
+	        bigStep: 10000,
+	        smallStep: 5000,
+	        secondStep: 5
+	      },
+	      12000: {
+	        marker: 15000,
+	        bigStep: 5000,
+	        smallStep: 1000,
+	        secondStep: 1
+	      },
+	      10000: {
+	        marker: 10000,
+	        bigStep: 5000,
+	        smallStep: 1000,
+	        secondStep: 1
+	      },
+	      5000: {
+	        marker: 5000,
+	        bigStep: 1000,
+	        smallStep: 500,
+	        secondStep: 1 / 2
+	      },
+	      2500: {
+	        marker: 2000,
+	        bigStep: 1000,
+	        smallStep: 500,
+	        secondStep: 1 / 2
+	      },
+	      1500: {
+	        marker: 2000,
+	        bigStep: 1000,
+	        smallStep: 200,
+	        secondStep: 1 / 5
+	      },
+	      700: {
+	        marker: 1000,
+	        bigStep: 500,
+	        smallStep: 100,
+	        secondStep: 1 / 10
+	      }
+	    };
+	  }
+	
+	  _createClass(TimeScale, [{
+	    key: 'getScaleInfo',
+	    value: function getScaleInfo(resolution) {
+	      var keys = Object.keys(this.timeinfo).map(function (item) {
+	        return parseInt(item, 10);
+	      });
+	
+	      // make sure keys are numerically sorted.
+	      keys = keys.sort(function (a, b) {
+	        return a - b;
+	      });
+	
+	      for (var i = 0; i < keys.length; i += 1) {
+	        if (resolution <= keys[i]) {
+	          return this.timeinfo[keys[i]];
+	        }
+	      }
+	
+	      return this.timeinfo[keys[0]];
+	    }
+	
+	    /*
+	      Return time in format mm:ss
+	    */
+	
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(e) {
+	      e.preventDefault();
+	
+	      var startX = e.offsetX;
+	      var startTime = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	
+	      this.ee.emit('select', startTime, startTime);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+	
+	      var widthX = (0, _conversions.secondsToPixels)(this.duration, this.samplesPerPixel, this.sampleRate);
+	      var pixPerSec = this.sampleRate / this.samplesPerPixel;
+	      var pixOffset = (0, _conversions.secondsToPixels)(this.offset, this.samplesPerPixel, this.sampleRate);
+	      var scaleInfo = this.getScaleInfo(this.samplesPerPixel);
+	      var canvasInfo = {};
+	      var timeMarkers = [];
+	      var end = widthX + pixOffset;
+	      var counter = 0;
+	
+	      for (var i = 0; i < end; i += pixPerSec * scaleInfo.secondStep) {
+	        var pixIndex = Math.floor(i);
+	        var pix = pixIndex - pixOffset;
+	
+	        if (pixIndex >= pixOffset) {
+	          // put a timestamp every 30 seconds.
+	          if (scaleInfo.marker && counter % scaleInfo.marker === 0) {
+	            timeMarkers.push((0, _h2.default)('div.time', {
+	              attributes: {
+	                style: 'position: absolute; left: ' + pix + 'px;'
+	              }
+	            }, [TimeScale.formatTime(counter)]));
+	
+	            canvasInfo[pix] = 10;
+	          } else if (scaleInfo.bigStep && counter % scaleInfo.bigStep === 0) {
+	            canvasInfo[pix] = 5;
+	          } else if (scaleInfo.smallStep && counter % scaleInfo.smallStep === 0) {
+	            canvasInfo[pix] = 2;
+	          }
+	        }
+	
+	        counter += 1000 * scaleInfo.secondStep;
+	      }
+	
+	      return (0, _h2.default)('div.playlist-time-scale', {
+	        onmousedown: function onmousedown(e) {
+	          _this.seekTo(e);
+	        },
+	        attributes: {
+	          style: 'position: relative; left: 0; right: 0; margin-left: ' + this.marginLeft + 'px;'
+	        }
+	      }, [timeMarkers, (0, _h2.default)('canvas', {
+	        attributes: {
+	          width: widthX,
+	          height: 30,
+	          style: 'position: absolute; left: 0; right: 0; top: 0; bottom: 0;'
+	        },
+	        hook: new _TimeScaleHook2.default(canvasInfo, this.offset, this.samplesPerPixel, this.duration)
+	      })]);
+	    }
+	  }], [{
+	    key: 'formatTime',
+	    value: function formatTime(milliseconds) {
+	      var seconds = milliseconds / 1000;
+	      var s = seconds % 60;
+	      var m = (seconds - s) / 60;
+	
+	      if (s < 10) {
+	        s = '0' + s;
+	      }
+	
+	      return m + ':' + s;
+	    }
+	  }]);
+	
+	  return TimeScale;
+	}();
+	
+	exports.default = TimeScale;
+
+/***/ }),
+/* 395 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/*
+	* virtual-dom hook for rendering the time scale canvas.
+	*/
+	var _class = function () {
+	  function _class(tickInfo, offset, samplesPerPixel, duration) {
+	    _classCallCheck(this, _class);
+	
+	    this.tickInfo = tickInfo;
+	    this.offset = offset;
+	    this.samplesPerPixel = samplesPerPixel;
+	    this.duration = duration;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'hook',
+	    value: function hook(canvas, prop, prev) {
+	      var _this = this;
+	
+	      // canvas is up to date
+	      if (prev !== undefined && prev.offset === this.offset && prev.duration === this.duration && prev.samplesPerPixel === this.samplesPerPixel) {
+	        return;
+	      }
+	
+	      var width = canvas.width;
+	      var height = canvas.height;
+	      var ctx = canvas.getContext('2d');
+	
+	      ctx.clearRect(0, 0, width, height);
+	
+	      Object.keys(this.tickInfo).forEach(function (x) {
+	        var scaleHeight = _this.tickInfo[x];
+	        var scaleY = height - scaleHeight;
+	        ctx.fillRect(x, scaleY, 1, scaleHeight);
+	      });
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 396 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _lodash = __webpack_require__(333);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _lodash3 = __webpack_require__(397);
+	
+	var _lodash4 = _interopRequireDefault(_lodash3);
+	
+	var _h = __webpack_require__(366);
+	
+	var _h2 = _interopRequireDefault(_h);
+	
+	var _conversions = __webpack_require__(388);
+	
+	var _VolumeSliderHook = __webpack_require__(398);
+	
+	var _VolumeSliderHook2 = _interopRequireDefault(_VolumeSliderHook);
+	
+	var _PanKnobHook = __webpack_require__(399);
+	
+	var _PanKnobHook2 = _interopRequireDefault(_PanKnobHook);
+	
+	var _GridHook = __webpack_require__(400);
+	
+	var _GridHook2 = _interopRequireDefault(_GridHook);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class() {
+	    _classCallCheck(this, _class);
+	
+	    this.name = 'Untitled'; // Track
+	    this.customClass = undefined; //Track
+	    this.waveOutlineColor = undefined; //Track
+	    this.gain = 1; //Track
+	    this._pan = 0; // Track
+	    this.ee = undefined;
+	    this.bpm = 100;
+	    this.quantize = 1;
+	
+	    this.clips = [];
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'unasignAll',
+	    value: function unasignAll() {
+	      return this.clips = [];
+	    }
+	    /*
+	      startTime, endTime in seconds (float).
+	      segment is for a highlighted section in the UI.
+	      returns a Promise that will resolve when the AudioBufferSource
+	      is either stopped or plays out naturally.
+	    */
+	
+	  }, {
+	    key: 'schedulePlay',
+	    value: function () {
+	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	          args[_key] = arguments[_key];
+	        }
+	
+	        return regeneratorRuntime.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                _context.next = 2;
+	                return Promise.all(this.clips.map(function (c) {
+	                  return c.schedulePlay.apply(c, args);
+	                }));
+	
+	              case 2:
+	              case 'end':
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+	
+	      function schedulePlay() {
+	        return _ref.apply(this, arguments);
+	      }
+	
+	      return schedulePlay;
+	    }()
+	  }, {
+	    key: 'scheduleStop',
+	    value: function scheduleStop(when) {
+	      this.clips.forEach(function (c) {
+	        return c.scheduleStop(when);
+	      });
+	    }
+	  }, {
+	    key: 'assign',
+	    value: function assign(clip) {
+	      return this.clips.push(clip);
+	    }
+	  }, {
+	    key: 'setEventEmitter',
+	    value: function setEventEmitter(ee) {
+	      this.ee = ee;
+	      this.clips.forEach(function (c) {
+	        return c.setEventEmitter(ee);
+	      });
+	    }
+	  }, {
+	    key: 'setName',
+	    value: function setName(name) {
+	      this.name = name;
+	    }
+	  }, {
+	    key: 'setCustomClass',
+	    value: function setCustomClass(className) {
+	      this.customClass = className;
+	    }
+	  }, {
+	    key: 'setWaveOutlineColor',
+	    value: function setWaveOutlineColor(color) {
+	      this.waveOutlineColor = color;
+	    }
+	  }, {
+	    key: 'setStartTime',
+	    value: function setStartTime(start) {
+	      this.startTime = start;
+	      this.endTime = start + this.duration;
+	    }
+	  }, {
+	    key: 'setOfflinePlayout',
+	    value: function setOfflinePlayout(playout) {
+	      this.clips.forEach(function (clip) {
+	        return clip.setOfflinePlayout(playout);
+	      });
+	    }
+	  }, {
+	    key: 'setEnabledStates',
+	    value: function setEnabledStates() {
+	      var enabledStates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	
+	      var defaultStatesEnabled = {
+	        cursor: true,
+	        fadein: true,
+	        fadeout: true,
+	        select: true,
+	        shift: true,
+	        interactive: true
+	      };
+	
+	      this.enabledStates = (0, _lodash2.default)({}, defaultStatesEnabled, enabledStates);
+	    }
+	  }, {
+	    key: 'setState',
+	    value: function setState(state) {
+	      this.clips.forEach(function (clip) {
+	        return clip.setState(state);
+	      });
+	    }
+	  }, {
+	    key: 'isPlaying',
+	    value: function isPlaying() {
+	      return this.clips.reduce(function (isit, clip) {
+	        return clip.isPlaying() || isit;
+	      }, false);
+	    }
+	  }, {
+	    key: 'setShouldPlay',
+	    value: function setShouldPlay(bool) {
+	      this.clips.forEach(function (clip) {
+	        return clip.playout.setShouldPlay(bool);
+	      });
+	    }
+	  }, {
+	    key: 'setGainLevel',
+	    value: function setGainLevel(level) {
+	      this.gain = level;
+	      this.clips.forEach(function (clip) {
+	        clip.gain = level;
+	        clip.playout.setVolumeGainLevel(level);
+	      });
+	    }
+	  }, {
+	    key: 'setMasterGainLevel',
+	    value: function setMasterGainLevel(level) {
+	      this.clips.forEach(function (clip) {
+	        return clip.playout.setMasterGainLevel(level);
+	      });
+	    }
+	  }, {
+	    key: 'setPan',
+	    value: function setPan(value) {
+	      var _this = this;
+	
+	      this.pan = value || this.pan;
+	      this.clips.forEach(function (clip) {
+	        return clip.setPan(_this.pan);
+	      });
+	    }
+	  }, {
+	    key: 'renderControls',
+	    value: function renderControls(data) {
+	      var _this2 = this;
+	
+	      var muteClass = data.muted ? '.active' : '';
+	      var soloClass = data.soloed ? '.active' : '';
+	
+	      return (0, _h2.default)('div.controls', {
+	        attributes: {
+	          style: 'height: ' + data.height + 'px; width: ' + data.controls.width + 'px; position: absolute; left: 0; z-index: 10;'
+	        }
+	      }, [(0, _h2.default)('header', [this.name]), (0, _h2.default)('div.btn-group', [(0, _h2.default)('span.btn.btn-default.btn-xs.destroyButton', {
+	        onclick: function onclick() {
+	          _this2.ee.emit('destroy', _this2);
+	        }
+	      }, ['X']), (0, _h2.default)('span.btn.btn-default.btn-xs.btn-mute' + muteClass, {
+	        onclick: function onclick() {
+	          _this2.ee.emit('mute', _this2);
+	        }
+	      }, ['Mute']), (0, _h2.default)('span.btn.btn-default.btn-xs.btn-solo' + soloClass, {
+	        onclick: function onclick() {
+	          _this2.ee.emit('solo', _this2);
+	        }
+	      }, ['Solo']), (0, _h2.default)('div.btn.btn-default.dropdown-toggle.btn-xs.btn-effects', {
+	        onclick: function onclick(e) {
+	          _this2.showmenu = !_this2.showmenu;
+	          _this2.ee.emit('interactive');
+	        }
+	      }, ["effects", (0, _h2.default)('div.effectsmenu', {
+	        attributes: {
+	          style: '\n                  position:absolite;\n                  top:0;\n                  left:10;\n                  ' + (this.showmenu ? '' : "display:none;") + '\n                '
+	        }
+	      }, [(0, _h2.default)("div.effect.btn.btn-default", {
+	        onclick: function onclick(e) {
+	          _this2.clips.forEach(function (clip) {
+	            clip.playout.toggleDelay = !clip.playout.toggleDelay;
+	          });
+	        },
+	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "delay"), (0, _h2.default)("div.effect.btn.btn-default", {
+	        onclick: function onclick(e) {
+	          _this2.clips.forEach(function (clip) {
+	            clip.playout.togglePhaser = !clip.playout.togglePhaser;
+	          });
+	        },
+	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "bitcrusher"), (0, _h2.default)("div.effect.btn.btn-default", {
+	        onclick: function onclick(e) {
+	          _this2.clips.forEach(function (clip) {
+	            clip.playout.toggleLowpass = !clip.playout.toggleLowpass;
+	          });
+	        },
+	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "lowpass")])]), (0, _h2.default)('canvas.knobCanvas', {
+	        attributes: {
+	          width: 25,
+	          height: 25,
+	          "data-ringbgcolor": '#EEE'
+	        },
+	        hook: new _PanKnobHook2.default(this.pan, this)
+	      })]), (0, _h2.default)('label', [(0, _h2.default)('input.volume-slider', {
+	        attributes: {
+	          type: 'range',
+	          min: 0,
+	          max: 100,
+	          value: 100
+	        },
+	        hook: new _VolumeSliderHook2.default(this.gain),
+	        oninput: function oninput(e) {
+	          _this2.ee.emit('volumechange', e.target.value, _this2);
+	        }
+	      })])]);
+	    }
+	  }, {
+	    key: 'getEndTime',
+	    value: function getEndTime() {
+	      return this.clips.reduce(function (maxval, clip) {
+	        return Math.max(maxval, clip.endTime);
+	      }, 0);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render(data) {
+	
+	      function convert(seconds) {
+	        return (0, _conversions.secondsToPixels)(seconds, data.resolution, data.sampleRate);
+	      }
+	
+	      var width = convert(this.getEndTime());
+	      var playbackX = convert(data.playbackSeconds);
+	      var startX = convert(this.startTime);
+	      var endX = convert(this.endTime);
+	      var progressWidth = 0;
+	
+	      if (playbackX > 0 && playbackX > startX) {
+	        if (playbackX < endX) {
+	          progressWidth = playbackX - startX;
+	        } else {
+	          progressWidth = width;
+	        }
+	      }
+	
+	      var waveformChildren = [(0, _h2.default)('div.cursor', {
+	        attributes: {
+	          style: 'position: absolute; width: 1px; margin: 0; padding: 0; top: 0; left: ' + playbackX + 'px; bottom: 0; z-index: 5;'
+	        }
+	      })];
+	
+	      var grid = (0, _h2.default)('canvas.grid', {
+	        attributes: {
+	          width: width,
+	          height: data.height,
+	          style: 'position:absolute;pointer-events:none'
+	        },
+	        hook: new _GridHook2.default(this.quantize, this.bpm, 'lightgray', data.resolution, data.sampleRate)
+	      });
+	      waveformChildren.push(grid);
+	
+	      waveformChildren.push(this.clips.map(function (clip) {
+	        return clip.render(data);
+	      }));
+	
+	      // draw cursor selection on active track.
+	      if (data.isActive === true) {
+	        var cStartX = (0, _conversions.secondsToPixels)(data.timeSelection.start, data.resolution, data.sampleRate);
+	        var cEndX = (0, _conversions.secondsToPixels)(data.timeSelection.end, data.resolution, data.sampleRate);
+	        var cWidth = cEndX - cStartX + 1;
+	        var cClassName = cWidth > 1 ? '.segment' : '.point';
+	
+	        waveformChildren.push((0, _h2.default)('div.selection' + cClassName, {
+	          attributes: {
+	            style: 'position: absolute; width: ' + cWidth + 'px; bottom: 0; top: 0; left: ' + cStartX + 'px; z-index: 4;'
+	          }
+	        }));
+	      }
+	
+	      var waveform = (0, _h2.default)('div.waveform', {
+	        attributes: {
+	          style: 'height: ' + data.height + 'px; position: relative;'
+	        }
+	      }, waveformChildren);
+	
+	      var channelChildren = [];
+	      var channelMargin = 0;
+	
+	      if (data.controls.show) {
+	        channelChildren.push(this.renderControls(data));
+	        channelMargin = data.controls.width;
+	      }
+	
+	      channelChildren.push(waveform);
+	
+	      var audibleClass = data.shouldPlay ? '' : '.silent';
+	      var customClass = this.customClass === undefined ? '' : '.' + this.customClass;
+	
+	      return (0, _h2.default)('div.channel-wrapper' + audibleClass + customClass, {
+	        attributes: {
+	          style: 'margin-left: ' + channelMargin + 'px; height: ' + data.height + 'px;'
+	        }
+	      }, channelChildren);
+	    }
+	  }, {
+	    key: 'getTrackDetails',
+	    value: function getTrackDetails() {
+	      var info = {
+	        src: this.src,
+	        name: this.name,
+	        customClass: this.customClass
+	      };
+	      return info;
+	    }
+	  }, {
+	    key: 'pan',
+	    set: function set(inp) {
+	      this._pan = inp;
+	      this.clips.forEach(function (clip) {
+	        return clip.setPan(inp);
+	      });
+	    },
+	    get: function get() {
+	      return this._pan;
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 397 */
+/***/ (function(module, exports) {
+
+	/**
+	 * lodash (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+	 * Released under MIT license <https://lodash.com/license>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 */
+	
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]';
+	
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^(?:0|[1-9]\d*)$/;
+	
+	/**
+	 * The base implementation of `_.times` without support for iteratee shorthands
+	 * or max array length checks.
+	 *
+	 * @private
+	 * @param {number} n The number of times to invoke `iteratee`.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns the array of results.
+	 */
+	function baseTimes(n, iteratee) {
+	  var index = -1,
+	      result = Array(n);
+	
+	  while (++index < n) {
+	    result[index] = iteratee(index);
+	  }
+	  return result;
+	}
+	
+	/**
+	 * Creates a unary function that invokes `func` with its argument transformed.
+	 *
+	 * @private
+	 * @param {Function} func The function to wrap.
+	 * @param {Function} transform The argument transform.
+	 * @returns {Function} Returns the new function.
+	 */
+	function overArg(func, transform) {
+	  return function(arg) {
+	    return func(transform(arg));
+	  };
+	}
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = overArg(Object.keys, Object);
+	
+	/**
+	 * Creates an array of the enumerable property names of the array-like `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @param {boolean} inherited Specify returning inherited property names.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function arrayLikeKeys(value, inherited) {
+	  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+	  // Safari 9 makes `arguments.length` enumerable in strict mode.
+	  var result = (isArray(value) || isArguments(value))
+	    ? baseTimes(value.length, String)
+	    : [];
+	
+	  var length = result.length,
+	      skipIndexes = !!length;
+	
+	  for (var key in value) {
+	    if ((inherited || hasOwnProperty.call(value, key)) &&
+	        !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	/**
+	 * The base implementation of `baseForOwn` which iterates over `object`
+	 * properties returned by `keysFunc` and invokes `iteratee` for each property.
+	 * Iteratee functions may exit iteration early by explicitly returning `false`.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {Function} keysFunc The function to get the keys of `object`.
+	 * @returns {Object} Returns `object`.
+	 */
+	var baseFor = createBaseFor();
+	
+	/**
+	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseForOwn(object, iteratee) {
+	  return object && baseFor(object, iteratee, keys);
+	}
+	
+	/**
+	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function baseKeys(object) {
+	  if (!isPrototype(object)) {
+	    return nativeKeys(object);
+	  }
+	  var result = [];
+	  for (var key in Object(object)) {
+	    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	/**
+	 * Creates a base function for methods like `_.forIn` and `_.forOwn`.
+	 *
+	 * @private
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Function} Returns the new base function.
+	 */
+	function createBaseFor(fromRight) {
+	  return function(object, iteratee, keysFunc) {
+	    var index = -1,
+	        iterable = Object(object),
+	        props = keysFunc(object),
+	        length = props.length;
+	
+	    while (length--) {
+	      var key = props[fromRight ? length : ++index];
+	      if (iteratee(iterable[key], key, iterable) === false) {
+	        break;
+	      }
+	    }
+	    return object;
+	  };
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return !!length &&
+	    (typeof value == 'number' || reIsUint.test(value)) &&
+	    (value > -1 && value % 1 == 0 && value < length);
+	}
+	
+	/**
+	 * Checks if `value` is likely a prototype object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+	 */
+	function isPrototype(value) {
+	  var Ctor = value && value.constructor,
+	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+	
+	  return value === proto;
+	}
+	
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+	}
+	
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(document.body.children);
+	 * // => false
+	 *
+	 * _.isArray('abc');
+	 * // => false
+	 *
+	 * _.isArray(_.noop);
+	 * // => false
+	 */
+	var isArray = Array.isArray;
+	
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(value.length) && !isFunction(value);
+	}
+	
+	/**
+	 * This method is like `_.isArrayLike` except that it also checks if `value`
+	 * is an object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array-like object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * _.isArrayLikeObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject('abc');
+	 * // => false
+	 *
+	 * _.isArrayLikeObject(_.noop);
+	 * // => false
+	 */
+	function isArrayLikeObject(value) {
+	  return isObjectLike(value) && isArrayLike(value);
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+	  var tag = isObject(value) ? objectToString.call(value) : '';
+	  return tag == funcTag || tag == genTag;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This method is loosely based on
+	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/**
+	 * Iterates over own enumerable string keyed properties of an object and
+	 * invokes `iteratee` for each property. The iteratee is invoked with three
+	 * arguments: (value, key, object). Iteratee functions may exit iteration
+	 * early by explicitly returning `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.3.0
+	 * @category Object
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 * @see _.forOwnRight
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.forOwn(new Foo, function(value, key) {
+	 *   console.log(key);
+	 * });
+	 * // => Logs 'a' then 'b' (iteration order is not guaranteed).
+	 */
+	function forOwn(object, iteratee) {
+	  return object && baseForOwn(object, typeof iteratee == 'function' ? iteratee : identity);
+	}
+	
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	function keys(object) {
+	  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+	}
+	
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = forOwn;
+
+
+/***/ }),
+/* 398 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/*
+	* virtual-dom hook for setting the volume input programmatically.
+	*/
+	var _class = function () {
+	  function _class(gain) {
+	    _classCallCheck(this, _class);
+	
+	    this.gain = gain;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'hook',
+	    value: function hook(volumeInput) {
+	      volumeInput.setAttribute('value', this.gain * 100);
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 399 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	    function _class(pan, track) {
+	        _classCallCheck(this, _class);
+	
+	        this.pan = pan;
+	        this.track = track;
+	        this.id = Math.random() * 100 | 0;
+	        this.lineWidth = 5;
+	        this.gap = Math.PI * .14; //This is doubled
+	        this.gapPosition = Math.PI * .5;
+	        this.track.pan = this.pan;
+	    }
+	
+	    _createClass(_class, [{
+	        key: 'setupEvents',
+	        value: function setupEvents(canvas) {
+	            var _this = this;
+	
+	            //pan Change
+	            canvas.onclick = function (e) {
+	                console.log(_this.id);
+	                var offsetX = e.offsetX,
+	                    offsetY = e.offsetY;
+	
+	                var center = { x: canvas.width / 2, y: canvas.height / 2 };
+	                var TAU = Math.PI * 2;
+	
+	                var angle = Math.atan2(offsetY - center.y, offsetX - center.x);
+	
+	                var top = _this.gapPosition - 3 * Math.PI;
+	
+	                var dangle = (angle - top) % TAU;
+	
+	                var adjustedNegatives = dangle > Math.PI ? dangle - TAU : dangle;
+	
+	                var amount = adjustedNegatives / (Math.PI - _this.gap);
+	
+	                var realamount = amount > 1 ? 1 : amount < -1 ? -1 : amount; //clamping to -1 to 1
+	
+	                // console.log(adjustedNegatives*180/Math.PI);
+	                // console.log(realamount);
+	                _this.track.pan = realamount;
+	
+	                _this.track.ee.emit('panknob', _this.track);
+	            };
+	        }
+	    }, {
+	        key: 'draw',
+	        value: function draw(g, canvas) {
+	            var center = { x: canvas.width / 2, y: canvas.height / 2 };
+	            var TAU = Math.PI * 2;
+	
+	            //Background
+	
+	            g.lineWidth = this.lineWidth;
+	            g.strokeStyle = canvas.getAttribute('data-ringbgcolor') || '#EEE';
+	            g.clearRect(0, 0, canvas.width, canvas.height);
+	            g.beginPath();
+	            g.arc(center.x, center.y, center.x - this.lineWidth, this.gap + this.gapPosition, TAU - this.gap + this.gapPosition);
+	            g.stroke();
+	
+	            //Pan Amount
+	
+	            g.strokeStyle = canvas.getAttribute('data-ringcolor') || 'black';
+	
+	            g.beginPath();
+	            g.arc(center.x, center.y, center.x - this.lineWidth, this.gapPosition + Math.PI, this.pan * (Math.PI - this.gap) + this.gapPosition + Math.PI, this.pan < 0);
+	            g.stroke();
+	
+	            // console.log('drawing pan',g.strokeStyle,center);
+	        }
+	    }, {
+	        key: 'hook',
+	        value: function hook(canvas, _, prev) {
+	            if (prev && prev.pan == this.pan) return;
+	
+	            this.setupEvents(canvas);
+	            var g = canvas.getContext('2d');
+	            this.draw(g, canvas);
+	        }
+	    }]);
+
+	    return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 400 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	    function _class(quantizeValue, bpm, color, resolution, sampleRate) {
+	        _classCallCheck(this, _class);
+	
+	        this.quantizeValue = quantizeValue;
+	        this.bpm = bpm;
+	        this.color = color;
+	        this.resolution = resolution;
+	        this.sampleRate = sampleRate;
+	    }
+	
+	    _createClass(_class, [{
+	        key: 'draw',
+	        value: function draw(g, canvas) {
+	            var step = (0, _conversions.secondsToPixels)(60 / this.bpm * this.quantizeValue, this.resolution, this.sampleRate);
+	            g.clearRect(0, 0, canvas.width, canvas.height);
+	            g.strokeStyle = this.color;
+	            g.beginPath();
+	            for (var a = 0; a < canvas.width; a += step) {
+	                g.moveTo(a, 0);
+	                g.lineTo(a, canvas.height);
+	            }
+	            g.stroke();
+	        }
+	    }, {
+	        key: 'hook',
+	        value: function hook(canvas, _, prev) {
+	            var g = canvas.getContext('2d');
+	            this.width = canvas.width;
+	            this.height = canvas.height;
+	            if (!prev) {
+	                this.draw(g, canvas);
+	                return;
+	            } else for (var prop in this) {
+	                if (this[prop] != prev[prop]) {
+	                    this.draw(g, canvas);
+	                    return;
+	                }
+	            }
+	        }
+	    }]);
+
+	    return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 401 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _lodash = __webpack_require__(333);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _lodash3 = __webpack_require__(397);
+	
+	var _lodash4 = _interopRequireDefault(_lodash3);
+	
+	var _uuid = __webpack_require__(402);
+	
+	var _uuid2 = _interopRequireDefault(_uuid);
+	
+	var _h = __webpack_require__(366);
+	
+	var _h2 = _interopRequireDefault(_h);
+	
+	var _webaudioPeaks = __webpack_require__(404);
+	
+	var _webaudioPeaks2 = _interopRequireDefault(_webaudioPeaks);
+	
+	var _fadeMaker = __webpack_require__(405);
+	
+	var _conversions = __webpack_require__(388);
+	
+	var _states = __webpack_require__(407);
+	
+	var _states2 = _interopRequireDefault(_states);
+	
+	var _CanvasHook = __webpack_require__(414);
+	
+	var _CanvasHook2 = _interopRequireDefault(_CanvasHook);
+	
+	var _FadeCanvasHook = __webpack_require__(415);
+	
+	var _FadeCanvasHook2 = _interopRequireDefault(_FadeCanvasHook);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var MAX_CANVAS_WIDTH = 1000;
+	
+	var _class = function () {
+	  function _class(buffer) {
+	    _classCallCheck(this, _class);
+	
+	    this.name = 'Untitled'; // Track
+	    this.customClass = undefined; //Track
+	    this.waveOutlineColor = undefined; //Track
+	    this.gain = 1; //Track
+	    this.pan = 0; // Track
+	
+	    this.ee = undefined;
+	
+	    this.buffer = buffer;
+	
+	    this.track = undefined;
+	
+	    this.peakData = {
+	      type: 'WebAudio',
+	      mono: false
+	    }; // Clip
+	    this.fades = {}; // Clip
+	    this.cueIn = 0; // Clip
+	    this.cueOut = 0; //Clip
+	    this.startTime = 0; // Clip
+	    this.images = []; // Clip
+	
+	    this.showMenu = false;
+	
+	    console.log(this);
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setTrack',
+	    value: function setTrack(track) {
+	      this.track = track;
+	    }
+	  }, {
+	    key: 'setEventEmitter',
+	    value: function setEventEmitter(ee) {
+	      this.ee = ee;
+	    }
+	  }, {
+	    key: 'setName',
+	    value: function setName(name) {
+	      this.name = name;
+	    }
+	  }, {
+	    key: 'setCustomClass',
+	    value: function setCustomClass(className) {
+	      this.customClass = className;
+	    }
+	  }, {
+	    key: 'setWaveOutlineColor',
+	    value: function setWaveOutlineColor(color) {
+	      this.waveOutlineColor = color;
+	    }
+	  }, {
+	    key: 'setCues',
+	    value: function setCues(cueIn, cueOut) {
+	      if (cueOut < cueIn) {
+	        throw new Error('cue out cannot be less than cue in');
+	      }
+	
+	      this.cueIn = cueIn;
+	      this.cueOut = cueOut;
+	    }
+	
+	    /*
+	    *   start, end in seconds relative to the entire playlist.
+	    */
+	
+	  }, {
+	    key: 'trim',
+	    value: function trim(start, end) {
+	      var trackStart = this.getStartTime();
+	      var trackEnd = this.endTime;
+	      var offset = this.cueIn - trackStart;
+	
+	      if (trackStart <= start && trackEnd >= start || trackStart <= end && trackEnd >= end) {
+	        var cueIn = start < trackStart ? trackStart : start;
+	        var cueOut = end > trackEnd ? trackEnd : end;
+	
+	        this.setCues(cueIn + offset, cueOut + offset);
+	        if (start > trackStart) {
+	          this.setStartTime(start);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'setStartTime',
+	    value: function setStartTime(start) {
+	      this.startTime = start;
+	    }
+	  }, {
+	    key: 'setPlayout',
+	    value: function setPlayout(playout) {
+	      this.playout = playout;
+	    }
+	  }, {
+	    key: 'setOfflinePlayout',
+	    value: function setOfflinePlayout(playout) {
+	      this.offlinePlayout = playout;
+	    }
+	  }, {
+	    key: 'setEnabledStates',
+	    value: function setEnabledStates() {
+	      var enabledStates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	
+	      var defaultStatesEnabled = {
+	        cursor: true,
+	        fadein: true,
+	        fadeout: true,
+	        select: true,
+	        shift: true,
+	        interactive: true
+	      };
+	
+	      this.enabledStates = (0, _lodash2.default)({}, defaultStatesEnabled, enabledStates);
+	    }
+	  }, {
+	    key: 'setFadeIn',
+	    value: function setFadeIn(duration) {
+	      var shape = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logarithmic';
+	
+	      if (duration > this.duration) {
+	        throw new Error('Invalid Fade In');
+	      }
+	      // console.log("fade in:",duration);
+	
+	      var fade = {
+	        shape: shape,
+	        start: 0,
+	        end: duration,
+	        getDuration: function getDuration() {
+	          return this.end - this.start;
+	        }
+	      };
+	
+	      if (this.fadeIn) {
+	        this.removeFade(this.fadeIn);
+	        this.fadeIn = undefined;
+	      }
+	
+	      this.fadeIn = this.saveFade(_fadeMaker.FADEIN, fade.shape, fade.start, fade.end);
+	    }
+	  }, {
+	    key: 'setFadeOut',
+	    value: function setFadeOut(duration) {
+	      var shape = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logarithmic';
+	
+	      if (duration > this.duration) {
+	        throw new Error('Invalid Fade Out');
+	      }
+	
+	      var fade = {
+	        shape: shape,
+	        start: this.duration - duration,
+	        end: this.duration,
+	        getDuration: function getDuration() {
+	          return this.end - this.start;
+	        }
+	      };
+	
+	      if (this.fadeOut) {
+	        this.removeFade(this.fadeOut);
+	        this.fadeOut = undefined;
+	      }
+	
+	      this.fadeOut = this.saveFade(_fadeMaker.FADEOUT, fade.shape, fade.start, fade.end);
+	    }
+	  }, {
+	    key: 'saveFade',
+	    value: function saveFade(type, shape, start, end) {
+	      var id = _uuid2.default.v4();
+	
+	      this.fades[id] = {
+	        type: type,
+	        shape: shape,
+	        start: start,
+	        end: end,
+	        getDuration: function getDuration() {
+	          return this.end - this.start;
+	        }
+	      };
+	
+	      return id;
+	    }
+	  }, {
+	    key: 'removeFade',
+	    value: function removeFade(id) {
+	      delete this.fades[id];
+	    }
+	  }, {
+	    key: 'setBuffer',
+	    value: function setBuffer(buffer) {
+	      this.buffer = buffer;
+	    }
+	  }, {
+	    key: 'setPeakData',
+	    value: function setPeakData(data) {
+	      this.peakData = data;
+	    }
+	  }, {
+	    key: 'calculatePeaks',
+	    value: function calculatePeaks(samplesPerPixel, sampleRate) {
+	      var cueIn = (0, _conversions.secondsToSamples)(this.cueIn, sampleRate);
+	      var cueOut = (0, _conversions.secondsToSamples)(this.cueOut, sampleRate);
+	      if (samplesPerPixel != this.samplesPerPixel || sampleRate != this.sampleRate) {
+	        this.images = [];
+	
+	        this.sampleRate = sampleRate;
+	        this.samplesPerPixel = samplesPerPixel;
+	      }
+	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono));
+	      console.log(this.peaks);
+	    }
+	  }, {
+	    key: 'setPeaks',
+	    value: function setPeaks(peaks) {
+	      this.peaks = peaks;
+	    }
+	  }, {
+	    key: 'setState',
+	    value: function setState(state) {
+	      this.state = state;
+	    }
+	  }, {
+	    key: 'getStartTime',
+	    value: function getStartTime() {
+	      return this.startTime;
+	    }
+	  }, {
+	    key: 'isPlaying',
+	    value: function isPlaying() {
+	      return this.playout.isPlaying();
+	    }
+	  }, {
+	    key: 'setShouldPlay',
+	    value: function setShouldPlay(bool) {
+	      this.playout.setShouldPlay(bool);
+	    }
+	  }, {
+	    key: 'setGainLevel',
+	    value: function setGainLevel(level) {
+	      this.gain = level;
+	      this.playout.setVolumeGainLevel(level);
+	    }
+	  }, {
+	    key: 'setMasterGainLevel',
+	    value: function setMasterGainLevel(level) {
+	      this.playout.setMasterGainLevel(level);
+	    }
+	  }, {
+	    key: 'setPan',
+	    value: function setPan(value) {
+	      if (value) {
+	        this.playout.setPan(value);
+	      } else {
+	        this.playout.setPan(this.pan);
+	      }
+	    }
+	
+	    /*
+	      startTime, endTime in seconds (float).
+	      segment is for a highlighted section in the UI.
+	       returns a Promise that will resolve when the AudioBufferSource
+	      is either stopped or plays out naturally.
+	    */
+	
+	  }, {
+	    key: 'schedulePlay',
+	    value: function schedulePlay(now, startTime, endTime, config) {
+	      var start = void 0;
+	      var duration = void 0;
+	      var when = now;
+	      var segment = endTime ? endTime - startTime : undefined;
+	
+	      var defaultOptions = {
+	        shouldPlay: true,
+	        masterGain: 1,
+	        isOffline: false
+	      };
+	
+	      var options = (0, _lodash2.default)({}, defaultOptions, config);
+	      var playoutSystem = options.isOffline ? this.offlinePlayout : this.playout;
+	
+	      // 1) track has no content to play.
+	      // 2) track does not play in this selection.
+	      if (this.endTime <= startTime || segment && startTime + segment < this.startTime) {
+	        // return a resolved promise since this track is technically "stopped".
+	        return Promise.resolve();
+	      }
+	
+	      // track should have something to play if it gets here.
+	
+	      // the track starts in the future or on the cursor position
+	      if (this.startTime >= startTime) {
+	        start = 0;
+	        // schedule additional delay for this audio node.
+	        when += this.startTime - startTime;
+	
+	        if (endTime) {
+	          segment -= this.startTime - startTime;
+	          duration = Math.min(segment, this.duration);
+	        } else {
+	          duration = this.duration;
+	        }
+	      } else {
+	        start = startTime - this.startTime;
+	
+	        if (endTime) {
+	          duration = Math.min(segment, this.duration - start);
+	        } else {
+	          duration = this.duration - start;
+	        }
+	      }
+	
+	      start += this.cueIn;
+	      var relPos = startTime - this.startTime;
+	      var sourcePromise = playoutSystem.setUpSource();
+	
+	      // param relPos: cursor position in seconds relative to this track.
+	      // can be negative if the cursor is placed before the start of this track etc.
+	      (0, _lodash4.default)(this.fades, function (fade) {
+	        var fadeStart = void 0;
+	        var fadeDuration = void 0;
+	
+	        // only apply fade if it's ahead of the cursor.
+	        if (relPos < fade.end) {
+	          if (relPos <= fade.start) {
+	            fadeStart = now + (fade.start - relPos);
+	            fadeDuration = fade.end - fade.start;
+	          } else if (relPos > fade.start && relPos < fade.end) {
+	            fadeStart = now - (relPos - fade.start);
+	            fadeDuration = fade.end - fade.start;
+	          }
+	
+	          switch (fade.type) {
+	            case _fadeMaker.FADEIN:
+	              {
+	                playoutSystem.applyFadeIn(fadeStart, fadeDuration, fade.shape);
+	                break;
+	              }
+	            case _fadeMaker.FADEOUT:
+	              {
+	                playoutSystem.applyFadeOut(fadeStart, fadeDuration, fade.shape);
+	                break;
+	              }
+	            default:
+	              {
+	                throw new Error('Invalid fade type saved on track.');
+	              }
+	          }
+	        }
+	      });
+	
+	      playoutSystem.setVolumeGainLevel(this.gain);
+	      playoutSystem.setShouldPlay(options.shouldPlay);
+	      playoutSystem.setMasterGainLevel(options.masterGain);
+	      playoutSystem.setPan(this.pan);
+	      console.log(when, start, duration);
+	      playoutSystem.play(when, start, duration);
+	
+	      return sourcePromise;
+	    }
+	  }, {
+	    key: 'scheduleStop',
+	    value: function scheduleStop() {
+	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+	
+	      this.playout.stop(when);
+	    }
+	  }, {
+	    key: 'renderOverlay',
+	    value: function renderOverlay(data) {
+	      var _this = this;
+	
+	      var channelPixels = (0, _conversions.secondsToPixels)(this.duration, data.resolution, data.sampleRate);
+	      var config = {
+	        attributes: {
+	          style: 'position: absolute; top: 0; right: 0; bottom: 0; left: -15px; width: ' + (channelPixels + 30) + 'px; z-index: 8;'
+	        }
+	      };
+	
+	      var overlayClass = '';
+	
+	      if (this.stateObj) {
+	        this.stateObj.setup(data.resolution, data.sampleRate);
+	        var StateClass = _states2.default[this.state];
+	        var events = StateClass.getEvents();
+	
+	        events.forEach(function (event) {
+	          config['on' + event] = _this.stateObj[event].bind(_this.stateObj);
+	        });
+	
+	        overlayClass = StateClass.getClass();
+	      }
+	      // use this overlay for track event cursor position calculations.
+	      return (0, _h2.default)('div.playlist-overlay' + overlayClass, config);
+	    }
+	  }, {
+	    key: 'renderFadeOut',
+	    value: function renderFadeOut(data) {
+	      var _this2 = this;
+	
+	      var fadeOut = this.fades[this.fadeOut];
+	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeOut.end - fadeOut.start, data.resolution, data.sampleRate);
+	      return (0, _h2.default)('div.wp-fade.wp-fadeout', {
+	        onmousedown: function onmousedown(e) {
+	          _this2.clickhandle = true;
+	        },
+	        onmosemove: function onmosemove(e) {
+	          _this2.clickhandle = false;
+	        },
+	        onmouseup: function onmouseup(e) {
+	          console.log(fadeOut.end - fadeOut.start);
+	          if (_this2.clickhandle && fadeOut.end - fadeOut.start < 0.2) {
+	            _this2.setFadeOut(2);
+	            _this2.ee.emit("interactive", _this2);
+	          }
+	        },
+	        attributes: {
+	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; right: 0; z-index: 10;pointer-events:none;'
+	        }
+	      }, [(0, _h2.default)('div.fadeout.fadehandle', {
+	        attributes: {
+	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    right: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 10px;\n                    pointer-events:initial;\n                    '
+	        }
+	      }), (0, _h2.default)('canvas', {
+	        attributes: {
+	          width: fadeWidth,
+	          height: data.height,
+	          style: 'pointer-events: none;'
+	
+	        },
+	        hook: new _FadeCanvasHook2.default(fadeOut.type, fadeOut.shape, fadeOut.end - fadeOut.start, data.resolution)
+	      })]);
+	    }
+	  }, {
+	    key: 'renderFadeIn',
+	    value: function renderFadeIn(data) {
+	      var _this3 = this;
+	
+	      var fadeIn = this.fades[this.fadeIn];
+	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeIn.end - fadeIn.start, data.resolution, data.sampleRate);
+	
+	      return (0, _h2.default)('div.wp-fade.wp-fadein', {
+	        attributes: {
+	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; left: 0; z-index: 10;pointer-events:none;'
+	        }
+	      }, [(0, _h2.default)('div.fadein.fadehandle', {
+	        onmousedown: function onmousedown(e) {
+	          _this3.clickhandle = true;
+	        },
+	        onmosemove: function onmosemove(e) {
+	          _this3.clickhandle = false;
+	        },
+	        onmouseup: function onmouseup(e) {
+	          console.log(fadeIn.end - fadeIn.start);
+	          if (_this3.clickhandle && fadeIn.end - fadeIn.start < 0.2) {
+	            _this3.setFadeIn(2);
+	            _this3.ee.emit("interactive", _this3);
+	          }
+	        },
+	        attributes: {
+	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    left: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 15px;\n                    pointer-events:initial;\n                    '
+	        }
+	      }), (0, _h2.default)('canvas', {
+	        attributes: {
+	          width: fadeWidth,
+	          height: data.height,
+	          style: 'pointer-events: none;\n                ' + (fadeWidth < 0.2 ? 'display:none;' : '') + '\n                '
+	
+	        },
+	        hook: new _FadeCanvasHook2.default(fadeIn.type, fadeIn.shape, fadeIn.end - fadeIn.start, data.resolution)
+	      })]);
+	    }
+	  }, {
+	    key: 'renderWaveform',
+	    value: function renderWaveform(data) {
+	      var convert = function convert(w) {
+	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
+	      };
+	
+	      var sampleWidth = this.peaks.length;
+	      var peaks = this.peaks.data[0];
+	
+	      var waveformChildren = [];
+	      var canvasColor = this.waveOutlineColor ? this.waveOutlineColor : data.colors.waveOutlineColor;
+	
+	      var canvashook = new _CanvasHook2.default(peaks, 0, this.peaks.bits, canvasColor, this.cueIn, data.resolution, data.sampleRate, this.images[0]);
+	      if (!this.images[0]) {
+	        this.images[0] = canvashook.setupImage(sampleWidth, data.height);
+	      }
+	      waveformChildren.push((0, _h2.default)('canvas', {
+	        attributes: {
+	          width: convert(this.duration),
+	          height: data.height,
+	          style: '\n          float: left;\n          position: relative;\n          margin: 0;\n          padding: 0;\n          z-index: 3;\n          pointer-events: none;\n        '
+	        },
+	        hook: canvashook
+	      }));
+	
+	      return (0, _h2.default)('div.clipwaveform', {
+	        attributes: {
+	          style: 'background: gray;height: ' + data.height + 'px;pointer-events: none;'
+	
+	        }
+	      }, waveformChildren);
+	    }
+	  }, {
+	    key: 'renderHandle',
+	    value: function renderHandle() {
+	      return (0, _h2.default)('div.handle', {
+	        attributes: {
+	          style: '\n          width:5px;\n          height:100%;\n          margin-left:2px;\n          display:inline-block;\n          background-color:black;\n          border-radius:15px;\n          pointer-events:none;\n        '
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'renderLeftShiftHandles',
+	    value: function renderLeftShiftHandles(data) {
+	      var handles = [this.renderHandle(), this.renderHandle()];
+	      return (0, _h2.default)('div.handleContainer.left', {
+	        attributes: {
+	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          left:9.8px;\n        '
+	        }
+	      }, handles);
+	    }
+	  }, {
+	    key: 'renderRightShiftHandles',
+	    value: function renderRightShiftHandles(data) {
+	      var handles = [this.renderHandle(), this.renderHandle()];
+	      // const endPixel = secondsToPixels(this.endTime,data.resolution,data.sampleRate);
+	      return (0, _h2.default)('div.handleContainer.right', {
+	        attributes: {
+	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          right:12px;\n        '
+	        }
+	      }, handles);
+	    }
+	  }, {
+	    key: 'renderMenuButton',
+	    value: function renderMenuButton(data) {
+	      var _this4 = this;
+	
+	      return (0, _h2.default)('div.menuButton', {
+	        onclick: function onclick(e) {
+	          console.log('showMenu', _this4.showMenu);
+	          _this4.showMenu = !_this4.showMenu;
+	          _this4.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: '\n          z-index:3;\n          text-align:center;\n          font-size:1em;\n          line-height:7px;\n          color:white;\n          background-color:black;\n          position:absolute;\n          bottom:10px;\n          left: 10px;\n          width:15px;\n          height:15px;\n          border-radius:15px;\n          user-select: none;\n          cursor:pointer;\n        '
+	        }
+	      }, '..');
+	    }
+	  }, {
+	    key: 'renderMenu',
+	    value: function renderMenu(data) {
+	      var _this5 = this;
+	
+	      var buttonStyle = '\n          height:20px;\n          cursor:pointer;\n          user-select:none;\n    ';
+	
+	      return (0, _h2.default)('div.menuContainer', {
+	        attributes: {
+	          style: '\n        position:absolute;\n        z-index:4;\n        width:70px;\n        background-color: darkgray;\n\n        '
+	        }
+	      }, [(0, _h2.default)('div.buttonSplit', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('splitStart', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Split"), (0, _h2.default)('div.buttonDuplicate', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('duplicate', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Duplicate"), (0, _h2.default)('div.buttonDelete', {
+	        onclick: function onclick(e) {
+	          _this5.ee.emit('delete', _this5);
+	          _this5.showMenu = false;
+	          _this5.ee.emit('interactive');
+	        },
+	        attributes: {
+	          style: buttonStyle
+	        }
+	      }, "Delete")]);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render(data) {
+	      var _this6 = this;
+	
+	      var convert = function convert(w) {
+	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
+	      };
+	
+	      var clipChildren = [];
+	
+	      clipChildren.push(this.renderWaveform(data));
+	
+	      if (this.fadeIn) clipChildren.push(this.renderFadeIn(data));
+	
+	      if (this.fadeOut) clipChildren.push(this.renderFadeOut(data));
+	
+	      clipChildren.push(this.renderLeftShiftHandles(data));
+	      clipChildren.push(this.renderRightShiftHandles(data));
+	
+	      clipChildren.push(this.renderMenuButton(data));
+	
+	      if (this.showMenu) clipChildren.push(this.renderMenu(data));
+	
+	      // clipChildren.push(this.renderOverlay(data));
+	
+	      return (0, _h2.default)('div.clip', {
+	        onmouseleave: function onmouseleave() {
+	          return _this6.ee.emit("activeclip", { name: '_none', startTime: 0 });
+	        },
+	        onmouseover: function onmouseover() {
+	          return _this6.ee.emit("activeclip", _this6);
+	        },
+	        attributes: {
+	          style: '\n            left:' + convert(this.startTime) + 'px;\n            height: ' + data.height + 'px; \n            position: absolute;\n            z-index:' + (this.showMenu ? 2 : 1) + ';\n            overflow:visible;\n          '
+	        }
+	      }, clipChildren);
+	    }
+	  }, {
+	    key: 'getTrackDetails',
+	    value: function getTrackDetails() {
+	      var info = {
+	        src: this.src,
+	        start: this.startTime,
+	        end: this.endTime,
+	        name: this.name,
+	        track: this.track,
+	
+	        customClass: this.customClass,
+	        cuein: this.cueIn,
+	        cueout: this.cueOut
+	      };
+	
+	      if (this.fadeIn) {
+	        var fadeIn = this.fades[this.fadeIn];
+	
+	        info.fadeIn = {
+	          shape: fadeIn.shape,
+	          duration: fadeIn.end - fadeIn.start
+	        };
+	      }
+	
+	      if (this.fadeOut) {
+	        var fadeOut = this.fades[this.fadeOut];
+	
+	        info.fadeOut = {
+	          shape: fadeOut.shape,
+	          duration: fadeOut.end - fadeOut.start
+	        };
+	      }
+	
+	      return info;
+	    }
+	  }, {
+	    key: 'duration',
+	    get: function get() {
+	      return this.cueOut - this.cueIn;
+	    }
+	  }, {
+	    key: 'endTime',
+	    get: function get() {
+	      return this.startTime + this.duration;
+	    },
+	    set: function set(time) {
+	      var duration = time - this.startTime;
+	      this.cueOut = this.cueIn + duration;
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 402 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	//     uuid.js
+	//
+	//     Copyright (c) 2010-2012 Robert Kieffer
+	//     MIT License - http://opensource.org/licenses/mit-license.php
+	
+	// Unique ID creation requires a high quality random # generator.  We feature
+	// detect to determine the best RNG source, normalizing to a function that
+	// returns 128-bits of randomness, since that's what's usually required
+	var _rng = __webpack_require__(403);
+	
+	// Maps for number <-> hex string conversion
+	var _byteToHex = [];
+	var _hexToByte = {};
+	for (var i = 0; i < 256; i++) {
+	  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+	  _hexToByte[_byteToHex[i]] = i;
+	}
+	
+	// **`parse()` - Parse a UUID into it's component bytes**
+	function parse(s, buf, offset) {
+	  var i = (buf && offset) || 0, ii = 0;
+	
+	  buf = buf || [];
+	  s.toLowerCase().replace(/[0-9a-f]{2}/g, function(oct) {
+	    if (ii < 16) { // Don't overflow!
+	      buf[i + ii++] = _hexToByte[oct];
+	    }
+	  });
+	
+	  // Zero out remaining bytes if string was short
+	  while (ii < 16) {
+	    buf[i + ii++] = 0;
+	  }
+	
+	  return buf;
+	}
+	
+	// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
+	function unparse(buf, offset) {
+	  var i = offset || 0, bth = _byteToHex;
+	  return  bth[buf[i++]] + bth[buf[i++]] +
+	          bth[buf[i++]] + bth[buf[i++]] + '-' +
+	          bth[buf[i++]] + bth[buf[i++]] + '-' +
+	          bth[buf[i++]] + bth[buf[i++]] + '-' +
+	          bth[buf[i++]] + bth[buf[i++]] + '-' +
+	          bth[buf[i++]] + bth[buf[i++]] +
+	          bth[buf[i++]] + bth[buf[i++]] +
+	          bth[buf[i++]] + bth[buf[i++]];
+	}
+	
+	// **`v1()` - Generate time-based UUID**
+	//
+	// Inspired by https://github.com/LiosK/UUID.js
+	// and http://docs.python.org/library/uuid.html
+	
+	// random #'s we need to init node and clockseq
+	var _seedBytes = _rng();
+	
+	// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+	var _nodeId = [
+	  _seedBytes[0] | 0x01,
+	  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
+	];
+	
+	// Per 4.2.2, randomize (14 bit) clockseq
+	var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+	
+	// Previous uuid creation time
+	var _lastMSecs = 0, _lastNSecs = 0;
+	
+	// See https://github.com/broofa/node-uuid for API details
+	function v1(options, buf, offset) {
+	  var i = buf && offset || 0;
+	  var b = buf || [];
+	
+	  options = options || {};
+	
+	  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+	
+	  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+	  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+	  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+	  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+	  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+	
+	  // Per 4.2.1.2, use count of uuid's generated during the current clock
+	  // cycle to simulate higher resolution clock
+	  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+	
+	  // Time since last uuid creation (in msecs)
+	  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+	
+	  // Per 4.2.1.2, Bump clockseq on clock regression
+	  if (dt < 0 && options.clockseq === undefined) {
+	    clockseq = clockseq + 1 & 0x3fff;
+	  }
+	
+	  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+	  // time interval
+	  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+	    nsecs = 0;
+	  }
+	
+	  // Per 4.2.1.2 Throw error if too many uuids are requested
+	  if (nsecs >= 10000) {
+	    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+	  }
+	
+	  _lastMSecs = msecs;
+	  _lastNSecs = nsecs;
+	  _clockseq = clockseq;
+	
+	  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+	  msecs += 12219292800000;
+	
+	  // `time_low`
+	  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+	  b[i++] = tl >>> 24 & 0xff;
+	  b[i++] = tl >>> 16 & 0xff;
+	  b[i++] = tl >>> 8 & 0xff;
+	  b[i++] = tl & 0xff;
+	
+	  // `time_mid`
+	  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+	  b[i++] = tmh >>> 8 & 0xff;
+	  b[i++] = tmh & 0xff;
+	
+	  // `time_high_and_version`
+	  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+	  b[i++] = tmh >>> 16 & 0xff;
+	
+	  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+	  b[i++] = clockseq >>> 8 | 0x80;
+	
+	  // `clock_seq_low`
+	  b[i++] = clockseq & 0xff;
+	
+	  // `node`
+	  var node = options.node || _nodeId;
+	  for (var n = 0; n < 6; n++) {
+	    b[i + n] = node[n];
+	  }
+	
+	  return buf ? buf : unparse(b);
+	}
+	
+	// **`v4()` - Generate random UUID**
+	
+	// See https://github.com/broofa/node-uuid for API details
+	function v4(options, buf, offset) {
+	  // Deprecated - 'format' argument, as supported in v1.2
+	  var i = buf && offset || 0;
+	
+	  if (typeof(options) == 'string') {
+	    buf = options == 'binary' ? new Array(16) : null;
+	    options = null;
+	  }
+	  options = options || {};
+	
+	  var rnds = options.random || (options.rng || _rng)();
+	
+	  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+	  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+	  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+	
+	  // Copy bytes to buffer, if provided
+	  if (buf) {
+	    for (var ii = 0; ii < 16; ii++) {
+	      buf[i + ii] = rnds[ii];
+	    }
+	  }
+	
+	  return buf || unparse(rnds);
+	}
+	
+	// Export public API
+	var uuid = v4;
+	uuid.v1 = v1;
+	uuid.v4 = v4;
+	uuid.parse = parse;
+	uuid.unparse = unparse;
+	
+	module.exports = uuid;
+
+
+/***/ }),
+/* 403 */
+/***/ (function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {
+	var rng;
+	
+	var crypto = global.crypto || global.msCrypto; // for IE 11
+	if (crypto && crypto.getRandomValues) {
+	  // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
+	  // Moderately fast, high quality
+	  var _rnds8 = new Uint8Array(16);
+	  rng = function whatwgRNG() {
+	    crypto.getRandomValues(_rnds8);
+	    return _rnds8;
+	  };
+	}
+	
+	if (!rng) {
+	  // Math.random()-based (RNG)
+	  //
+	  // If all else fails, use Math.random().  It's fast, but is of unspecified
+	  // quality.
+	  var  _rnds = new Array(16);
+	  rng = function() {
+	    for (var i = 0, r; i < 16; i++) {
+	      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+	      _rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+	    }
+	
+	    return _rnds;
+	  };
+	}
+	
+	module.exports = rng;
+	
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ }),
+/* 404 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	//http://jsperf.com/typed-array-min-max/2
+	//plain for loop for finding min/max is way faster than anything else.
+	/**
+	* @param {TypedArray} array - Subarray of audio to calculate peaks from.
+	*/
+	function findMinMax(array) {
+	    var min = Infinity;
+	    var max = -Infinity;
+	    var i = 0;
+	    var len = array.length;
+	    var curr;
+	
+	    for(; i < len; i++) {
+	        curr = array[i];
+	        if (min > curr) {
+	            min = curr;
+	        }
+	        if (max < curr) {
+	            max = curr;
+	        }
+	    }
+	
+	    return {
+	        min: min,
+	        max: max
+	    };
+	}
+	
+	/**
+	* @param {Number} n - peak to convert from float to Int8, Int16 etc.
+	* @param {Number} bits - convert to #bits two's complement signed integer
+	*/
+	function convert(n, bits) {
+	    var max = Math.pow(2, bits-1);
+	    var v = n < 0 ? n * max : n * max - 1;
+	    return Math.max(-max, Math.min(max-1, v));
+	}
+	
+	/**
+	* @param {TypedArray} channel - Audio track frames to calculate peaks from.
+	* @param {Number} samplesPerPixel - Audio frames per peak
+	*/
+	function extractPeaks(channel, samplesPerPixel, bits) {
+	    var i;
+	    var chanLength = channel.length;
+	    var numPeaks = Math.ceil(chanLength / samplesPerPixel);
+	    var start;
+	    var end;
+	    var segment;
+	    var max; 
+	    var min;
+	    var extrema;
+	
+	    //create interleaved array of min,max
+	    var peaks = new (eval("Int"+bits+"Array"))(numPeaks*2);
+	
+	    for (i = 0; i < numPeaks; i++) {
+	
+	        start = i * samplesPerPixel;
+	        end = (i + 1) * samplesPerPixel > chanLength ? chanLength : (i + 1) * samplesPerPixel;
+	
+	        segment = channel.subarray(start, end);
+	        extrema = findMinMax(segment);
+	        min = convert(extrema.min, bits);
+	        max = convert(extrema.max, bits);
+	
+	        peaks[i*2] = min;
+	        peaks[i*2+1] = max;
+	    }
+	
+	    return peaks;
+	}
+	
+	function makeMono(channelPeaks, bits) {
+	    var numChan = channelPeaks.length;
+	    var weight = 1 / numChan;
+	    var numPeaks = channelPeaks[0].length / 2;
+	    var c = 0;
+	    var i = 0;
+	    var min;
+	    var max;
+	    var peaks = new (eval("Int"+bits+"Array"))(numPeaks*2);
+	
+	    for (i = 0; i < numPeaks; i++) {
+	        min = 0;
+	        max = 0;
+	
+	        for (c = 0; c < numChan; c++) {
+	            min += weight * channelPeaks[c][i*2];
+	            max += weight * channelPeaks[c][i*2+1];
+	        }
+	
+	        peaks[i*2] = min;
+	        peaks[i*2+1] = max;
+	    }
+	
+	    //return in array so channel number counts still work.
+	    return [peaks];
+	}
+	
+	/**
+	* @param {AudioBuffer,TypedArray} source - Source of audio samples for peak calculations.
+	* @param {Number} samplesPerPixel - Number of audio samples per peak.
+	* @param {Number} cueIn - index in channel to start peak calculations from.
+	* @param {Number} cueOut - index in channel to end peak calculations from (non-inclusive).
+	*/
+	module.exports = function(source, samplesPerPixel, isMono, cueIn, cueOut, bits) {
+	    samplesPerPixel = samplesPerPixel || 10000;
+	    bits = bits || 8;
+	    
+	    if (isMono === null || isMono === undefined) {
+	        isMono = true;
+	    }
+	
+	    if ([8, 16, 32].indexOf(bits) < 0) {
+	        throw new Error("Invalid number of bits specified for peaks.");
+	    }
+	
+	    var numChan = source.numberOfChannels;
+	    var peaks = [];
+	    var c;
+	    var numPeaks;
+	    var channel;
+	    var slice;
+	
+	    if (typeof source.subarray === "undefined") {
+	        for (c = 0; c < numChan; c++) {
+	            channel = source.getChannelData(c);
+	            cueIn = cueIn || 0;
+	            cueOut = cueOut || channel.length;
+	            slice = channel.subarray(cueIn, cueOut);
+	            peaks.push(extractPeaks(slice, samplesPerPixel, bits));
+	        }
+	    }
+	    else {
+	        cueIn = cueIn || 0;
+	        cueOut = cueOut || source.length;
+	        peaks.push(extractPeaks(source.subarray(cueIn, cueOut), samplesPerPixel, bits));
+	    }
+	
+	    if (isMono && peaks.length > 1) {
+	        peaks = makeMono(peaks, bits);
+	    }
+	
+	    numPeaks = peaks[0].length / 2;
+	
+	    return {
+	        length: numPeaks,
+	        data: peaks,
+	        bits: bits
+	    };
+	};
+
+/***/ }),
+/* 405 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.FADEOUT = exports.FADEIN = exports.LOGARITHMIC = exports.EXPONENTIAL = exports.LINEAR = exports.SCURVE = undefined;
+	exports.createFadeIn = createFadeIn;
+	exports.createFadeOut = createFadeOut;
+	
+	var _fadeCurves = __webpack_require__(406);
+	
+	var SCURVE = exports.SCURVE = "sCurve";
+	var LINEAR = exports.LINEAR = "linear";
+	var EXPONENTIAL = exports.EXPONENTIAL = "exponential";
+	var LOGARITHMIC = exports.LOGARITHMIC = "logarithmic";
+	
+	var FADEIN = exports.FADEIN = "FadeIn";
+	var FADEOUT = exports.FADEOUT = "FadeOut";
+	
+	function sCurveFadeIn(start, duration) {
+	    var curve = (0, _fadeCurves.sCurve)(10000, 1);
+	    this.setValueCurveAtTime(curve, start, duration);
+	}
+	
+	function sCurveFadeOut(start, duration) {
+	    var curve = (0, _fadeCurves.sCurve)(10000, -1);
+	    this.setValueCurveAtTime(curve, start, duration);
+	}
+	
+	function linearFadeIn(start, duration) {
+	    this.linearRampToValueAtTime(0, start);
+	    this.linearRampToValueAtTime(1, start + duration);
+	}
+	
+	function linearFadeOut(start, duration) {
+	    this.linearRampToValueAtTime(1, start);
+	    this.linearRampToValueAtTime(0, start + duration);
+	}
+	
+	function exponentialFadeIn(start, duration) {
+	    this.exponentialRampToValueAtTime(0.01, start);
+	    this.exponentialRampToValueAtTime(1, start + duration);
+	}
+	
+	function exponentialFadeOut(start, duration) {
+	    this.exponentialRampToValueAtTime(1, start);
+	    this.exponentialRampToValueAtTime(0.01, start + duration);
+	}
+	
+	function logarithmicFadeIn(start, duration) {
+	    var curve = (0, _fadeCurves.logarithmic)(10000, 10, 1);
+	    this.setValueCurveAtTime(curve, start, duration);
+	}
+	
+	function logarithmicFadeOut(start, duration) {
+	    var curve = (0, _fadeCurves.logarithmic)(10000, 10, -1);
+	    this.setValueCurveAtTime(curve, start, duration);
+	}
+	
+	function createFadeIn(gain, shape, start, duration) {
+	    switch (shape) {
+	        case SCURVE:
+	            sCurveFadeIn.call(gain, start, duration);
+	            break;
+	        case LINEAR:
+	            linearFadeIn.call(gain, start, duration);
+	            break;
+	        case EXPONENTIAL:
+	            exponentialFadeIn.call(gain, start, duration);
+	            break;
+	        case LOGARITHMIC:
+	            logarithmicFadeIn.call(gain, start, duration);
+	            break;
+	        default:
+	            throw new Error("Unsupported Fade type");
+	    }
+	}
+	
+	function createFadeOut(gain, shape, start, duration) {
+	    switch (shape) {
+	        case SCURVE:
+	            sCurveFadeOut.call(gain, start, duration);
+	            break;
+	        case LINEAR:
+	            linearFadeOut.call(gain, start, duration);
+	            break;
+	        case EXPONENTIAL:
+	            exponentialFadeOut.call(gain, start, duration);
+	            break;
+	        case LOGARITHMIC:
+	            logarithmicFadeOut.call(gain, start, duration);
+	            break;
+	        default:
+	            throw new Error("Unsupported Fade type");
+	    }
+	}
+
+
+/***/ }),
+/* 406 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.linear = linear;
+	exports.exponential = exponential;
+	exports.sCurve = sCurve;
+	exports.logarithmic = logarithmic;
+	function linear(length, rotation) {
+	    var curve = new Float32Array(length),
+	        i,
+	        x,
+	        scale = length - 1;
+	
+	    for (i = 0; i < length; i++) {
+	        x = i / scale;
+	
+	        if (rotation > 0) {
+	            curve[i] = x;
+	        } else {
+	            curve[i] = 1 - x;
+	        }
+	    }
+	
+	    return curve;
+	}
+	
+	function exponential(length, rotation) {
+	    var curve = new Float32Array(length),
+	        i,
+	        x,
+	        scale = length - 1,
+	        index;
+	
+	    for (i = 0; i < length; i++) {
+	        x = i / scale;
+	        index = rotation > 0 ? i : length - 1 - i;
+	
+	        curve[index] = Math.exp(2 * x - 1) / Math.exp(1);
+	    }
+	
+	    return curve;
+	}
+	
+	//creating a curve to simulate an S-curve with setValueCurveAtTime.
+	function sCurve(length, rotation) {
+	    var curve = new Float32Array(length),
+	        i,
+	        phase = rotation > 0 ? Math.PI / 2 : -(Math.PI / 2);
+	
+	    for (i = 0; i < length; ++i) {
+	        curve[i] = Math.sin(Math.PI * i / length - phase) / 2 + 0.5;
+	    }
+	    return curve;
+	}
+	
+	//creating a curve to simulate a logarithmic curve with setValueCurveAtTime.
+	function logarithmic(length, base, rotation) {
+	    var curve = new Float32Array(length),
+	        index,
+	        x = 0,
+	        i;
+	
+	    for (i = 0; i < length; i++) {
+	        //index for the curve array.
+	        index = rotation > 0 ? i : length - 1 - i;
+	
+	        x = i / length;
+	        curve[index] = Math.log(1 + base * x) / Math.log(1 + base);
+	    }
+	
+	    return curve;
+	}
+
+
+/***/ }),
+/* 407 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _CursorState = __webpack_require__(408);
+	
+	var _CursorState2 = _interopRequireDefault(_CursorState);
+	
+	var _SelectState = __webpack_require__(409);
+	
+	var _SelectState2 = _interopRequireDefault(_SelectState);
+	
+	var _ShiftState = __webpack_require__(410);
+	
+	var _ShiftState2 = _interopRequireDefault(_ShiftState);
+	
+	var _FadeInState = __webpack_require__(411);
+	
+	var _FadeInState2 = _interopRequireDefault(_FadeInState);
+	
+	var _FadeOutState = __webpack_require__(412);
+	
+	var _FadeOutState2 = _interopRequireDefault(_FadeOutState);
+	
+	var _InteractiveState = __webpack_require__(413);
+	
+	var _InteractiveState2 = _interopRequireDefault(_InteractiveState);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  cursor: _CursorState2.default,
+	  select: _SelectState2.default,
+	  shift: _ShiftState2.default,
+	  fadein: _FadeInState2.default,
+	  fadeout: _FadeOutState2.default,
+	  interactive: _InteractiveState2.default
+	};
+
+/***/ }),
+/* 408 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(track) {
+	    _classCallCheck(this, _class);
+	
+	    this.track = track;
+	    this.setupEventListeners();
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setupEventListeners',
+	    value: function setupEventListeners() {
+	      var _this = this;
+	
+	      this.track.ee.on("playlistmousedown", function (e) {
+	        return _this.click.call(_this, e);
+	      });
+	    }
+	  }, {
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'click',
+	    value: function click(e) {
+	      e.preventDefault();
+	      console.log('cursor here');
+	
+	      var startX = e.offsetX;
+	      var startTime = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	
+	      this.track.ee.emit('select', startTime, startTime, this.track);
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-cursor';
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 409 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(track) {
+	    _classCallCheck(this, _class);
+	
+	    this.track = track;
+	    this.active = false;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'emitSelection',
+	    value: function emitSelection(x) {
+	      var minX = Math.min(x, this.startX);
+	      var maxX = Math.max(x, this.startX);
+	      var startTime = (0, _conversions.pixelsToSeconds)(minX, this.samplesPerPixel, this.sampleRate);
+	      var endTime = (0, _conversions.pixelsToSeconds)(maxX, this.samplesPerPixel, this.sampleRate);
+	
+	      this.track.ee.emit('select', startTime, endTime, this.track);
+	    }
+	  }, {
+	    key: 'complete',
+	    value: function complete(x) {
+	      this.emitSelection(x);
+	      this.active = false;
+	    }
+	  }, {
+	    key: 'mousedown',
+	    value: function mousedown(e) {
+	      e.preventDefault();
+	      this.active = true;
+	
+	      this.startX = e.offsetX;
+	      var startTime = (0, _conversions.pixelsToSeconds)(this.startX, this.samplesPerPixel, this.sampleRate);
+	
+	      this.track.ee.emit('select', startTime, startTime, this.track);
+	    }
+	  }, {
+	    key: 'mousemove',
+	    value: function mousemove(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.emitSelection(e.offsetX);
+	      }
+	    }
+	  }, {
+	    key: 'mouseup',
+	    value: function mouseup(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.complete(e.offsetX);
+	      }
+	    }
+	  }, {
+	    key: 'mouseleave',
+	    value: function mouseleave(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.complete(e.offsetX);
+	      }
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-select';
+	    }
+	  }, {
+	    key: 'getEvents',
+	    value: function getEvents() {
+	      return ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 410 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(track) {
+	    _classCallCheck(this, _class);
+	
+	    this.track = track;
+	    this.active = false;
+	    this.lastqtime = undefined;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'emitShift',
+	    value: function emitShift(x) {
+	      var deltaX = x - this.prevX;
+	      var deltaTime = (0, _conversions.pixelsToSeconds)(deltaX, this.samplesPerPixel, this.sampleRate);
+	
+	      var quantizeTime = 60 / this.track.bpm * this.track.quantize;
+	
+	      // debugger;
+	      if (this.track.quantize != 0) {
+	
+	        var varGHtime = Math.round(deltaTime / quantizeTime) * quantizeTime;
+	
+	        if (varGHtime != this.lastqtime) {
+	          // Galen
+	          this.prevX = x; // Galen
+	          this.track.ee.emit('shift', varGHtime, this.track); // Galen
+	          this.lastqtime = varGHtime; // Galen
+	        }
+	      } else {
+	        // Galen: if the track isn't quantized
+	        this.prevX = x; // Galen
+	        this.track.ee.emit('shift', deltaTime, this.track); // Galen
+	        this.lastqtime = varGHtime; // Galen
+	      }
+	
+	      // const deltaX = x - this.prevX;
+	      // const deltaTime = pixelsToSeconds(deltaX, this.samplesPerPixel, this.sampleRate);
+	      // this.prevX = x;
+	      // this.track.ee.emit('shift', deltaTime, this.track);
+	    }
+	  }, {
+	    key: 'complete',
+	    value: function complete(x) {
+	      this.emitShift(x);
+	      this.active = false;
+	    }
+	  }, {
+	    key: 'mousedown',
+	    value: function mousedown(e) {
+	      e.preventDefault();
+	
+	      this.active = true;
+	      this.el = e.target;
+	      this.prevX = e.offsetX;
+	    }
+	  }, {
+	    key: 'mousemove',
+	    value: function mousemove(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.emitShift(e.offsetX);
+	      }
+	    }
+	  }, {
+	    key: 'mouseup',
+	    value: function mouseup(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.complete(e.offsetX);
+	      }
+	    }
+	  }, {
+	    key: 'mouseleave',
+	    value: function mouseleave(e) {
+	      if (this.active) {
+	        e.preventDefault();
+	        this.complete(e.offsetX);
+	      }
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-shift';
+	    }
+	  }, {
+	    key: 'getEvents',
+	    value: function getEvents() {
+	      return ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 411 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(track) {
+	    _classCallCheck(this, _class);
+	
+	    this.track = track;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'click',
+	    value: function click(e) {
+	      var startX = e.offsetX;
+	      var time = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	
+	      if (time > this.track.getStartTime() && time < this.track.getEndTime()) {
+	        this.track.ee.emit('fadein', time - this.track.getStartTime(), this.track);
+	      }
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-fadein';
+	    }
+	  }, {
+	    key: 'getEvents',
+	    value: function getEvents() {
+	      return ['click'];
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 412 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(track) {
+	    _classCallCheck(this, _class);
+	
+	    this.track = track;
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'click',
+	    value: function click(e) {
+	      var startX = e.offsetX;
+	      var time = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
+	
+	      if (time > this.track.getStartTime() && time < this.track.getEndTime()) {
+	        this.track.ee.emit('fadeout', this.track.getEndTime() - time, this.track);
+	      }
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-fadeout';
+	    }
+	  }, {
+	    key: 'getEvents',
+	    value: function getEvents() {
+	      return ['click'];
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 413 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(clip) {
+	    var _this = this;
+	
+	    _classCallCheck(this, _class);
+	
+	    this.mouseleave = function (e) {
+	      _this.mouseup(e);
+	      _this.mousemove(e);
+	      document.body.style.cursor = "auto";
+	    };
+	
+	    this.clip = clip;
+	    // 0 : not dragging; 1 : dragging the end; -1 : dragging the begining
+	    this.draggingFrom = 0;
+	    this.action = null;
+	    this.bufferedMovement = 0;
+	    this._activeClip = { name: '_none', startTime: 0 };
+	    this.setupEventListeners();
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'setupEventListeners',
+	    value: function setupEventListeners() {
+	      var _this2 = this;
+	
+	      var self = this;
+	      this.clip.ee.on("playlistmouseleave", function (e) {
+	        if (_this2.clip && _this2.clip.state != 'interactive') return;
+	        self.mouseleave.call(self, e);
+	      });
+	      this.clip.ee.on("playlistmouseup", function (e) {
+	        if (_this2.clip && _this2.clip.state != 'interactive') return;
+	        self.mouseup.call(self, e);
+	      });
+	      this.clip.ee.on("playlistmousedown", function (e) {
+	        if (_this2.clip && _this2.clip.state != 'interactive') return;
+	        self.mousedown.call(self, e);
+	      });
+	      this.clip.ee.on("playlistmousemove", function (e) {
+	        if (_this2.clip && _this2.clip.state != 'interactive') return;
+	        self.mousemove.call(self, e);
+	      });
+	    }
+	  }, {
+	    key: 'setup',
+	    value: function setup(samplesPerPixel, sampleRate) {
+	      this.samplesPerPixel = samplesPerPixel;
+	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'emitShift',
+	    value: function emitShift(x) {
+	      var deltaX = x - this.prevX;
+	      var deltaTime = (0, _conversions.pixelsToSeconds)(deltaX, this.samplesPerPixel, this.sampleRate);
+	      this.prevX = x;
+	      this.clip.ee.emit('shift', deltaTime, this.clip);
+	    }
+	  }, {
+	    key: 'mousedown',
+	    value: function mousedown(e) {
+	      if (this.action == "fadedraggable") this.action = "dragginghandle";else if (this.action == "resizeableleft") {
+	        this.startAt = this.getMousepos(e);
+	        this.action = "resizingleft";
+	      } else if (this.action == "resizeableright") {
+	        this.startAt = this.getMousepos(e);
+	        this.oldCueOutForResising = this.activeClip.cueOut;
+	        this.action = "resizingright";
+	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
+	        this.seekTo(e);
+	      }
+	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
+	      //this.action = "scrolldraggingcandidate";
+	      //this.clip.ee.emit("scrolldraggingstart");
+	      // }
+	      // console.log(this.clip);
+	    }
+	  }, {
+	    key: 'mousemove',
+	    value: function mousemove(e) {
+	      // const mousepos = pixelsToSeconds(this.correctOffset(e), this.samplesPerPixel, this.sampleRate);
+	      // if (!mousepos)return;
+	      // console.log(this.action);
+	      var mousepos = this.getMousepos(e);
+	      var movementX = (0, _conversions.pixelsToSeconds)(e.movementX, this.samplesPerPixel, this.sampleRate);
+	      if (this.action == "dragginghandle") {
+	        // console.log(mousepos,this.clip.getStartTime(),this.clip.startTime);
+	        // console.log(mousepos,this.activeClip.duration)
+	        var fadeout = this.activeClip.fades[this.activeClip.fadeOut];
+	        var fadein = this.activeClip.fades[this.activeClip.fadeIn];
+	
+	        if (this.hoveringover == "fadein") this.ee.emit('fadein', Math.min(Math.max(mousepos, 0), this.activeClip.duration - fadeout.getDuration() - 0.5), this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - Math.min(Math.max(mousepos, fadein.getDuration() + 0.5), this.activeClip.duration), this.activeClip);
+	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
+	        this.updateResizing(e);
+	      } else if (this.action == "shifting") {
+	        var blocklength = 60 / this.activeClip.bpm * this.activeClip.quantize; //in seconds
+	        this.bufferedMovement += movementX; //in seconds
+	        var snaps = Math.round(this.bufferedMovement / blocklength);
+	        if (snaps != 0) {
+	          this.ee.emit("shift", snaps * blocklength, this.activeClip);
+	          this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
+	        }
+	      } else if (this.action == "split") {
+	        document.body.style.cursor = "text";
+	      } else if (e.target.classList.contains('fadehandle')) {
+	        this.action = "fadedraggable";
+	        this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
+	
+	        document.body.style.cursor = "pointer";
+	      }
+	      // else if (this.action == "scrolldragging" || this.action == "scrolldraggingcandidate"){
+	      //   this.ee.emit("scrolldragging",e.movementX);
+	      //   this.action = "scrolldragging";
+	      // }
+	      else if (e.target.className == "handleContainer right") {
+	          this.action = "resizeableright";
+	          document.body.style.cursor = "e-resize";
+	        } else if (e.target.className == "handleContainer left") {
+	          this.action = "resizeableleft";
+	          document.body.style.cursor = "w-resize";
+	        } else if (e.target.className == "clip") {
+	          this.action = "shiftable";
+	          document.body.style.cursor = "grab";
+	        }
+	        // else if (e.target.className == "waveform"){
+	        //   document.body.style.cursor = "auto";
+	        //   this.action = "scrolldraggable";
+	        // }
+	        else {
+	            this.action = null;
+	            document.body.style.cursor = "auto";
+	          }
+	      // console.log(this.action);
+	    }
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(e) {
+	      e.preventDefault();
+	      // console.log("seek");
+	      var startTime = this.getMousepos(e);
+	      // const startTime = pixelsToSeconds(startX, this.samplesPerPixel, this.sampleRate);
+	      this.clip.ee.emit('select', startTime, startTime, this.clip);
+	    }
+	  }, {
+	    key: 'getMousepos',
+	    value: function getMousepos(e) {
+	      var waveform = document.body.querySelector(".waveform");
+	      if (!waveform) return null;
+	      var relative = e.pageX - waveform.getBoundingClientRect().left;
+	      var seconds = (0, _conversions.pixelsToSeconds)(relative, this.samplesPerPixel, this.sampleRate);
+	      // console.log(relative, this.samplesPerPixel, this.sampleRate);
+	      return seconds - this.activeClip.startTime;
+	    }
+	  }, {
+	    key: 'updateResizing',
+	    value: function updateResizing(e) {
+	      var mousepos = this.getMousepos(e) - this.startAt;
+	      // console.log("mousepos",mousepos,this.startAt);
+	      var activeClip = this.activeClip;
+	      if (activeClip.quantize) {
+	        var blocklength = 60 / activeClip.bpm * activeClip.quantize;
+	        mousepos = Math.round(mousepos / blocklength) * blocklength;
+	      }
+	      if (this.action == "resizingleft") {
+	        // console.log(activeClip.cueIn + mousepos);
+	        if (activeClip.cueIn + mousepos <= 0) mousepos = -activeClip.cueIn;
+	        if (activeClip.cueIn + mousepos - activeClip.cueOut >= -4) mousepos = -4 + activeClip.cueOut - activeClip.cueIn;
+	        var oldStartTime = activeClip.startTime;
+	        var oldCueIn = activeClip.cueIn;
+	        activeClip.startTime = oldStartTime + mousepos;
+	        activeClip.cueIn = oldCueIn + mousepos;
+	
+	        var fadeout = activeClip.fades[activeClip.fadeOut];
+	        var fadein = activeClip.fades[activeClip.fadeIn];
+	        this.ee.emit('fadein', Math.min(fadein.getDuration(), this.activeClip.duration - fadeout.getDuration() - 0.5), activeClip);
+	        this.ee.emit('fadeout', Math.min(fadeout.getDuration(), activeClip.duration - 0.5), activeClip);
+	      }
+	      if (this.action == "resizingright") {
+	        if (this.oldCueOutForResising + mousepos > activeClip.buffer.duration) mousepos = activeClip.buffer.duration - this.oldCueOutForResising;
+	        if (this.oldCueOutForResising + mousepos - activeClip.cueIn < 4) mousepos = 4 + activeClip.cueIn - this.oldCueOutForResising;
+	
+	        activeClip.cueOut = this.oldCueOutForResising + mousepos;
+	
+	        var _fadeout = activeClip.fades[activeClip.fadeOut];
+	        var _fadein = activeClip.fades[activeClip.fadeIn];
+	        this.ee.emit('fadeout', Math.min(_fadeout.getDuration(), Math.max(activeClip.duration - _fadein.getDuration() - 0.5, 0.1)), activeClip);
+	        this.ee.emit('fadein', Math.min(_fadein.getDuration(), this.activeClip.duration - 0.5), activeClip);
+	      }
+	
+	      activeClip.ee.emit("interactive", activeClip);
+	    }
+	  }, {
+	    key: 'mouseup',
+	    value: function mouseup(e) {
+	      if (this.action == "split") {
+	        if (e.target.className == 'clip') {
+	          var time = this.getMousepos(e);
+	          this.ee.emit('splitAt', { clip: this.activeClip, at: time });
+	        }
+	
+	        this.action = null;
+	      } else if (this.action == "dragginghandle" || this.action == "shifting") {
+	        this.action = null;
+	        this.bufferedMovement = 0;
+	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
+	        e.preventDefault();
+	        this.updateResizing(e);
+	        this.action = null;
+	        // console.log("dropped");
+	      }
+	    }
+	  }, {
+	    key: 'activeClip',
+	    set: function set(clip) {
+	      if (!this.action || this.action == 'none' || this.action.includes('able')) this._activeClip = clip;
+	    },
+	    get: function get() {
+	      return this._activeClip;
+	    }
+	  }], [{
+	    key: 'getClass',
+	    value: function getClass() {
+	      return '.state-interactive';
+	    }
+	  }, {
+	    key: 'getEvents',
+	    value: function getEvents() {
+	      return [];
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 414 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * virtual-dom hook for drawing to the canvas element.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
+	
+	
+	var _conversions = __webpack_require__(388);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var CanvasHook = function () {
+	  function CanvasHook(peaks, offset, bits, color, cueIn, resolution, sampleRate, image) {
+	    _classCallCheck(this, CanvasHook);
+	
+	    this.cueIn = cueIn;
+	    this.resolution = resolution;
+	    this.sampleRate = sampleRate;
+	    this.peaks = peaks;
+	    // http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
+	    this.offset = offset;
+	    this.color = color;
+	    this.bits = bits;
+	    this.bufferedwaveform = image;
+	    this.bwc = undefined; // BufferedWaveformContext
+	  }
+	
+	  _createClass(CanvasHook, [{
+	    key: 'drawCanvas',
+	    value: function drawCanvas(cc, len, h2) {
+	      var maxValue = Math.pow(2, this.bits - 1);
+	
+	      cc.clearRect(0, 0, len, h2 * 2);
+	      // cc.fillStyle = "black";
+	      // cc.fillRect(0,0,len,h2*2);
+	      cc.fillStyle = this.color;
+	      // console.log(this.color);
+	      for (var i = 0; i < len; i += 1) {
+	        var minPeak = this.peaks[i * 2] / maxValue;
+	        var maxPeak = this.peaks[i * 2 + 1] / maxValue;
+	        CanvasHook.drawFrame(cc, h2, i, minPeak, maxPeak);
+	      }
+	    }
+	  }, {
+	    key: 'getImage',
+	    value: function getImage() {
+	      return this.bufferedwaveform;
+	    }
+	  }, {
+	    key: 'setupImage',
+	    value: function setupImage(width, height) {
+	      this.bufferedwaveform = document.createElement('canvas');
+	      this.bufferedwaveform.width = width;
+	      this.bufferedwaveform.height = height;
+	      // console.log(this.bufferedwaveform);
+	      console.log("new canvas");
+	      this.bwc = this.bufferedwaveform.getContext('2d');
+	      this.drawCanvas(this.bwc, width, height / 2);
+	      return this.bufferedwaveform;
+	    }
+	  }, {
+	    key: 'hook',
+	    value: function hook(canvas, prop, prev) {
+	      // canvas is up to date
+	
+	      var len = canvas.width;
+	      var cc = canvas.getContext('2d');
+	      var h2 = canvas.height / 2;
+	
+	      if (!this.bufferedwaveform) this.setupImage(this.peaks.length, h2 * 2);
+	
+	      cc.clearRect(0, 0, canvas.width, canvas.height);
+	      var offsettotal = (0, _conversions.secondsToPixels)(-this.cueIn, this.resolution, this.sampleRate);
+	
+	      cc.drawImage(this.bufferedwaveform, offsettotal, 0);
+	    }
+	  }], [{
+	    key: 'drawFrame',
+	    value: function drawFrame(cc, h2, x, minPeak, maxPeak) {
+	      var min = Math.abs(minPeak * h2);
+	      var max = Math.abs(maxPeak * h2);
+	
+	      // draw max
+	      cc.fillRect(x, 0, 1, h2 - max);
+	      // draw min
+	      cc.fillRect(x, h2 + min, 1, h2 - min);
+	    }
+	  }]);
+	
+	  return CanvasHook;
+	}();
+	
+	exports.default = CanvasHook;
+
+/***/ }),
+/* 415 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _fadeMaker = __webpack_require__(405);
+	
+	var _fadeCurves = __webpack_require__(406);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/*
+	* virtual-dom hook for drawing the fade curve to the canvas element.
+	*/
+	var FadeCanvasHook = function () {
+	  function FadeCanvasHook(type, shape, duration, samplesPerPixel) {
+	    _classCallCheck(this, FadeCanvasHook);
+	
+	    this.type = type;
+	    this.shape = shape;
+	    this.duration = duration;
+	    this.samplesPerPixel = samplesPerPixel;
+	  }
+	
+	  _createClass(FadeCanvasHook, [{
+	    key: 'hook',
+	    value: function hook(canvas, prop, prev) {
+	      // node is up to date.
+	      if (prev !== undefined && prev.shape === this.shape && prev.type === this.type && prev.duration === this.duration && prev.samplesPerPixel === this.samplesPerPixel) {
+	        return;
+	      }
+	
+	      var ctx = canvas.getContext('2d');
+	      var width = canvas.width;
+	      var height = canvas.height;
+	
+	      var curve = FadeCanvasHook.createCurve(this.shape, this.type, width);
+	      var len = curve.length;
+	      var y = height - curve[0] * height;
+	
+	      ctx.strokeStyle = 'black';
+	      ctx.beginPath();
+	      ctx.moveTo(0, y);
+	
+	      for (var i = 1; i < len; i += 1) {
+	        y = height - curve[i] * height;
+	        ctx.lineTo(i, y);
+	      }
+	      ctx.stroke();
+	    }
+	  }], [{
+	    key: 'createCurve',
+	    value: function createCurve(shape, type, width) {
+	      var reflection = void 0;
+	      var curve = void 0;
+	
+	      switch (type) {
+	        case _fadeMaker.FADEIN:
+	          {
+	            reflection = 1;
+	            break;
+	          }
+	        case _fadeMaker.FADEOUT:
+	          {
+	            reflection = -1;
+	            break;
+	          }
+	        default:
+	          {
+	            throw new Error('Unsupported fade type.');
+	          }
+	      }
+	
+	      switch (shape) {
+	        case _fadeMaker.SCURVE:
+	          {
+	            curve = (0, _fadeCurves.sCurve)(width, reflection);
+	            break;
+	          }
+	        case _fadeMaker.LINEAR:
+	          {
+	            curve = (0, _fadeCurves.linear)(width, reflection);
+	            break;
+	          }
+	        case _fadeMaker.EXPONENTIAL:
+	          {
+	            curve = (0, _fadeCurves.exponential)(width, reflection);
+	            break;
+	          }
+	        case _fadeMaker.LOGARITHMIC:
+	          {
+	            curve = (0, _fadeCurves.logarithmic)(width, 10, reflection);
+	            break;
+	          }
+	        default:
+	          {
+	            throw new Error('Unsupported fade shape');
+	          }
+	      }
+	
+	      return curve;
+	    }
+	  }]);
+	
+	  return FadeCanvasHook;
+	}();
+	
+	exports.default = FadeCanvasHook;
+
+/***/ }),
+/* 416 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _fadeMaker = __webpack_require__(405);
+	
+	var _tunajs = __webpack_require__(417);
+	
+	var _tunajs2 = _interopRequireDefault(_tunajs);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _class = function () {
+	  function _class(ac, buffer) {
+	    _classCallCheck(this, _class);
+	
+	    this.ac = ac;
+	    this.tuna = new _tunajs2.default(this.ac);
+	    this.gain = 1;
+	    this.buffer = buffer;
+	    this.destination = this.ac.destination;
+	
+	    this.delay = new this.tuna.Delay({
+	      feedback: 0.45, //0 to 1+
+	      delayTime: 150, //1 to 10000 milliseconds
+	      wetLevel: 0.25, //0 to 1+
+	      dryLevel: 1, //0 to 1+
+	      cutoff: 2000, //cutoff frequency of the built in lowpass-filter. 20 to 22050
+	      bypass: 0
+	    });
+	
+	    this.lowpass = new this.tuna.Filter({
+	      frequency: 440, //20 to 22050
+	      Q: 1, //0.001 to 100
+	      gain: 0, //-40 to 40 (in decibels)
+	      filterType: "lowpass", //lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass
+	      bypass: 0
+	    });
+	
+	    this.phaser = new this.tuna.Bitcrusher({
+	      bits: 4, //1 to 16
+	      normfreq: 0.1, //0 to 1
+	      bufferSize: 4096 //256 to 16384
+	    });
+	  }
+	
+	  _createClass(_class, [{
+	    key: 'applyFade',
+	    value: function applyFade(type, start, duration) {
+	      var shape = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'logarithmic';
+	
+	      if (type === _fadeMaker.FADEIN) {
+	        (0, _fadeMaker.createFadeIn)(this.fadeGain.gain, shape, start, duration);
+	      } else if (type === _fadeMaker.FADEOUT) {
+	        (0, _fadeMaker.createFadeOut)(this.fadeGain.gain, shape, start, duration);
+	      } else {
+	        throw new Error('Unsupported fade type');
+	      }
+	    }
+	  }, {
+	    key: 'applyFadeIn',
+	    value: function applyFadeIn(start, duration) {
+	      var shape = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'logarithmic';
+	
+	      this.applyFade(_fadeMaker.FADEIN, start, duration, shape);
+	    }
+	  }, {
+	    key: 'applyFadeOut',
+	    value: function applyFadeOut(start, duration) {
+	      var shape = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'logarithmic';
+	
+	      this.applyFade(_fadeMaker.FADEOUT, start, duration, shape);
+	    }
+	  }, {
+	    key: 'isPlaying',
+	    value: function isPlaying() {
+	      return this.source !== undefined;
+	    }
+	  }, {
+	    key: 'getDuration',
+	    value: function getDuration() {
+	      return this.buffer.duration;
+	    }
+	  }, {
+	    key: 'setAudioContext',
+	    value: function setAudioContext(audioContext) {
+	      this.ac = audioContext;
+	      this.destination = this.ac.destination;
+	    }
+	  }, {
+	    key: 'setUpSource',
+	    value: function setUpSource() {
+	      var _this = this;
+	
+	      this.source = this.ac.createBufferSource();
+	      this.source.buffer = this.buffer;
+	
+	      var sourcePromise = new Promise(function (resolve) {
+	        // keep track of the buffer state.
+	        _this.source.onended = function () {
+	          _this.source.disconnect();
+	          _this.fadeGain.disconnect();
+	          _this.volumeGain.disconnect();
+	          _this.shouldPlayGain.disconnect();
+	          _this.masterGain.disconnect();
+	          _this.panner.disconnect();
+	
+	          _this.source = undefined;
+	          _this.fadeGain = undefined;
+	          _this.volumeGain = undefined;
+	          _this.shouldPlayGain = undefined;
+	          _this.masterGain = undefined;
+	          _this.panner = undefined;
+	
+	          resolve();
+	        };
+	      });
+	
+	      this.fadeGain = this.ac.createGain();
+	      // used for track volume slider
+	      this.volumeGain = this.ac.createGain();
+	      // used for solo/mute
+	      this.shouldPlayGain = this.ac.createGain();
+	
+	      this.panner = this.ac.createStereoPanner();
+	
+	      console.log('playout', this.delay);
+	
+	      this.masterGain = this.ac.createGain();
+	
+	      this.source.connect(this.fadeGain).connect(this.panner);
+	
+	      var tunachain = this.panner;
+	      if (this.toggleDelay) {
+	        tunachain.connect(this.delay);
+	        tunachain = this.delay;
+	      }
+	      if (this.togglePhaser) {
+	        tunachain.connect(this.phaser);
+	        tunachain = this.phaser;
+	      }
+	      if (this.toggleLowpass) {
+	        tunachain.connect(this.lowpass);
+	        tunachain = this.lowpass;
+	      }
+	      tunachain.connect(this.volumeGain);
+	
+	      this.volumeGain.connect(this.shouldPlayGain).connect(this.masterGain).connect(this.destination);
+	
+	      return sourcePromise;
+	    }
+	  }, {
+	    key: 'setVolumeGainLevel',
+	    value: function setVolumeGainLevel(level) {
+	      if (this.volumeGain) {
+	        this.volumeGain.gain.value = level;
+	      }
+	    }
+	  }, {
+	    key: 'setShouldPlay',
+	    value: function setShouldPlay(bool) {
+	      if (this.shouldPlayGain) {
+	        this.shouldPlayGain.gain.value = bool ? 1 : 0;
+	      }
+	    }
+	  }, {
+	    key: 'setMasterGainLevel',
+	    value: function setMasterGainLevel(level) {
+	      if (this.masterGain) {
+	        this.masterGain.gain.value = level;
+	      }
+	    }
+	  }, {
+	    key: 'setPan',
+	    value: function setPan(pan) {
+	      if (this.panner) {
+	        this.panner.pan.value = pan;
+	      }
+	    }
+	
+	    /*
+	      source.start is picky when passing the end time.
+	      If rounding error causes a number to make the source think
+	      it is playing slightly more samples than it has it won't play at all.
+	      Unfortunately it doesn't seem to work if you just give it a start time.
+	    */
+	
+	  }, {
+	    key: 'play',
+	    value: function play(when, start, duration) {
+	      this.source.start(when, start, duration);
+	    }
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+	
+	      if (this.source) {
+	        try {
+	          this.source.stop(when);
+	        } catch (e) {}
+	      }
+	    }
+	  }]);
+
+	  return _class;
+	}();
+
+	exports.default = _class;
+
+/***/ }),
+/* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
@@ -16632,14 +20807,14 @@ var WaveformPlaylist =
 	            }
 	        },
 	        callback: {
-	            value: function(callback) {
+	            value: function(tcallback) {
 	                var that = this;
 	                return function() {
 	                    that._phase += that._phaseInc;
 	                    if (that._phase > 2 * Math.PI) {
 	                        that._phase = 0;
 	                    }
-	                    callback(that._target, that._offset + that._oscillation * Math.sin(that._phase));
+	                    tcallback(that._target, that._offset + that._oscillation * Math.sin(that._phase));
 	                };
 	            }
 	        }
@@ -16650,4170 +20825,6 @@ var WaveformPlaylist =
 	    };
 	})();
 
-
-/***/ }),
-/* 389 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.samplesToSeconds = samplesToSeconds;
-	exports.secondsToSamples = secondsToSamples;
-	exports.samplesToPixels = samplesToPixels;
-	exports.pixelsToSamples = pixelsToSamples;
-	exports.pixelsToSeconds = pixelsToSeconds;
-	exports.secondsToPixels = secondsToPixels;
-	function samplesToSeconds(samples, sampleRate) {
-	  return samples / sampleRate;
-	}
-	
-	function secondsToSamples(seconds, sampleRate) {
-	  return Math.ceil(seconds * sampleRate);
-	}
-	
-	function samplesToPixels(samples, resolution) {
-	  return Math.floor(samples / resolution);
-	}
-	
-	function pixelsToSamples(pixels, resolution) {
-	  return Math.floor(pixels * resolution);
-	}
-	
-	function pixelsToSeconds(pixels, resolution, sampleRate) {
-	  return pixels * resolution / sampleRate;
-	}
-	
-	function secondsToPixels(seconds, resolution, sampleRate) {
-	  return Math.ceil(seconds * sampleRate / resolution);
-	}
-
-/***/ }),
-/* 390 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _BlobLoader = __webpack_require__(391);
-	
-	var _BlobLoader2 = _interopRequireDefault(_BlobLoader);
-	
-	var _XHRLoader = __webpack_require__(393);
-	
-	var _XHRLoader2 = _interopRequireDefault(_XHRLoader);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class() {
-	    _classCallCheck(this, _class);
-	  }
-	
-	  _createClass(_class, null, [{
-	    key: 'createLoader',
-	    value: function createLoader(src, audioContext, ee) {
-	      if (src instanceof Blob) {
-	        return new _BlobLoader2.default(src, audioContext, ee);
-	      } else if (typeof src === 'string') {
-	        return new _XHRLoader2.default(src, audioContext, ee);
-	      }
-	
-	      throw new Error('Unsupported src type');
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 391 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-	
-	var _Loader2 = __webpack_require__(392);
-	
-	var _Loader3 = _interopRequireDefault(_Loader2);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _class = function (_Loader) {
-	  _inherits(_class, _Loader);
-	
-	  function _class() {
-	    _classCallCheck(this, _class);
-	
-	    return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'load',
-	
-	
-	    /*
-	    * Loads an audio file via a FileReader
-	    */
-	    value: function load() {
-	      var _this2 = this;
-	
-	      return new Promise(function (resolve, reject) {
-	        if (_this2.src.type.match(/audio.*/) ||
-	        // added for problems with Firefox mime types + ogg.
-	        _this2.src.type.match(/video\/ogg/)) {
-	          var fr = new FileReader();
-	
-	          fr.readAsArrayBuffer(_this2.src);
-	
-	          fr.addEventListener('progress', function (e) {
-	            _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileProgress', _this2).call(_this2, e);
-	          });
-	
-	          fr.addEventListener('load', function (e) {
-	            var decoderPromise = _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileLoad', _this2).call(_this2, e);
-	
-	            decoderPromise.then(function (audioBuffer) {
-	              resolve(audioBuffer);
-	            });
-	          });
-	
-	          fr.addEventListener('error', function (err) {
-	            reject(err);
-	          });
-	        } else {
-	          reject(Error('Unsupported file type ' + _this2.src.type));
-	        }
-	      });
-	    }
-	  }]);
-	
-	  return _class;
-	}(_Loader3.default);
-	
-	exports.default = _class;
-
-/***/ }),
-/* 392 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.STATE_FINISHED = exports.STATE_DECODING = exports.STATE_LOADING = exports.STATE_UNINITIALIZED = undefined;
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _eventEmitter = __webpack_require__(347);
-	
-	var _eventEmitter2 = _interopRequireDefault(_eventEmitter);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var STATE_UNINITIALIZED = exports.STATE_UNINITIALIZED = 0;
-	var STATE_LOADING = exports.STATE_LOADING = 1;
-	var STATE_DECODING = exports.STATE_DECODING = 2;
-	var STATE_FINISHED = exports.STATE_FINISHED = 3;
-	
-	var _class = function () {
-	  function _class(src, audioContext) {
-	    var ee = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : (0, _eventEmitter2.default)();
-	
-	    _classCallCheck(this, _class);
-	
-	    this.src = src;
-	    this.ac = audioContext;
-	    this.audioRequestState = STATE_UNINITIALIZED;
-	    this.ee = ee;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setStateChange',
-	    value: function setStateChange(state) {
-	      this.audioRequestState = state;
-	      this.ee.emit('audiorequeststatechange', this.audioRequestState, this.src);
-	    }
-	  }, {
-	    key: 'fileProgress',
-	    value: function fileProgress(e) {
-	      var percentComplete = 0;
-	
-	      if (this.audioRequestState === STATE_UNINITIALIZED) {
-	        this.setStateChange(STATE_LOADING);
-	      }
-	
-	      if (e.lengthComputable) {
-	        percentComplete = e.loaded / e.total * 100;
-	      }
-	
-	      this.ee.emit('loadprogress', percentComplete, this.src);
-	    }
-	  }, {
-	    key: 'fileLoad',
-	    value: function fileLoad(e) {
-	      var _this = this;
-	
-	      var audioData = e.target.response || e.target.result;
-	
-	      this.setStateChange(STATE_DECODING);
-	
-	      return new Promise(function (resolve, reject) {
-	        _this.ac.decodeAudioData(audioData, function (audioBuffer) {
-	          _this.audioBuffer = audioBuffer;
-	          _this.setStateChange(STATE_FINISHED);
-	
-	          resolve(audioBuffer);
-	        }, function (err) {
-	          reject(err);
-	        });
-	      });
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 393 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-	
-	var _Loader2 = __webpack_require__(392);
-	
-	var _Loader3 = _interopRequireDefault(_Loader2);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _class = function (_Loader) {
-	  _inherits(_class, _Loader);
-	
-	  function _class() {
-	    _classCallCheck(this, _class);
-	
-	    return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'load',
-	
-	
-	    /**
-	     * Loads an audio file via XHR.
-	     */
-	    value: function load() {
-	      var _this2 = this;
-	
-	      return new Promise(function (resolve, reject) {
-	        var xhr = new XMLHttpRequest();
-	
-	        xhr.open('GET', _this2.src, true);
-	        xhr.responseType = 'arraybuffer';
-	        xhr.send();
-	
-	        xhr.addEventListener('progress', function (e) {
-	          _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileProgress', _this2).call(_this2, e);
-	        });
-	
-	        xhr.addEventListener('load', function (e) {
-	          var decoderPromise = _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'fileLoad', _this2).call(_this2, e);
-	
-	          decoderPromise.then(function (audioBuffer) {
-	            resolve(audioBuffer);
-	          });
-	        });
-	
-	        xhr.addEventListener('error', function () {
-	          reject(Error('Track ' + _this2.src + ' failed to load'));
-	        });
-	      });
-	    }
-	  }]);
-	
-	  return _class;
-	}(_Loader3.default);
-	
-	exports.default = _class;
-
-/***/ }),
-/* 394 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/*
-	* virtual-dom hook for scrolling the track container.
-	*/
-	var _class = function () {
-	  function _class(playlist) {
-	    _classCallCheck(this, _class);
-	
-	    this.playlist = playlist;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'hook',
-	    value: function hook(node) {
-	      var playlist = this.playlist;
-	      var el = node;
-	      if (!playlist.isScrolling) {
-	        if (playlist.isAutomaticScroll) {
-	          var rect = node.getBoundingClientRect();
-	          var cursorRect = node.querySelector('.cursor').getBoundingClientRect();
-	
-	          if (cursorRect.right > rect.right || cursorRect.right < 0) {
-	            playlist.scrollLeft = playlist.playbackSeconds;
-	          }
-	        }
-	      }
-	      var left = (0, _conversions.secondsToPixels)(playlist.scrollLeft, playlist.samplesPerPixel, playlist.sampleRate);
-	
-	      el.scrollLeft = left;
-	      // el.addEventListener('mouseleave',e => playlist.ee.emit('scrolldraggingend',e));
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 395 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _h = __webpack_require__(366);
-	
-	var _h2 = _interopRequireDefault(_h);
-	
-	var _conversions = __webpack_require__(389);
-	
-	var _TimeScaleHook = __webpack_require__(396);
-	
-	var _TimeScaleHook2 = _interopRequireDefault(_TimeScaleHook);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var TimeScale = function () {
-	  function TimeScale(ee, duration, offset, samplesPerPixel, sampleRate) {
-	    var marginLeft = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
-	
-	    _classCallCheck(this, TimeScale);
-	
-	    this.ee = ee;
-	    this.duration = duration;
-	    this.offset = offset;
-	    this.samplesPerPixel = samplesPerPixel;
-	    this.sampleRate = sampleRate;
-	    this.marginLeft = marginLeft;
-	
-	    this.dragging = false;
-	
-	    this.timeinfo = {
-	      20000: {
-	        marker: 30000,
-	        bigStep: 10000,
-	        smallStep: 5000,
-	        secondStep: 5
-	      },
-	      12000: {
-	        marker: 15000,
-	        bigStep: 5000,
-	        smallStep: 1000,
-	        secondStep: 1
-	      },
-	      10000: {
-	        marker: 10000,
-	        bigStep: 5000,
-	        smallStep: 1000,
-	        secondStep: 1
-	      },
-	      5000: {
-	        marker: 5000,
-	        bigStep: 1000,
-	        smallStep: 500,
-	        secondStep: 1 / 2
-	      },
-	      2500: {
-	        marker: 2000,
-	        bigStep: 1000,
-	        smallStep: 500,
-	        secondStep: 1 / 2
-	      },
-	      1500: {
-	        marker: 2000,
-	        bigStep: 1000,
-	        smallStep: 200,
-	        secondStep: 1 / 5
-	      },
-	      700: {
-	        marker: 1000,
-	        bigStep: 500,
-	        smallStep: 100,
-	        secondStep: 1 / 10
-	      }
-	    };
-	  }
-	
-	  _createClass(TimeScale, [{
-	    key: 'getScaleInfo',
-	    value: function getScaleInfo(resolution) {
-	      var keys = Object.keys(this.timeinfo).map(function (item) {
-	        return parseInt(item, 10);
-	      });
-	
-	      // make sure keys are numerically sorted.
-	      keys = keys.sort(function (a, b) {
-	        return a - b;
-	      });
-	
-	      for (var i = 0; i < keys.length; i += 1) {
-	        if (resolution <= keys[i]) {
-	          return this.timeinfo[keys[i]];
-	        }
-	      }
-	
-	      return this.timeinfo[keys[0]];
-	    }
-	
-	    /*
-	      Return time in format mm:ss
-	    */
-	
-	  }, {
-	    key: 'seekTo',
-	    value: function seekTo(e) {
-	      e.preventDefault();
-	
-	      var startX = e.offsetX;
-	      var startTime = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
-	
-	      this.ee.emit('select', startTime, startTime);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this = this;
-	
-	      var widthX = (0, _conversions.secondsToPixels)(this.duration, this.samplesPerPixel, this.sampleRate);
-	      var pixPerSec = this.sampleRate / this.samplesPerPixel;
-	      var pixOffset = (0, _conversions.secondsToPixels)(this.offset, this.samplesPerPixel, this.sampleRate);
-	      var scaleInfo = this.getScaleInfo(this.samplesPerPixel);
-	      var canvasInfo = {};
-	      var timeMarkers = [];
-	      var end = widthX + pixOffset;
-	      var counter = 0;
-	
-	      for (var i = 0; i < end; i += pixPerSec * scaleInfo.secondStep) {
-	        var pixIndex = Math.floor(i);
-	        var pix = pixIndex - pixOffset;
-	
-	        if (pixIndex >= pixOffset) {
-	          // put a timestamp every 30 seconds.
-	          if (scaleInfo.marker && counter % scaleInfo.marker === 0) {
-	            timeMarkers.push((0, _h2.default)('div.time', {
-	              attributes: {
-	                style: 'position: absolute; left: ' + pix + 'px;'
-	              }
-	            }, [TimeScale.formatTime(counter)]));
-	
-	            canvasInfo[pix] = 10;
-	          } else if (scaleInfo.bigStep && counter % scaleInfo.bigStep === 0) {
-	            canvasInfo[pix] = 5;
-	          } else if (scaleInfo.smallStep && counter % scaleInfo.smallStep === 0) {
-	            canvasInfo[pix] = 2;
-	          }
-	        }
-	
-	        counter += 1000 * scaleInfo.secondStep;
-	      }
-	
-	      return (0, _h2.default)('div.playlist-time-scale', {
-	        onmousedown: function onmousedown(e) {
-	          _this.seekTo(e);
-	        },
-	        attributes: {
-	          style: 'position: relative; left: 0; right: 0; margin-left: ' + this.marginLeft + 'px;'
-	        }
-	      }, [timeMarkers, (0, _h2.default)('canvas', {
-	        attributes: {
-	          width: widthX,
-	          height: 30,
-	          style: 'position: absolute; left: 0; right: 0; top: 0; bottom: 0;'
-	        },
-	        hook: new _TimeScaleHook2.default(canvasInfo, this.offset, this.samplesPerPixel, this.duration)
-	      })]);
-	    }
-	  }], [{
-	    key: 'formatTime',
-	    value: function formatTime(milliseconds) {
-	      var seconds = milliseconds / 1000;
-	      var s = seconds % 60;
-	      var m = (seconds - s) / 60;
-	
-	      if (s < 10) {
-	        s = '0' + s;
-	      }
-	
-	      return m + ':' + s;
-	    }
-	  }]);
-	
-	  return TimeScale;
-	}();
-	
-	exports.default = TimeScale;
-
-/***/ }),
-/* 396 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/*
-	* virtual-dom hook for rendering the time scale canvas.
-	*/
-	var _class = function () {
-	  function _class(tickInfo, offset, samplesPerPixel, duration) {
-	    _classCallCheck(this, _class);
-	
-	    this.tickInfo = tickInfo;
-	    this.offset = offset;
-	    this.samplesPerPixel = samplesPerPixel;
-	    this.duration = duration;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'hook',
-	    value: function hook(canvas, prop, prev) {
-	      var _this = this;
-	
-	      // canvas is up to date
-	      if (prev !== undefined && prev.offset === this.offset && prev.duration === this.duration && prev.samplesPerPixel === this.samplesPerPixel) {
-	        return;
-	      }
-	
-	      var width = canvas.width;
-	      var height = canvas.height;
-	      var ctx = canvas.getContext('2d');
-	
-	      ctx.clearRect(0, 0, width, height);
-	
-	      Object.keys(this.tickInfo).forEach(function (x) {
-	        var scaleHeight = _this.tickInfo[x];
-	        var scaleY = height - scaleHeight;
-	        ctx.fillRect(x, scaleY, 1, scaleHeight);
-	      });
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 397 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _lodash = __webpack_require__(333);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _lodash3 = __webpack_require__(398);
-	
-	var _lodash4 = _interopRequireDefault(_lodash3);
-	
-	var _h = __webpack_require__(366);
-	
-	var _h2 = _interopRequireDefault(_h);
-	
-	var _conversions = __webpack_require__(389);
-	
-	var _VolumeSliderHook = __webpack_require__(399);
-	
-	var _VolumeSliderHook2 = _interopRequireDefault(_VolumeSliderHook);
-	
-	var _PanKnobHook = __webpack_require__(400);
-	
-	var _PanKnobHook2 = _interopRequireDefault(_PanKnobHook);
-	
-	var _GridHook = __webpack_require__(401);
-	
-	var _GridHook2 = _interopRequireDefault(_GridHook);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class() {
-	    _classCallCheck(this, _class);
-	
-	    this.name = 'Untitled'; // Track
-	    this.customClass = undefined; //Track
-	    this.waveOutlineColor = undefined; //Track
-	    this.gain = 1; //Track
-	    this._pan = 0; // Track
-	    this.ee = undefined;
-	    this.bpm = 100;
-	    this.quantize = 1;
-	
-	    this.clips = [];
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'unasignAll',
-	    value: function unasignAll() {
-	      return this.clips = [];
-	    }
-	    /*
-	      startTime, endTime in seconds (float).
-	      segment is for a highlighted section in the UI.
-	      returns a Promise that will resolve when the AudioBufferSource
-	      is either stopped or plays out naturally.
-	    */
-	
-	  }, {
-	    key: 'schedulePlay',
-	    value: function () {
-	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	          args[_key] = arguments[_key];
-	        }
-	
-	        return regeneratorRuntime.wrap(function _callee$(_context) {
-	          while (1) {
-	            switch (_context.prev = _context.next) {
-	              case 0:
-	                _context.next = 2;
-	                return Promise.all(this.clips.map(function (c) {
-	                  return c.schedulePlay.apply(c, args);
-	                }));
-	
-	              case 2:
-	              case 'end':
-	                return _context.stop();
-	            }
-	          }
-	        }, _callee, this);
-	      }));
-	
-	      function schedulePlay() {
-	        return _ref.apply(this, arguments);
-	      }
-	
-	      return schedulePlay;
-	    }()
-	  }, {
-	    key: 'scheduleStop',
-	    value: function scheduleStop(when) {
-	      this.clips.forEach(function (c) {
-	        return c.scheduleStop(when);
-	      });
-	    }
-	  }, {
-	    key: 'assign',
-	    value: function assign(clip) {
-	      return this.clips.push(clip);
-	    }
-	  }, {
-	    key: 'setEventEmitter',
-	    value: function setEventEmitter(ee) {
-	      this.ee = ee;
-	      this.clips.forEach(function (c) {
-	        return c.setEventEmitter(ee);
-	      });
-	    }
-	  }, {
-	    key: 'setName',
-	    value: function setName(name) {
-	      this.name = name;
-	    }
-	  }, {
-	    key: 'setCustomClass',
-	    value: function setCustomClass(className) {
-	      this.customClass = className;
-	    }
-	  }, {
-	    key: 'setWaveOutlineColor',
-	    value: function setWaveOutlineColor(color) {
-	      this.waveOutlineColor = color;
-	    }
-	  }, {
-	    key: 'setStartTime',
-	    value: function setStartTime(start) {
-	      this.startTime = start;
-	      this.endTime = start + this.duration;
-	    }
-	  }, {
-	    key: 'setOfflinePlayout',
-	    value: function setOfflinePlayout(playout) {
-	      this.clips.forEach(function (clip) {
-	        return clip.setOfflinePlayout(playout);
-	      });
-	    }
-	  }, {
-	    key: 'setEnabledStates',
-	    value: function setEnabledStates() {
-	      var enabledStates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	
-	      var defaultStatesEnabled = {
-	        cursor: true,
-	        fadein: true,
-	        fadeout: true,
-	        select: true,
-	        shift: true,
-	        interactive: true
-	      };
-	
-	      this.enabledStates = (0, _lodash2.default)({}, defaultStatesEnabled, enabledStates);
-	    }
-	  }, {
-	    key: 'setState',
-	    value: function setState(state) {
-	      this.clips.forEach(function (clip) {
-	        return clip.setState(state);
-	      });
-	    }
-	  }, {
-	    key: 'isPlaying',
-	    value: function isPlaying() {
-	      return this.clips.reduce(function (isit, clip) {
-	        return clip.isPlaying() || isit;
-	      }, false);
-	    }
-	  }, {
-	    key: 'setShouldPlay',
-	    value: function setShouldPlay(bool) {
-	      this.clips.forEach(function (clip) {
-	        return clip.playout.setShouldPlay(bool);
-	      });
-	    }
-	  }, {
-	    key: 'setGainLevel',
-	    value: function setGainLevel(level) {
-	      this.gain = level;
-	      this.clips.forEach(function (clip) {
-	        clip.gain = level;
-	        clip.playout.setVolumeGainLevel(level);
-	      });
-	    }
-	  }, {
-	    key: 'setMasterGainLevel',
-	    value: function setMasterGainLevel(level) {
-	      this.clips.forEach(function (clip) {
-	        return clip.playout.setMasterGainLevel(level);
-	      });
-	    }
-	  }, {
-	    key: 'setPan',
-	    value: function setPan(value) {
-	      var _this = this;
-	
-	      this.pan = value || this.pan;
-	      this.clips.forEach(function (clip) {
-	        return clip.setPan(_this.pan);
-	      });
-	    }
-	  }, {
-	    key: 'renderControls',
-	    value: function renderControls(data) {
-	      var _this2 = this;
-	
-	      var muteClass = data.muted ? '.active' : '';
-	      var soloClass = data.soloed ? '.active' : '';
-	
-	      return (0, _h2.default)('div.controls', {
-	        attributes: {
-	          style: 'height: ' + data.height + 'px; width: ' + data.controls.width + 'px; position: absolute; left: 0; z-index: 10;'
-	        }
-	      }, [(0, _h2.default)('header', [this.name]), (0, _h2.default)('div.btn-group', [(0, _h2.default)('span.btn.btn-default.btn-xs.destroyButton', {
-	        onclick: function onclick() {
-	          _this2.ee.emit('destroy', _this2);
-	        }
-	      }, ['X']), (0, _h2.default)('span.btn.btn-default.btn-xs.btn-mute' + muteClass, {
-	        onclick: function onclick() {
-	          _this2.ee.emit('mute', _this2);
-	        }
-	      }, ['Mute']), (0, _h2.default)('span.btn.btn-default.btn-xs.btn-solo' + soloClass, {
-	        onclick: function onclick() {
-	          _this2.ee.emit('solo', _this2);
-	        }
-	      }, ['Solo']), (0, _h2.default)('div.btn.btn-default.dropdown-toggle.btn-xs.btn-effects', {
-	        onclick: function onclick(e) {
-	          _this2.showmenu = !_this2.showmenu;
-	          _this2.ee.emit('interactive');
-	        }
-	      }, ["effects", (0, _h2.default)('div.effectsmenu', {
-	        attributes: {
-	          style: '\n                  position:absolite;\n                  top:0;\n                  left:10;\n                  ' + (this.showmenu ? '' : "display:none;") + '\n                '
-	        }
-	      }, [(0, _h2.default)("div.effect.btn.btn-default", {
-	        onclick: function onclick(e) {
-	          _this2.clips.forEach(function (clip) {
-	            clip.playout.toggleDelay = !clip.playout.toggleDelay;
-	          });
-	        },
-	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "delay"), (0, _h2.default)("div.effect.btn.btn-default", {
-	        onclick: function onclick(e) {
-	          _this2.clips.forEach(function (clip) {
-	            clip.playout.togglePhaser = !clip.playout.togglePhaser;
-	          });
-	        },
-	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "phaser"), (0, _h2.default)("div.effect.btn.btn-default", {
-	        onclick: function onclick(e) {
-	          _this2.clips.forEach(function (clip) {
-	            clip.playout.toggleLowpass = !clip.playout.toggleLowpass;
-	          });
-	        },
-	        attributes: { style: '\n                width:50px;height:20px;display:inline-block;\n              ' } }, "lowpass")])]), (0, _h2.default)('canvas.knobCanvas', {
-	        attributes: {
-	          width: 25,
-	          height: 25,
-	          "data-ringbgcolor": '#EEE'
-	        },
-	        hook: new _PanKnobHook2.default(this.pan, this)
-	      })]), (0, _h2.default)('label', [(0, _h2.default)('input.volume-slider', {
-	        attributes: {
-	          type: 'range',
-	          min: 0,
-	          max: 100,
-	          value: 100
-	        },
-	        hook: new _VolumeSliderHook2.default(this.gain),
-	        oninput: function oninput(e) {
-	          _this2.ee.emit('volumechange', e.target.value, _this2);
-	        }
-	      })])]);
-	    }
-	  }, {
-	    key: 'getEndTime',
-	    value: function getEndTime() {
-	      return this.clips.reduce(function (maxval, clip) {
-	        return Math.max(maxval, clip.endTime);
-	      }, 0);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render(data) {
-	
-	      function convert(seconds) {
-	        return (0, _conversions.secondsToPixels)(seconds, data.resolution, data.sampleRate);
-	      }
-	
-	      var width = convert(this.getEndTime());
-	      var playbackX = convert(data.playbackSeconds);
-	      var startX = convert(this.startTime);
-	      var endX = convert(this.endTime);
-	      var progressWidth = 0;
-	
-	      if (playbackX > 0 && playbackX > startX) {
-	        if (playbackX < endX) {
-	          progressWidth = playbackX - startX;
-	        } else {
-	          progressWidth = width;
-	        }
-	      }
-	
-	      var waveformChildren = [(0, _h2.default)('div.cursor', {
-	        attributes: {
-	          style: 'position: absolute; width: 1px; margin: 0; padding: 0; top: 0; left: ' + playbackX + 'px; bottom: 0; z-index: 5;'
-	        }
-	      })];
-	
-	      var grid = (0, _h2.default)('canvas.grid', {
-	        attributes: {
-	          width: width,
-	          height: data.height,
-	          style: 'position:absolute;pointer-events:none'
-	        },
-	        hook: new _GridHook2.default(this.quantize, this.bpm, 'lightgray', data.resolution, data.sampleRate)
-	      });
-	      waveformChildren.push(grid);
-	
-	      waveformChildren.push(this.clips.map(function (clip) {
-	        return clip.render(data);
-	      }));
-	
-	      // draw cursor selection on active track.
-	      if (data.isActive === true) {
-	        var cStartX = (0, _conversions.secondsToPixels)(data.timeSelection.start, data.resolution, data.sampleRate);
-	        var cEndX = (0, _conversions.secondsToPixels)(data.timeSelection.end, data.resolution, data.sampleRate);
-	        var cWidth = cEndX - cStartX + 1;
-	        var cClassName = cWidth > 1 ? '.segment' : '.point';
-	
-	        waveformChildren.push((0, _h2.default)('div.selection' + cClassName, {
-	          attributes: {
-	            style: 'position: absolute; width: ' + cWidth + 'px; bottom: 0; top: 0; left: ' + cStartX + 'px; z-index: 4;'
-	          }
-	        }));
-	      }
-	
-	      var waveform = (0, _h2.default)('div.waveform', {
-	        attributes: {
-	          style: 'height: ' + data.height + 'px; position: relative;'
-	        }
-	      }, waveformChildren);
-	
-	      var channelChildren = [];
-	      var channelMargin = 0;
-	
-	      if (data.controls.show) {
-	        channelChildren.push(this.renderControls(data));
-	        channelMargin = data.controls.width;
-	      }
-	
-	      channelChildren.push(waveform);
-	
-	      var audibleClass = data.shouldPlay ? '' : '.silent';
-	      var customClass = this.customClass === undefined ? '' : '.' + this.customClass;
-	
-	      return (0, _h2.default)('div.channel-wrapper' + audibleClass + customClass, {
-	        attributes: {
-	          style: 'margin-left: ' + channelMargin + 'px; height: ' + data.height + 'px;'
-	        }
-	      }, channelChildren);
-	    }
-	  }, {
-	    key: 'getTrackDetails',
-	    value: function getTrackDetails() {
-	      var info = {
-	        src: this.src,
-	        name: this.name,
-	        customClass: this.customClass
-	      };
-	      return info;
-	    }
-	  }, {
-	    key: 'pan',
-	    set: function set(inp) {
-	      this._pan = inp;
-	      this.clips.forEach(function (clip) {
-	        return clip.setPan(inp);
-	      });
-	    },
-	    get: function get() {
-	      return this._pan;
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 398 */
-/***/ (function(module, exports) {
-
-	/**
-	 * lodash (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modularize exports="npm" -o ./`
-	 * Copyright jQuery Foundation and other contributors <https://jquery.org/>
-	 * Released under MIT license <https://lodash.com/license>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 */
-	
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-	
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]';
-	
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^(?:0|[1-9]\d*)$/;
-	
-	/**
-	 * The base implementation of `_.times` without support for iteratee shorthands
-	 * or max array length checks.
-	 *
-	 * @private
-	 * @param {number} n The number of times to invoke `iteratee`.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the array of results.
-	 */
-	function baseTimes(n, iteratee) {
-	  var index = -1,
-	      result = Array(n);
-	
-	  while (++index < n) {
-	    result[index] = iteratee(index);
-	  }
-	  return result;
-	}
-	
-	/**
-	 * Creates a unary function that invokes `func` with its argument transformed.
-	 *
-	 * @private
-	 * @param {Function} func The function to wrap.
-	 * @param {Function} transform The argument transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overArg(func, transform) {
-	  return function(arg) {
-	    return func(transform(arg));
-	  };
-	}
-	
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-	
-	/** Built-in value references. */
-	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-	
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = overArg(Object.keys, Object);
-	
-	/**
-	 * Creates an array of the enumerable property names of the array-like `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @param {boolean} inherited Specify returning inherited property names.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function arrayLikeKeys(value, inherited) {
-	  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-	  // Safari 9 makes `arguments.length` enumerable in strict mode.
-	  var result = (isArray(value) || isArguments(value))
-	    ? baseTimes(value.length, String)
-	    : [];
-	
-	  var length = result.length,
-	      skipIndexes = !!length;
-	
-	  for (var key in value) {
-	    if ((inherited || hasOwnProperty.call(value, key)) &&
-	        !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-	
-	/**
-	 * The base implementation of `baseForOwn` which iterates over `object`
-	 * properties returned by `keysFunc` and invokes `iteratee` for each property.
-	 * Iteratee functions may exit iteration early by explicitly returning `false`.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @param {Function} keysFunc The function to get the keys of `object`.
-	 * @returns {Object} Returns `object`.
-	 */
-	var baseFor = createBaseFor();
-	
-	/**
-	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseForOwn(object, iteratee) {
-	  return object && baseFor(object, iteratee, keys);
-	}
-	
-	/**
-	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function baseKeys(object) {
-	  if (!isPrototype(object)) {
-	    return nativeKeys(object);
-	  }
-	  var result = [];
-	  for (var key in Object(object)) {
-	    if (hasOwnProperty.call(object, key) && key != 'constructor') {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-	
-	/**
-	 * Creates a base function for methods like `_.forIn` and `_.forOwn`.
-	 *
-	 * @private
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {Function} Returns the new base function.
-	 */
-	function createBaseFor(fromRight) {
-	  return function(object, iteratee, keysFunc) {
-	    var index = -1,
-	        iterable = Object(object),
-	        props = keysFunc(object),
-	        length = props.length;
-	
-	    while (length--) {
-	      var key = props[fromRight ? length : ++index];
-	      if (iteratee(iterable[key], key, iterable) === false) {
-	        break;
-	      }
-	    }
-	    return object;
-	  };
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return !!length &&
-	    (typeof value == 'number' || reIsUint.test(value)) &&
-	    (value > -1 && value % 1 == 0 && value < length);
-	}
-	
-	/**
-	 * Checks if `value` is likely a prototype object.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
-	 */
-	function isPrototype(value) {
-	  var Ctor = value && value.constructor,
-	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
-	
-	  return value === proto;
-	}
-	
-	/**
-	 * Checks if `value` is likely an `arguments` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-	 *  else `false`.
-	 * @example
-	 *
-	 * _.isArguments(function() { return arguments; }());
-	 * // => true
-	 *
-	 * _.isArguments([1, 2, 3]);
-	 * // => false
-	 */
-	function isArguments(value) {
-	  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
-	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
-	}
-	
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(document.body.children);
-	 * // => false
-	 *
-	 * _.isArray('abc');
-	 * // => false
-	 *
-	 * _.isArray(_.noop);
-	 * // => false
-	 */
-	var isArray = Array.isArray;
-	
-	/**
-	 * Checks if `value` is array-like. A value is considered array-like if it's
-	 * not a function and has a `value.length` that's an integer greater than or
-	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 * @example
-	 *
-	 * _.isArrayLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLike(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLike('abc');
-	 * // => true
-	 *
-	 * _.isArrayLike(_.noop);
-	 * // => false
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength(value.length) && !isFunction(value);
-	}
-	
-	/**
-	 * This method is like `_.isArrayLike` except that it also checks if `value`
-	 * is an object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array-like object,
-	 *  else `false`.
-	 * @example
-	 *
-	 * _.isArrayLikeObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject('abc');
-	 * // => false
-	 *
-	 * _.isArrayLikeObject(_.noop);
-	 * // => false
-	 */
-	function isArrayLikeObject(value) {
-	  return isObjectLike(value) && isArrayLike(value);
-	}
-	
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8-9 which returns 'object' for typed array and other constructors.
-	  var tag = isObject(value) ? objectToString.call(value) : '';
-	  return tag == funcTag || tag == genTag;
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This method is loosely based on
-	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 * @example
-	 *
-	 * _.isLength(3);
-	 * // => true
-	 *
-	 * _.isLength(Number.MIN_VALUE);
-	 * // => false
-	 *
-	 * _.isLength(Infinity);
-	 * // => false
-	 *
-	 * _.isLength('3');
-	 * // => false
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' &&
-	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-	
-	/**
-	 * Checks if `value` is the
-	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(_.noop);
-	 * // => true
-	 *
-	 * _.isObject(null);
-	 * // => false
-	 */
-	function isObject(value) {
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-	
-	/**
-	 * Iterates over own enumerable string keyed properties of an object and
-	 * invokes `iteratee` for each property. The iteratee is invoked with three
-	 * arguments: (value, key, object). Iteratee functions may exit iteration
-	 * early by explicitly returning `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.3.0
-	 * @category Object
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-	 * @returns {Object} Returns `object`.
-	 * @see _.forOwnRight
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.forOwn(new Foo, function(value, key) {
-	 *   console.log(key);
-	 * });
-	 * // => Logs 'a' then 'b' (iteration order is not guaranteed).
-	 */
-	function forOwn(object, iteratee) {
-	  return object && baseForOwn(object, typeof iteratee == 'function' ? iteratee : identity);
-	}
-	
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	function keys(object) {
-	  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-	}
-	
-	/**
-	 * This method returns the first argument it receives.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 *
-	 * console.log(_.identity(object) === object);
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-	
-	module.exports = forOwn;
-
-
-/***/ }),
-/* 399 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/*
-	* virtual-dom hook for setting the volume input programmatically.
-	*/
-	var _class = function () {
-	  function _class(gain) {
-	    _classCallCheck(this, _class);
-	
-	    this.gain = gain;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'hook',
-	    value: function hook(volumeInput) {
-	      volumeInput.setAttribute('value', this.gain * 100);
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 400 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	    function _class(pan, track) {
-	        _classCallCheck(this, _class);
-	
-	        this.pan = pan;
-	        this.track = track;
-	        this.id = Math.random() * 100 | 0;
-	        this.lineWidth = 5;
-	        this.gap = Math.PI * .14; //This is doubled
-	        this.gapPosition = Math.PI * .5;
-	        this.track.pan = this.pan;
-	    }
-	
-	    _createClass(_class, [{
-	        key: 'setupEvents',
-	        value: function setupEvents(canvas) {
-	            var _this = this;
-	
-	            //pan Change
-	            canvas.onclick = function (e) {
-	                console.log(_this.id);
-	                var offsetX = e.offsetX,
-	                    offsetY = e.offsetY;
-	
-	                var center = { x: canvas.width / 2, y: canvas.height / 2 };
-	                var TAU = Math.PI * 2;
-	
-	                var angle = Math.atan2(offsetY - center.y, offsetX - center.x);
-	
-	                var top = _this.gapPosition - 3 * Math.PI;
-	
-	                var dangle = (angle - top) % TAU;
-	
-	                var adjustedNegatives = dangle > Math.PI ? dangle - TAU : dangle;
-	
-	                var amount = adjustedNegatives / (Math.PI - _this.gap);
-	
-	                var realamount = amount > 1 ? 1 : amount < -1 ? -1 : amount; //clamping to -1 to 1
-	
-	                // console.log(adjustedNegatives*180/Math.PI);
-	                // console.log(realamount);
-	                _this.track.pan = realamount;
-	
-	                _this.track.ee.emit('panknob', _this.track);
-	            };
-	        }
-	    }, {
-	        key: 'draw',
-	        value: function draw(g, canvas) {
-	            var center = { x: canvas.width / 2, y: canvas.height / 2 };
-	            var TAU = Math.PI * 2;
-	
-	            //Background
-	
-	            g.lineWidth = this.lineWidth;
-	            g.strokeStyle = canvas.getAttribute('data-ringbgcolor') || '#EEE';
-	            g.clearRect(0, 0, canvas.width, canvas.height);
-	            g.beginPath();
-	            g.arc(center.x, center.y, center.x - this.lineWidth, this.gap + this.gapPosition, TAU - this.gap + this.gapPosition);
-	            g.stroke();
-	
-	            //Pan Amount
-	
-	            g.strokeStyle = canvas.getAttribute('data-ringcolor') || 'black';
-	
-	            g.beginPath();
-	            g.arc(center.x, center.y, center.x - this.lineWidth, this.gapPosition + Math.PI, this.pan * (Math.PI - this.gap) + this.gapPosition + Math.PI, this.pan < 0);
-	            g.stroke();
-	
-	            // console.log('drawing pan',g.strokeStyle,center);
-	        }
-	    }, {
-	        key: 'hook',
-	        value: function hook(canvas, _, prev) {
-	            if (prev && prev.pan == this.pan) return;
-	
-	            this.setupEvents(canvas);
-	            var g = canvas.getContext('2d');
-	            this.draw(g, canvas);
-	        }
-	    }]);
-
-	    return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 401 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	    function _class(quantizeValue, bpm, color, resolution, sampleRate) {
-	        _classCallCheck(this, _class);
-	
-	        this.quantizeValue = quantizeValue;
-	        this.bpm = bpm;
-	        this.color = color;
-	        this.resolution = resolution;
-	        this.sampleRate = sampleRate;
-	    }
-	
-	    _createClass(_class, [{
-	        key: 'draw',
-	        value: function draw(g, canvas) {
-	            var step = (0, _conversions.secondsToPixels)(60 / this.bpm * this.quantizeValue, this.resolution, this.sampleRate);
-	            g.clearRect(0, 0, canvas.width, canvas.height);
-	            g.strokeStyle = this.color;
-	            g.beginPath();
-	            for (var a = 0; a < canvas.width; a += step) {
-	                g.moveTo(a, 0);
-	                g.lineTo(a, canvas.height);
-	            }
-	            g.stroke();
-	        }
-	    }, {
-	        key: 'hook',
-	        value: function hook(canvas, _, prev) {
-	            var g = canvas.getContext('2d');
-	            this.width = canvas.width;
-	            this.height = canvas.height;
-	            if (!prev) {
-	                this.draw(g, canvas);
-	                return;
-	            } else for (var prop in this) {
-	                if (this[prop] != prev[prop]) {
-	                    this.draw(g, canvas);
-	                    return;
-	                }
-	            }
-	        }
-	    }]);
-
-	    return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 402 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _lodash = __webpack_require__(333);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _lodash3 = __webpack_require__(398);
-	
-	var _lodash4 = _interopRequireDefault(_lodash3);
-	
-	var _uuid = __webpack_require__(403);
-	
-	var _uuid2 = _interopRequireDefault(_uuid);
-	
-	var _h = __webpack_require__(366);
-	
-	var _h2 = _interopRequireDefault(_h);
-	
-	var _webaudioPeaks = __webpack_require__(405);
-	
-	var _webaudioPeaks2 = _interopRequireDefault(_webaudioPeaks);
-	
-	var _fadeMaker = __webpack_require__(406);
-	
-	var _conversions = __webpack_require__(389);
-	
-	var _states = __webpack_require__(408);
-	
-	var _states2 = _interopRequireDefault(_states);
-	
-	var _CanvasHook = __webpack_require__(415);
-	
-	var _CanvasHook2 = _interopRequireDefault(_CanvasHook);
-	
-	var _FadeCanvasHook = __webpack_require__(416);
-	
-	var _FadeCanvasHook2 = _interopRequireDefault(_FadeCanvasHook);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var MAX_CANVAS_WIDTH = 1000;
-	
-	var _class = function () {
-	  function _class(buffer) {
-	    _classCallCheck(this, _class);
-	
-	    this.name = 'Untitled'; // Track
-	    this.customClass = undefined; //Track
-	    this.waveOutlineColor = undefined; //Track
-	    this.gain = 1; //Track
-	    this.pan = 0; // Track
-	
-	    this.ee = undefined;
-	
-	    this.buffer = buffer;
-	
-	    this.track = undefined;
-	
-	    this.peakData = {
-	      type: 'WebAudio',
-	      mono: false
-	    }; // Clip
-	    this.fades = {}; // Clip
-	    this.cueIn = 0; // Clip
-	    this.cueOut = 0; //Clip
-	    this.startTime = 0; // Clip
-	    this.images = []; // Clip
-	
-	    this.showMenu = false;
-	
-	    console.log(this);
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setTrack',
-	    value: function setTrack(track) {
-	      this.track = track;
-	    }
-	  }, {
-	    key: 'setEventEmitter',
-	    value: function setEventEmitter(ee) {
-	      this.ee = ee;
-	    }
-	  }, {
-	    key: 'setName',
-	    value: function setName(name) {
-	      this.name = name;
-	    }
-	  }, {
-	    key: 'setCustomClass',
-	    value: function setCustomClass(className) {
-	      this.customClass = className;
-	    }
-	  }, {
-	    key: 'setWaveOutlineColor',
-	    value: function setWaveOutlineColor(color) {
-	      this.waveOutlineColor = color;
-	    }
-	  }, {
-	    key: 'setCues',
-	    value: function setCues(cueIn, cueOut) {
-	      if (cueOut < cueIn) {
-	        throw new Error('cue out cannot be less than cue in');
-	      }
-	
-	      this.cueIn = cueIn;
-	      this.cueOut = cueOut;
-	    }
-	
-	    /*
-	    *   start, end in seconds relative to the entire playlist.
-	    */
-	
-	  }, {
-	    key: 'trim',
-	    value: function trim(start, end) {
-	      var trackStart = this.getStartTime();
-	      var trackEnd = this.endTime;
-	      var offset = this.cueIn - trackStart;
-	
-	      if (trackStart <= start && trackEnd >= start || trackStart <= end && trackEnd >= end) {
-	        var cueIn = start < trackStart ? trackStart : start;
-	        var cueOut = end > trackEnd ? trackEnd : end;
-	
-	        this.setCues(cueIn + offset, cueOut + offset);
-	        if (start > trackStart) {
-	          this.setStartTime(start);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'setStartTime',
-	    value: function setStartTime(start) {
-	      this.startTime = start;
-	    }
-	  }, {
-	    key: 'setPlayout',
-	    value: function setPlayout(playout) {
-	      this.playout = playout;
-	    }
-	  }, {
-	    key: 'setOfflinePlayout',
-	    value: function setOfflinePlayout(playout) {
-	      this.offlinePlayout = playout;
-	    }
-	  }, {
-	    key: 'setEnabledStates',
-	    value: function setEnabledStates() {
-	      var enabledStates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	
-	      var defaultStatesEnabled = {
-	        cursor: true,
-	        fadein: true,
-	        fadeout: true,
-	        select: true,
-	        shift: true,
-	        interactive: true
-	      };
-	
-	      this.enabledStates = (0, _lodash2.default)({}, defaultStatesEnabled, enabledStates);
-	    }
-	  }, {
-	    key: 'setFadeIn',
-	    value: function setFadeIn(duration) {
-	      var shape = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logarithmic';
-	
-	      if (duration > this.duration) {
-	        throw new Error('Invalid Fade In');
-	      }
-	      // console.log("fade in:",duration);
-	
-	      var fade = {
-	        shape: shape,
-	        start: 0,
-	        end: duration
-	      };
-	
-	      if (this.fadeIn) {
-	        this.removeFade(this.fadeIn);
-	        this.fadeIn = undefined;
-	      }
-	
-	      this.fadeIn = this.saveFade(_fadeMaker.FADEIN, fade.shape, fade.start, fade.end);
-	    }
-	  }, {
-	    key: 'setFadeOut',
-	    value: function setFadeOut(duration) {
-	      var shape = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'logarithmic';
-	
-	      if (duration > this.duration) {
-	        throw new Error('Invalid Fade Out');
-	      }
-	
-	      var fade = {
-	        shape: shape,
-	        start: this.duration - duration,
-	        end: this.duration
-	      };
-	
-	      if (this.fadeOut) {
-	        this.removeFade(this.fadeOut);
-	        this.fadeOut = undefined;
-	      }
-	
-	      this.fadeOut = this.saveFade(_fadeMaker.FADEOUT, fade.shape, fade.start, fade.end);
-	    }
-	  }, {
-	    key: 'saveFade',
-	    value: function saveFade(type, shape, start, end) {
-	      var id = _uuid2.default.v4();
-	
-	      this.fades[id] = {
-	        type: type,
-	        shape: shape,
-	        start: start,
-	        end: end
-	      };
-	
-	      return id;
-	    }
-	  }, {
-	    key: 'removeFade',
-	    value: function removeFade(id) {
-	      delete this.fades[id];
-	    }
-	  }, {
-	    key: 'setBuffer',
-	    value: function setBuffer(buffer) {
-	      this.buffer = buffer;
-	    }
-	  }, {
-	    key: 'setPeakData',
-	    value: function setPeakData(data) {
-	      this.peakData = data;
-	    }
-	  }, {
-	    key: 'calculatePeaks',
-	    value: function calculatePeaks(samplesPerPixel, sampleRate) {
-	      var cueIn = (0, _conversions.secondsToSamples)(this.cueIn, sampleRate);
-	      var cueOut = (0, _conversions.secondsToSamples)(this.cueOut, sampleRate);
-	      if (samplesPerPixel != this.samplesPerPixel || sampleRate != this.sampleRate) {
-	        this.images = [];
-	
-	        this.sampleRate = sampleRate;
-	        this.samplesPerPixel = samplesPerPixel;
-	      }
-	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono));
-	      console.log(this.peaks);
-	    }
-	  }, {
-	    key: 'setPeaks',
-	    value: function setPeaks(peaks) {
-	      this.peaks = peaks;
-	    }
-	  }, {
-	    key: 'setState',
-	    value: function setState(state) {
-	      this.state = state;
-	    }
-	  }, {
-	    key: 'getStartTime',
-	    value: function getStartTime() {
-	      return this.startTime;
-	    }
-	  }, {
-	    key: 'isPlaying',
-	    value: function isPlaying() {
-	      return this.playout.isPlaying();
-	    }
-	  }, {
-	    key: 'setShouldPlay',
-	    value: function setShouldPlay(bool) {
-	      this.playout.setShouldPlay(bool);
-	    }
-	  }, {
-	    key: 'setGainLevel',
-	    value: function setGainLevel(level) {
-	      this.gain = level;
-	      this.playout.setVolumeGainLevel(level);
-	    }
-	  }, {
-	    key: 'setMasterGainLevel',
-	    value: function setMasterGainLevel(level) {
-	      this.playout.setMasterGainLevel(level);
-	    }
-	  }, {
-	    key: 'setPan',
-	    value: function setPan(value) {
-	      if (value) {
-	        this.playout.setPan(value);
-	      } else {
-	        this.playout.setPan(this.pan);
-	      }
-	    }
-	
-	    /*
-	      startTime, endTime in seconds (float).
-	      segment is for a highlighted section in the UI.
-	       returns a Promise that will resolve when the AudioBufferSource
-	      is either stopped or plays out naturally.
-	    */
-	
-	  }, {
-	    key: 'schedulePlay',
-	    value: function schedulePlay(now, startTime, endTime, config) {
-	      var start = void 0;
-	      var duration = void 0;
-	      var when = now;
-	      var segment = endTime ? endTime - startTime : undefined;
-	
-	      var defaultOptions = {
-	        shouldPlay: true,
-	        masterGain: 1,
-	        isOffline: false
-	      };
-	
-	      var options = (0, _lodash2.default)({}, defaultOptions, config);
-	      var playoutSystem = options.isOffline ? this.offlinePlayout : this.playout;
-	
-	      // 1) track has no content to play.
-	      // 2) track does not play in this selection.
-	      if (this.endTime <= startTime || segment && startTime + segment < this.startTime) {
-	        // return a resolved promise since this track is technically "stopped".
-	        return Promise.resolve();
-	      }
-	
-	      // track should have something to play if it gets here.
-	
-	      // the track starts in the future or on the cursor position
-	      if (this.startTime >= startTime) {
-	        start = 0;
-	        // schedule additional delay for this audio node.
-	        when += this.startTime - startTime;
-	
-	        if (endTime) {
-	          segment -= this.startTime - startTime;
-	          duration = Math.min(segment, this.duration);
-	        } else {
-	          duration = this.duration;
-	        }
-	      } else {
-	        start = startTime - this.startTime;
-	
-	        if (endTime) {
-	          duration = Math.min(segment, this.duration - start);
-	        } else {
-	          duration = this.duration - start;
-	        }
-	      }
-	
-	      start += this.cueIn;
-	      var relPos = startTime - this.startTime;
-	      var sourcePromise = playoutSystem.setUpSource();
-	
-	      // param relPos: cursor position in seconds relative to this track.
-	      // can be negative if the cursor is placed before the start of this track etc.
-	      (0, _lodash4.default)(this.fades, function (fade) {
-	        var fadeStart = void 0;
-	        var fadeDuration = void 0;
-	
-	        // only apply fade if it's ahead of the cursor.
-	        if (relPos < fade.end) {
-	          if (relPos <= fade.start) {
-	            fadeStart = now + (fade.start - relPos);
-	            fadeDuration = fade.end - fade.start;
-	          } else if (relPos > fade.start && relPos < fade.end) {
-	            fadeStart = now - (relPos - fade.start);
-	            fadeDuration = fade.end - fade.start;
-	          }
-	
-	          switch (fade.type) {
-	            case _fadeMaker.FADEIN:
-	              {
-	                playoutSystem.applyFadeIn(fadeStart, fadeDuration, fade.shape);
-	                break;
-	              }
-	            case _fadeMaker.FADEOUT:
-	              {
-	                playoutSystem.applyFadeOut(fadeStart, fadeDuration, fade.shape);
-	                break;
-	              }
-	            default:
-	              {
-	                throw new Error('Invalid fade type saved on track.');
-	              }
-	          }
-	        }
-	      });
-	
-	      playoutSystem.setVolumeGainLevel(this.gain);
-	      playoutSystem.setShouldPlay(options.shouldPlay);
-	      playoutSystem.setMasterGainLevel(options.masterGain);
-	      playoutSystem.setPan(this.pan);
-	      console.log(when, start, duration);
-	      playoutSystem.play(when, start, duration);
-	
-	      return sourcePromise;
-	    }
-	  }, {
-	    key: 'scheduleStop',
-	    value: function scheduleStop() {
-	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-	
-	      this.playout.stop(when);
-	    }
-	  }, {
-	    key: 'renderOverlay',
-	    value: function renderOverlay(data) {
-	      var _this = this;
-	
-	      var channelPixels = (0, _conversions.secondsToPixels)(this.duration, data.resolution, data.sampleRate);
-	      var config = {
-	        attributes: {
-	          style: 'position: absolute; top: 0; right: 0; bottom: 0; left: -15px; width: ' + (channelPixels + 30) + 'px; z-index: 8;'
-	        }
-	      };
-	
-	      var overlayClass = '';
-	
-	      if (this.stateObj) {
-	        this.stateObj.setup(data.resolution, data.sampleRate);
-	        var StateClass = _states2.default[this.state];
-	        var events = StateClass.getEvents();
-	
-	        events.forEach(function (event) {
-	          config['on' + event] = _this.stateObj[event].bind(_this.stateObj);
-	        });
-	
-	        overlayClass = StateClass.getClass();
-	      }
-	      // use this overlay for track event cursor position calculations.
-	      return (0, _h2.default)('div.playlist-overlay' + overlayClass, config);
-	    }
-	  }, {
-	    key: 'renderFadeOut',
-	    value: function renderFadeOut(data) {
-	      var _this2 = this;
-	
-	      var fadeOut = this.fades[this.fadeOut];
-	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeOut.end - fadeOut.start, data.resolution, data.sampleRate);
-	      return (0, _h2.default)('div.wp-fade.wp-fadeout', {
-	        onmousedown: function onmousedown(e) {
-	          _this2.clickhandle = true;
-	        },
-	        onmosemove: function onmosemove(e) {
-	          _this2.clickhandle = false;
-	        },
-	        onmouseup: function onmouseup(e) {
-	          console.log(fadeOut.end - fadeOut.start);
-	          if (_this2.clickhandle && fadeOut.end - fadeOut.start < 0.2) {
-	            _this2.setFadeOut(2);
-	            _this2.ee.emit("interactive", _this2);
-	          }
-	        },
-	        attributes: {
-	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; right: 0; z-index: 10;pointer-events:none;'
-	        }
-	      }, [(0, _h2.default)('div.fadeout.fadehandle', {
-	        attributes: {
-	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    right: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 10px;\n                    pointer-events:initial;\n                    '
-	        }
-	      }), (0, _h2.default)('canvas', {
-	        attributes: {
-	          width: fadeWidth,
-	          height: data.height,
-	          style: 'pointer-events: none;'
-	
-	        },
-	        hook: new _FadeCanvasHook2.default(fadeOut.type, fadeOut.shape, fadeOut.end - fadeOut.start, data.resolution)
-	      })]);
-	    }
-	  }, {
-	    key: 'renderFadeIn',
-	    value: function renderFadeIn(data) {
-	      var _this3 = this;
-	
-	      var fadeIn = this.fades[this.fadeIn];
-	      var fadeWidth = (0, _conversions.secondsToPixels)(fadeIn.end - fadeIn.start, data.resolution, data.sampleRate);
-	
-	      return (0, _h2.default)('div.wp-fade.wp-fadein', {
-	        attributes: {
-	          style: 'position: absolute; height: ' + data.height + 'px; width: ' + fadeWidth + 'px; top: 0; left: 0; z-index: 10;pointer-events:none;'
-	        }
-	      }, [(0, _h2.default)('div.fadein.fadehandle', {
-	        onmousedown: function onmousedown(e) {
-	          _this3.clickhandle = true;
-	        },
-	        onmosemove: function onmosemove(e) {
-	          _this3.clickhandle = false;
-	        },
-	        onmouseup: function onmouseup(e) {
-	          console.log(fadeIn.end - fadeIn.start);
-	          if (_this3.clickhandle && fadeIn.end - fadeIn.start < 0.2) {
-	            _this3.setFadeIn(2);
-	            _this3.ee.emit("interactive", _this3);
-	          }
-	        },
-	        attributes: {
-	          style: 'position: absolute; \n                    height: 15px; \n                    width: 15px; \n                    z-index: 10; \n                    top:10px; \n                    left: ' + (Math.max(fadeWidth, 15) - 5) + 'px; \n                    background-color: black;\n                    border-radius: 15px;\n                    pointer-events:initial;\n                    '
-	        }
-	      }), (0, _h2.default)('canvas', {
-	        attributes: {
-	          width: fadeWidth,
-	          height: data.height,
-	          style: 'pointer-events: none;\n                ' + (fadeWidth < 0.2 ? 'display:none;' : '') + '\n                '
-	
-	        },
-	        hook: new _FadeCanvasHook2.default(fadeIn.type, fadeIn.shape, fadeIn.end - fadeIn.start, data.resolution)
-	      })]);
-	    }
-	  }, {
-	    key: 'renderWaveform',
-	    value: function renderWaveform(data) {
-	      var convert = function convert(w) {
-	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
-	      };
-	
-	      var sampleWidth = this.peaks.length;
-	      var peaks = this.peaks.data[0];
-	
-	      var waveformChildren = [];
-	      var canvasColor = this.waveOutlineColor ? this.waveOutlineColor : data.colors.waveOutlineColor;
-	
-	      var canvashook = new _CanvasHook2.default(peaks, 0, this.peaks.bits, canvasColor, this.cueIn, data.resolution, data.sampleRate, this.images[0]);
-	      if (!this.images[0]) {
-	        this.images[0] = canvashook.setupImage(sampleWidth, data.height);
-	      }
-	      waveformChildren.push((0, _h2.default)('canvas', {
-	        attributes: {
-	          width: convert(this.duration),
-	          height: data.height,
-	          style: '\n          float: left;\n          position: relative;\n          margin: 0;\n          padding: 0;\n          z-index: 3;\n          pointer-events: none;\n        '
-	        },
-	        hook: canvashook
-	      }));
-	
-	      return (0, _h2.default)('div.clipwaveform', {
-	        attributes: {
-	          style: 'background: gray;height: ' + data.height + 'px;pointer-events: none;'
-	
-	        }
-	      }, waveformChildren);
-	    }
-	  }, {
-	    key: 'renderHandle',
-	    value: function renderHandle() {
-	      return (0, _h2.default)('div.handle', {
-	        attributes: {
-	          style: '\n          width:5px;\n          height:100%;\n          margin-left:2px;\n          display:inline-block;\n          background-color:black;\n          border-radius:15px;\n          pointer-events:none;\n        '
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'renderLeftShiftHandles',
-	    value: function renderLeftShiftHandles(data) {
-	      var handles = [this.renderHandle(), this.renderHandle()];
-	      return (0, _h2.default)('div.handleContainer.left', {
-	        attributes: {
-	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          left:9.8px;\n        '
-	        }
-	      }, handles);
-	    }
-	  }, {
-	    key: 'renderRightShiftHandles',
-	    value: function renderRightShiftHandles(data) {
-	      var handles = [this.renderHandle(), this.renderHandle()];
-	      // const endPixel = secondsToPixels(this.endTime,data.resolution,data.sampleRate);
-	      return (0, _h2.default)('div.handleContainer.right', {
-	        attributes: {
-	          style: '\n          z-index: 3;\n          height:' + ((data.height * .5 | 0) - 4) + 'px;\n          position:absolute;\n          top:' + (data.height * .25 | 0 + 2) + 'px;\n          right:12px;\n        '
-	        }
-	      }, handles);
-	    }
-	  }, {
-	    key: 'renderMenuButton',
-	    value: function renderMenuButton(data) {
-	      var _this4 = this;
-	
-	      return (0, _h2.default)('div.menuButton', {
-	        onclick: function onclick(e) {
-	          console.log('showMenu', _this4.showMenu);
-	          _this4.showMenu = !_this4.showMenu;
-	          _this4.ee.emit('interactive');
-	        },
-	        attributes: {
-	          style: '\n          z-index:3;\n          text-align:center;\n          font-size:1em;\n          line-height:7px;\n          color:white;\n          background-color:black;\n          position:absolute;\n          bottom:10px;\n          left: 10px;\n          width:15px;\n          height:15px;\n          border-radius:15px;\n          user-select: none;\n          cursor:pointer;\n        '
-	        }
-	      }, '..');
-	    }
-	  }, {
-	    key: 'renderMenu',
-	    value: function renderMenu(data) {
-	      var _this5 = this;
-	
-	      var buttonStyle = '\n          height:20px;\n          cursor:pointer;\n          user-select:none;\n    ';
-	
-	      return (0, _h2.default)('div.menuContainer', {
-	        attributes: {
-	          style: '\n        position:absolute;\n        z-index:4;\n        width:70px;\n        background-color: darkgray;\n\n        '
-	        }
-	      }, [(0, _h2.default)('div.buttonSplit', {
-	        onclick: function onclick(e) {
-	          _this5.ee.emit('splitStart', _this5);
-	          _this5.showMenu = false;
-	          _this5.ee.emit('interactive');
-	        },
-	        attributes: {
-	          style: buttonStyle
-	        }
-	      }, "Split"), (0, _h2.default)('div.buttonDuplicate', {
-	        onclick: function onclick(e) {
-	          _this5.ee.emit('duplicate', _this5);
-	          _this5.showMenu = false;
-	          _this5.ee.emit('interactive');
-	        },
-	        attributes: {
-	          style: buttonStyle
-	        }
-	      }, "Duplicate"), (0, _h2.default)('div.buttonDelete', {
-	        onclick: function onclick(e) {
-	          _this5.ee.emit('delete', _this5);
-	          _this5.showMenu = false;
-	          _this5.ee.emit('interactive');
-	        },
-	        attributes: {
-	          style: buttonStyle
-	        }
-	      }, "Delete")]);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render(data) {
-	      var _this6 = this;
-	
-	      var convert = function convert(w) {
-	        return (0, _conversions.secondsToPixels)(w, data.resolution, data.sampleRate);
-	      };
-	
-	      var clipChildren = [];
-	
-	      clipChildren.push(this.renderWaveform(data));
-	
-	      if (this.fadeIn) clipChildren.push(this.renderFadeIn(data));
-	
-	      if (this.fadeOut) clipChildren.push(this.renderFadeOut(data));
-	
-	      clipChildren.push(this.renderLeftShiftHandles(data));
-	      clipChildren.push(this.renderRightShiftHandles(data));
-	
-	      clipChildren.push(this.renderMenuButton(data));
-	
-	      if (this.showMenu) clipChildren.push(this.renderMenu(data));
-	
-	      // clipChildren.push(this.renderOverlay(data));
-	
-	      return (0, _h2.default)('div.clip', {
-	        onmouseleave: function onmouseleave() {
-	          return _this6.ee.emit("activeclip", { name: '_none', startTime: 0 });
-	        },
-	        onmouseover: function onmouseover() {
-	          return _this6.ee.emit("activeclip", _this6);
-	        },
-	        attributes: {
-	          style: '\n            left:' + convert(this.startTime) + 'px;\n            height: ' + data.height + 'px; \n            position: absolute;\n            z-index:' + (this.showMenu ? 2 : 1) + ';\n            overflow:visible;\n          '
-	        }
-	      }, clipChildren);
-	    }
-	  }, {
-	    key: 'getTrackDetails',
-	    value: function getTrackDetails() {
-	      var info = {
-	        src: this.src,
-	        start: this.startTime,
-	        end: this.endTime,
-	        name: this.name,
-	        track: this.track,
-	
-	        customClass: this.customClass,
-	        cuein: this.cueIn,
-	        cueout: this.cueOut
-	      };
-	
-	      if (this.fadeIn) {
-	        var fadeIn = this.fades[this.fadeIn];
-	
-	        info.fadeIn = {
-	          shape: fadeIn.shape,
-	          duration: fadeIn.end - fadeIn.start
-	        };
-	      }
-	
-	      if (this.fadeOut) {
-	        var fadeOut = this.fades[this.fadeOut];
-	
-	        info.fadeOut = {
-	          shape: fadeOut.shape,
-	          duration: fadeOut.end - fadeOut.start
-	        };
-	      }
-	
-	      return info;
-	    }
-	  }, {
-	    key: 'duration',
-	    get: function get() {
-	      return this.cueOut - this.cueIn;
-	    }
-	  }, {
-	    key: 'endTime',
-	    get: function get() {
-	      return this.startTime + this.duration;
-	    },
-	    set: function set(time) {
-	      var duration = time - this.startTime;
-	      this.cueOut = this.cueIn + duration;
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 403 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	//     uuid.js
-	//
-	//     Copyright (c) 2010-2012 Robert Kieffer
-	//     MIT License - http://opensource.org/licenses/mit-license.php
-	
-	// Unique ID creation requires a high quality random # generator.  We feature
-	// detect to determine the best RNG source, normalizing to a function that
-	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(404);
-	
-	// Maps for number <-> hex string conversion
-	var _byteToHex = [];
-	var _hexToByte = {};
-	for (var i = 0; i < 256; i++) {
-	  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
-	  _hexToByte[_byteToHex[i]] = i;
-	}
-	
-	// **`parse()` - Parse a UUID into it's component bytes**
-	function parse(s, buf, offset) {
-	  var i = (buf && offset) || 0, ii = 0;
-	
-	  buf = buf || [];
-	  s.toLowerCase().replace(/[0-9a-f]{2}/g, function(oct) {
-	    if (ii < 16) { // Don't overflow!
-	      buf[i + ii++] = _hexToByte[oct];
-	    }
-	  });
-	
-	  // Zero out remaining bytes if string was short
-	  while (ii < 16) {
-	    buf[i + ii++] = 0;
-	  }
-	
-	  return buf;
-	}
-	
-	// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
-	function unparse(buf, offset) {
-	  var i = offset || 0, bth = _byteToHex;
-	  return  bth[buf[i++]] + bth[buf[i++]] +
-	          bth[buf[i++]] + bth[buf[i++]] + '-' +
-	          bth[buf[i++]] + bth[buf[i++]] + '-' +
-	          bth[buf[i++]] + bth[buf[i++]] + '-' +
-	          bth[buf[i++]] + bth[buf[i++]] + '-' +
-	          bth[buf[i++]] + bth[buf[i++]] +
-	          bth[buf[i++]] + bth[buf[i++]] +
-	          bth[buf[i++]] + bth[buf[i++]];
-	}
-	
-	// **`v1()` - Generate time-based UUID**
-	//
-	// Inspired by https://github.com/LiosK/UUID.js
-	// and http://docs.python.org/library/uuid.html
-	
-	// random #'s we need to init node and clockseq
-	var _seedBytes = _rng();
-	
-	// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-	var _nodeId = [
-	  _seedBytes[0] | 0x01,
-	  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
-	];
-	
-	// Per 4.2.2, randomize (14 bit) clockseq
-	var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
-	
-	// Previous uuid creation time
-	var _lastMSecs = 0, _lastNSecs = 0;
-	
-	// See https://github.com/broofa/node-uuid for API details
-	function v1(options, buf, offset) {
-	  var i = buf && offset || 0;
-	  var b = buf || [];
-	
-	  options = options || {};
-	
-	  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-	
-	  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-	  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-	  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-	  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-	  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-	
-	  // Per 4.2.1.2, use count of uuid's generated during the current clock
-	  // cycle to simulate higher resolution clock
-	  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-	
-	  // Time since last uuid creation (in msecs)
-	  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-	
-	  // Per 4.2.1.2, Bump clockseq on clock regression
-	  if (dt < 0 && options.clockseq === undefined) {
-	    clockseq = clockseq + 1 & 0x3fff;
-	  }
-	
-	  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-	  // time interval
-	  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-	    nsecs = 0;
-	  }
-	
-	  // Per 4.2.1.2 Throw error if too many uuids are requested
-	  if (nsecs >= 10000) {
-	    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-	  }
-	
-	  _lastMSecs = msecs;
-	  _lastNSecs = nsecs;
-	  _clockseq = clockseq;
-	
-	  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-	  msecs += 12219292800000;
-	
-	  // `time_low`
-	  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-	  b[i++] = tl >>> 24 & 0xff;
-	  b[i++] = tl >>> 16 & 0xff;
-	  b[i++] = tl >>> 8 & 0xff;
-	  b[i++] = tl & 0xff;
-	
-	  // `time_mid`
-	  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-	  b[i++] = tmh >>> 8 & 0xff;
-	  b[i++] = tmh & 0xff;
-	
-	  // `time_high_and_version`
-	  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-	  b[i++] = tmh >>> 16 & 0xff;
-	
-	  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-	  b[i++] = clockseq >>> 8 | 0x80;
-	
-	  // `clock_seq_low`
-	  b[i++] = clockseq & 0xff;
-	
-	  // `node`
-	  var node = options.node || _nodeId;
-	  for (var n = 0; n < 6; n++) {
-	    b[i + n] = node[n];
-	  }
-	
-	  return buf ? buf : unparse(b);
-	}
-	
-	// **`v4()` - Generate random UUID**
-	
-	// See https://github.com/broofa/node-uuid for API details
-	function v4(options, buf, offset) {
-	  // Deprecated - 'format' argument, as supported in v1.2
-	  var i = buf && offset || 0;
-	
-	  if (typeof(options) == 'string') {
-	    buf = options == 'binary' ? new Array(16) : null;
-	    options = null;
-	  }
-	  options = options || {};
-	
-	  var rnds = options.random || (options.rng || _rng)();
-	
-	  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-	  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-	  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-	
-	  // Copy bytes to buffer, if provided
-	  if (buf) {
-	    for (var ii = 0; ii < 16; ii++) {
-	      buf[i + ii] = rnds[ii];
-	    }
-	  }
-	
-	  return buf || unparse(rnds);
-	}
-	
-	// Export public API
-	var uuid = v4;
-	uuid.v1 = v1;
-	uuid.v4 = v4;
-	uuid.parse = parse;
-	uuid.unparse = unparse;
-	
-	module.exports = uuid;
-
-
-/***/ }),
-/* 404 */
-/***/ (function(module, exports) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {
-	var rng;
-	
-	var crypto = global.crypto || global.msCrypto; // for IE 11
-	if (crypto && crypto.getRandomValues) {
-	  // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
-	  // Moderately fast, high quality
-	  var _rnds8 = new Uint8Array(16);
-	  rng = function whatwgRNG() {
-	    crypto.getRandomValues(_rnds8);
-	    return _rnds8;
-	  };
-	}
-	
-	if (!rng) {
-	  // Math.random()-based (RNG)
-	  //
-	  // If all else fails, use Math.random().  It's fast, but is of unspecified
-	  // quality.
-	  var  _rnds = new Array(16);
-	  rng = function() {
-	    for (var i = 0, r; i < 16; i++) {
-	      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-	      _rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-	    }
-	
-	    return _rnds;
-	  };
-	}
-	
-	module.exports = rng;
-	
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ }),
-/* 405 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	//http://jsperf.com/typed-array-min-max/2
-	//plain for loop for finding min/max is way faster than anything else.
-	/**
-	* @param {TypedArray} array - Subarray of audio to calculate peaks from.
-	*/
-	function findMinMax(array) {
-	    var min = Infinity;
-	    var max = -Infinity;
-	    var i = 0;
-	    var len = array.length;
-	    var curr;
-	
-	    for(; i < len; i++) {
-	        curr = array[i];
-	        if (min > curr) {
-	            min = curr;
-	        }
-	        if (max < curr) {
-	            max = curr;
-	        }
-	    }
-	
-	    return {
-	        min: min,
-	        max: max
-	    };
-	}
-	
-	/**
-	* @param {Number} n - peak to convert from float to Int8, Int16 etc.
-	* @param {Number} bits - convert to #bits two's complement signed integer
-	*/
-	function convert(n, bits) {
-	    var max = Math.pow(2, bits-1);
-	    var v = n < 0 ? n * max : n * max - 1;
-	    return Math.max(-max, Math.min(max-1, v));
-	}
-	
-	/**
-	* @param {TypedArray} channel - Audio track frames to calculate peaks from.
-	* @param {Number} samplesPerPixel - Audio frames per peak
-	*/
-	function extractPeaks(channel, samplesPerPixel, bits) {
-	    var i;
-	    var chanLength = channel.length;
-	    var numPeaks = Math.ceil(chanLength / samplesPerPixel);
-	    var start;
-	    var end;
-	    var segment;
-	    var max; 
-	    var min;
-	    var extrema;
-	
-	    //create interleaved array of min,max
-	    var peaks = new (eval("Int"+bits+"Array"))(numPeaks*2);
-	
-	    for (i = 0; i < numPeaks; i++) {
-	
-	        start = i * samplesPerPixel;
-	        end = (i + 1) * samplesPerPixel > chanLength ? chanLength : (i + 1) * samplesPerPixel;
-	
-	        segment = channel.subarray(start, end);
-	        extrema = findMinMax(segment);
-	        min = convert(extrema.min, bits);
-	        max = convert(extrema.max, bits);
-	
-	        peaks[i*2] = min;
-	        peaks[i*2+1] = max;
-	    }
-	
-	    return peaks;
-	}
-	
-	function makeMono(channelPeaks, bits) {
-	    var numChan = channelPeaks.length;
-	    var weight = 1 / numChan;
-	    var numPeaks = channelPeaks[0].length / 2;
-	    var c = 0;
-	    var i = 0;
-	    var min;
-	    var max;
-	    var peaks = new (eval("Int"+bits+"Array"))(numPeaks*2);
-	
-	    for (i = 0; i < numPeaks; i++) {
-	        min = 0;
-	        max = 0;
-	
-	        for (c = 0; c < numChan; c++) {
-	            min += weight * channelPeaks[c][i*2];
-	            max += weight * channelPeaks[c][i*2+1];
-	        }
-	
-	        peaks[i*2] = min;
-	        peaks[i*2+1] = max;
-	    }
-	
-	    //return in array so channel number counts still work.
-	    return [peaks];
-	}
-	
-	/**
-	* @param {AudioBuffer,TypedArray} source - Source of audio samples for peak calculations.
-	* @param {Number} samplesPerPixel - Number of audio samples per peak.
-	* @param {Number} cueIn - index in channel to start peak calculations from.
-	* @param {Number} cueOut - index in channel to end peak calculations from (non-inclusive).
-	*/
-	module.exports = function(source, samplesPerPixel, isMono, cueIn, cueOut, bits) {
-	    samplesPerPixel = samplesPerPixel || 10000;
-	    bits = bits || 8;
-	    
-	    if (isMono === null || isMono === undefined) {
-	        isMono = true;
-	    }
-	
-	    if ([8, 16, 32].indexOf(bits) < 0) {
-	        throw new Error("Invalid number of bits specified for peaks.");
-	    }
-	
-	    var numChan = source.numberOfChannels;
-	    var peaks = [];
-	    var c;
-	    var numPeaks;
-	    var channel;
-	    var slice;
-	
-	    if (typeof source.subarray === "undefined") {
-	        for (c = 0; c < numChan; c++) {
-	            channel = source.getChannelData(c);
-	            cueIn = cueIn || 0;
-	            cueOut = cueOut || channel.length;
-	            slice = channel.subarray(cueIn, cueOut);
-	            peaks.push(extractPeaks(slice, samplesPerPixel, bits));
-	        }
-	    }
-	    else {
-	        cueIn = cueIn || 0;
-	        cueOut = cueOut || source.length;
-	        peaks.push(extractPeaks(source.subarray(cueIn, cueOut), samplesPerPixel, bits));
-	    }
-	
-	    if (isMono && peaks.length > 1) {
-	        peaks = makeMono(peaks, bits);
-	    }
-	
-	    numPeaks = peaks[0].length / 2;
-	
-	    return {
-	        length: numPeaks,
-	        data: peaks,
-	        bits: bits
-	    };
-	};
-
-/***/ }),
-/* 406 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.FADEOUT = exports.FADEIN = exports.LOGARITHMIC = exports.EXPONENTIAL = exports.LINEAR = exports.SCURVE = undefined;
-	exports.createFadeIn = createFadeIn;
-	exports.createFadeOut = createFadeOut;
-	
-	var _fadeCurves = __webpack_require__(407);
-	
-	var SCURVE = exports.SCURVE = "sCurve";
-	var LINEAR = exports.LINEAR = "linear";
-	var EXPONENTIAL = exports.EXPONENTIAL = "exponential";
-	var LOGARITHMIC = exports.LOGARITHMIC = "logarithmic";
-	
-	var FADEIN = exports.FADEIN = "FadeIn";
-	var FADEOUT = exports.FADEOUT = "FadeOut";
-	
-	function sCurveFadeIn(start, duration) {
-	    var curve = (0, _fadeCurves.sCurve)(10000, 1);
-	    this.setValueCurveAtTime(curve, start, duration);
-	}
-	
-	function sCurveFadeOut(start, duration) {
-	    var curve = (0, _fadeCurves.sCurve)(10000, -1);
-	    this.setValueCurveAtTime(curve, start, duration);
-	}
-	
-	function linearFadeIn(start, duration) {
-	    this.linearRampToValueAtTime(0, start);
-	    this.linearRampToValueAtTime(1, start + duration);
-	}
-	
-	function linearFadeOut(start, duration) {
-	    this.linearRampToValueAtTime(1, start);
-	    this.linearRampToValueAtTime(0, start + duration);
-	}
-	
-	function exponentialFadeIn(start, duration) {
-	    this.exponentialRampToValueAtTime(0.01, start);
-	    this.exponentialRampToValueAtTime(1, start + duration);
-	}
-	
-	function exponentialFadeOut(start, duration) {
-	    this.exponentialRampToValueAtTime(1, start);
-	    this.exponentialRampToValueAtTime(0.01, start + duration);
-	}
-	
-	function logarithmicFadeIn(start, duration) {
-	    var curve = (0, _fadeCurves.logarithmic)(10000, 10, 1);
-	    this.setValueCurveAtTime(curve, start, duration);
-	}
-	
-	function logarithmicFadeOut(start, duration) {
-	    var curve = (0, _fadeCurves.logarithmic)(10000, 10, -1);
-	    this.setValueCurveAtTime(curve, start, duration);
-	}
-	
-	function createFadeIn(gain, shape, start, duration) {
-	    switch (shape) {
-	        case SCURVE:
-	            sCurveFadeIn.call(gain, start, duration);
-	            break;
-	        case LINEAR:
-	            linearFadeIn.call(gain, start, duration);
-	            break;
-	        case EXPONENTIAL:
-	            exponentialFadeIn.call(gain, start, duration);
-	            break;
-	        case LOGARITHMIC:
-	            logarithmicFadeIn.call(gain, start, duration);
-	            break;
-	        default:
-	            throw new Error("Unsupported Fade type");
-	    }
-	}
-	
-	function createFadeOut(gain, shape, start, duration) {
-	    switch (shape) {
-	        case SCURVE:
-	            sCurveFadeOut.call(gain, start, duration);
-	            break;
-	        case LINEAR:
-	            linearFadeOut.call(gain, start, duration);
-	            break;
-	        case EXPONENTIAL:
-	            exponentialFadeOut.call(gain, start, duration);
-	            break;
-	        case LOGARITHMIC:
-	            logarithmicFadeOut.call(gain, start, duration);
-	            break;
-	        default:
-	            throw new Error("Unsupported Fade type");
-	    }
-	}
-
-
-/***/ }),
-/* 407 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.linear = linear;
-	exports.exponential = exponential;
-	exports.sCurve = sCurve;
-	exports.logarithmic = logarithmic;
-	function linear(length, rotation) {
-	    var curve = new Float32Array(length),
-	        i,
-	        x,
-	        scale = length - 1;
-	
-	    for (i = 0; i < length; i++) {
-	        x = i / scale;
-	
-	        if (rotation > 0) {
-	            curve[i] = x;
-	        } else {
-	            curve[i] = 1 - x;
-	        }
-	    }
-	
-	    return curve;
-	}
-	
-	function exponential(length, rotation) {
-	    var curve = new Float32Array(length),
-	        i,
-	        x,
-	        scale = length - 1,
-	        index;
-	
-	    for (i = 0; i < length; i++) {
-	        x = i / scale;
-	        index = rotation > 0 ? i : length - 1 - i;
-	
-	        curve[index] = Math.exp(2 * x - 1) / Math.exp(1);
-	    }
-	
-	    return curve;
-	}
-	
-	//creating a curve to simulate an S-curve with setValueCurveAtTime.
-	function sCurve(length, rotation) {
-	    var curve = new Float32Array(length),
-	        i,
-	        phase = rotation > 0 ? Math.PI / 2 : -(Math.PI / 2);
-	
-	    for (i = 0; i < length; ++i) {
-	        curve[i] = Math.sin(Math.PI * i / length - phase) / 2 + 0.5;
-	    }
-	    return curve;
-	}
-	
-	//creating a curve to simulate a logarithmic curve with setValueCurveAtTime.
-	function logarithmic(length, base, rotation) {
-	    var curve = new Float32Array(length),
-	        index,
-	        x = 0,
-	        i;
-	
-	    for (i = 0; i < length; i++) {
-	        //index for the curve array.
-	        index = rotation > 0 ? i : length - 1 - i;
-	
-	        x = i / length;
-	        curve[index] = Math.log(1 + base * x) / Math.log(1 + base);
-	    }
-	
-	    return curve;
-	}
-
-
-/***/ }),
-/* 408 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _CursorState = __webpack_require__(409);
-	
-	var _CursorState2 = _interopRequireDefault(_CursorState);
-	
-	var _SelectState = __webpack_require__(410);
-	
-	var _SelectState2 = _interopRequireDefault(_SelectState);
-	
-	var _ShiftState = __webpack_require__(411);
-	
-	var _ShiftState2 = _interopRequireDefault(_ShiftState);
-	
-	var _FadeInState = __webpack_require__(412);
-	
-	var _FadeInState2 = _interopRequireDefault(_FadeInState);
-	
-	var _FadeOutState = __webpack_require__(413);
-	
-	var _FadeOutState2 = _interopRequireDefault(_FadeOutState);
-	
-	var _InteractiveState = __webpack_require__(414);
-	
-	var _InteractiveState2 = _interopRequireDefault(_InteractiveState);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  cursor: _CursorState2.default,
-	  select: _SelectState2.default,
-	  shift: _ShiftState2.default,
-	  fadein: _FadeInState2.default,
-	  fadeout: _FadeOutState2.default,
-	  interactive: _InteractiveState2.default
-	};
-
-/***/ }),
-/* 409 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(track) {
-	    _classCallCheck(this, _class);
-	
-	    this.track = track;
-	    this.setupEventListeners();
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setupEventListeners',
-	    value: function setupEventListeners() {
-	      var _this = this;
-	
-	      this.track.ee.on("playlistmousedown", function (e) {
-	        return _this.click.call(_this, e);
-	      });
-	    }
-	  }, {
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'click',
-	    value: function click(e) {
-	      e.preventDefault();
-	      console.log('cursor here');
-	
-	      var startX = e.offsetX;
-	      var startTime = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
-	
-	      this.track.ee.emit('select', startTime, startTime, this.track);
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-cursor';
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 410 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(track) {
-	    _classCallCheck(this, _class);
-	
-	    this.track = track;
-	    this.active = false;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'emitSelection',
-	    value: function emitSelection(x) {
-	      var minX = Math.min(x, this.startX);
-	      var maxX = Math.max(x, this.startX);
-	      var startTime = (0, _conversions.pixelsToSeconds)(minX, this.samplesPerPixel, this.sampleRate);
-	      var endTime = (0, _conversions.pixelsToSeconds)(maxX, this.samplesPerPixel, this.sampleRate);
-	
-	      this.track.ee.emit('select', startTime, endTime, this.track);
-	    }
-	  }, {
-	    key: 'complete',
-	    value: function complete(x) {
-	      this.emitSelection(x);
-	      this.active = false;
-	    }
-	  }, {
-	    key: 'mousedown',
-	    value: function mousedown(e) {
-	      e.preventDefault();
-	      this.active = true;
-	
-	      this.startX = e.offsetX;
-	      var startTime = (0, _conversions.pixelsToSeconds)(this.startX, this.samplesPerPixel, this.sampleRate);
-	
-	      this.track.ee.emit('select', startTime, startTime, this.track);
-	    }
-	  }, {
-	    key: 'mousemove',
-	    value: function mousemove(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.emitSelection(e.offsetX);
-	      }
-	    }
-	  }, {
-	    key: 'mouseup',
-	    value: function mouseup(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.complete(e.offsetX);
-	      }
-	    }
-	  }, {
-	    key: 'mouseleave',
-	    value: function mouseleave(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.complete(e.offsetX);
-	      }
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-select';
-	    }
-	  }, {
-	    key: 'getEvents',
-	    value: function getEvents() {
-	      return ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 411 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(track) {
-	    _classCallCheck(this, _class);
-	
-	    this.track = track;
-	    this.active = false;
-	    this.lastqtime = undefined;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'emitShift',
-	    value: function emitShift(x) {
-	      var deltaX = x - this.prevX;
-	      var deltaTime = (0, _conversions.pixelsToSeconds)(deltaX, this.samplesPerPixel, this.sampleRate);
-	
-	      var quantizeTime = 60 / this.track.bpm * this.track.quantize;
-	
-	      // debugger;
-	      if (this.track.quantize != 0) {
-	
-	        var varGHtime = Math.round(deltaTime / quantizeTime) * quantizeTime;
-	
-	        if (varGHtime != this.lastqtime) {
-	          // Galen
-	          this.prevX = x; // Galen
-	          this.track.ee.emit('shift', varGHtime, this.track); // Galen
-	          this.lastqtime = varGHtime; // Galen
-	        }
-	      } else {
-	        // Galen: if the track isn't quantized
-	        this.prevX = x; // Galen
-	        this.track.ee.emit('shift', deltaTime, this.track); // Galen
-	        this.lastqtime = varGHtime; // Galen
-	      }
-	
-	      // const deltaX = x - this.prevX;
-	      // const deltaTime = pixelsToSeconds(deltaX, this.samplesPerPixel, this.sampleRate);
-	      // this.prevX = x;
-	      // this.track.ee.emit('shift', deltaTime, this.track);
-	    }
-	  }, {
-	    key: 'complete',
-	    value: function complete(x) {
-	      this.emitShift(x);
-	      this.active = false;
-	    }
-	  }, {
-	    key: 'mousedown',
-	    value: function mousedown(e) {
-	      e.preventDefault();
-	
-	      this.active = true;
-	      this.el = e.target;
-	      this.prevX = e.offsetX;
-	    }
-	  }, {
-	    key: 'mousemove',
-	    value: function mousemove(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.emitShift(e.offsetX);
-	      }
-	    }
-	  }, {
-	    key: 'mouseup',
-	    value: function mouseup(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.complete(e.offsetX);
-	      }
-	    }
-	  }, {
-	    key: 'mouseleave',
-	    value: function mouseleave(e) {
-	      if (this.active) {
-	        e.preventDefault();
-	        this.complete(e.offsetX);
-	      }
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-shift';
-	    }
-	  }, {
-	    key: 'getEvents',
-	    value: function getEvents() {
-	      return ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 412 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(track) {
-	    _classCallCheck(this, _class);
-	
-	    this.track = track;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'click',
-	    value: function click(e) {
-	      var startX = e.offsetX;
-	      var time = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
-	
-	      if (time > this.track.getStartTime() && time < this.track.getEndTime()) {
-	        this.track.ee.emit('fadein', time - this.track.getStartTime(), this.track);
-	      }
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-fadein';
-	    }
-	  }, {
-	    key: 'getEvents',
-	    value: function getEvents() {
-	      return ['click'];
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 413 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(track) {
-	    _classCallCheck(this, _class);
-	
-	    this.track = track;
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'click',
-	    value: function click(e) {
-	      var startX = e.offsetX;
-	      var time = (0, _conversions.pixelsToSeconds)(startX, this.samplesPerPixel, this.sampleRate);
-	
-	      if (time > this.track.getStartTime() && time < this.track.getEndTime()) {
-	        this.track.ee.emit('fadeout', this.track.getEndTime() - time, this.track);
-	      }
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-fadeout';
-	    }
-	  }, {
-	    key: 'getEvents',
-	    value: function getEvents() {
-	      return ['click'];
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 414 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(clip) {
-	    var _this = this;
-	
-	    _classCallCheck(this, _class);
-	
-	    this.mouseleave = function (e) {
-	      _this.mouseup(e);
-	      _this.mousemove(e);
-	      document.body.style.cursor = "auto";
-	    };
-	
-	    this.clip = clip;
-	    // 0 : not dragging; 1 : dragging the end; -1 : dragging the begining
-	    this.draggingFrom = 0;
-	    this.action = null;
-	    this.bufferedMovement = 0;
-	    this._activeClip = { name: '_none', startTime: 0 };
-	    this.setupEventListeners();
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'setupEventListeners',
-	    value: function setupEventListeners() {
-	      var _this2 = this;
-	
-	      var self = this;
-	      this.clip.ee.on("playlistmouseleave", function (e) {
-	        if (_this2.clip && _this2.clip.state != 'interactive') return;
-	        self.mouseleave.call(self, e);
-	      });
-	      this.clip.ee.on("playlistmouseup", function (e) {
-	        if (_this2.clip && _this2.clip.state != 'interactive') return;
-	        self.mouseup.call(self, e);
-	      });
-	      this.clip.ee.on("playlistmousedown", function (e) {
-	        if (_this2.clip && _this2.clip.state != 'interactive') return;
-	        self.mousedown.call(self, e);
-	      });
-	      this.clip.ee.on("playlistmousemove", function (e) {
-	        if (_this2.clip && _this2.clip.state != 'interactive') return;
-	        self.mousemove.call(self, e);
-	      });
-	    }
-	  }, {
-	    key: 'setup',
-	    value: function setup(samplesPerPixel, sampleRate) {
-	      this.samplesPerPixel = samplesPerPixel;
-	      this.sampleRate = sampleRate;
-	    }
-	  }, {
-	    key: 'emitShift',
-	    value: function emitShift(x) {
-	      var deltaX = x - this.prevX;
-	      var deltaTime = (0, _conversions.pixelsToSeconds)(deltaX, this.samplesPerPixel, this.sampleRate);
-	      this.prevX = x;
-	      this.clip.ee.emit('shift', deltaTime, this.clip);
-	    }
-	  }, {
-	    key: 'mousedown',
-	    value: function mousedown(e) {
-	      if (this.action == "fadedraggable") this.action = "dragginghandle";else if (this.action == "resizeableleft") {
-	        this.startAt = this.getMousepos(e);
-	        this.action = "resizingleft";
-	      } else if (this.action == "resizeableright") {
-	        this.startAt = this.getMousepos(e);
-	        this.oldCueOutForResising = this.activeClip.cueOut;
-	        this.action = "resizingright";
-	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
-	        this.seekTo(e);
-	      }
-	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
-	      //this.action = "scrolldraggingcandidate";
-	      //this.clip.ee.emit("scrolldraggingstart");
-	      // }
-	      // console.log(this.clip);
-	    }
-	  }, {
-	    key: 'mousemove',
-	    value: function mousemove(e) {
-	      // const mousepos = pixelsToSeconds(this.correctOffset(e), this.samplesPerPixel, this.sampleRate);
-	      // if (!mousepos)return;
-	      // console.log(this.action);
-	      var mousepos = this.getMousepos(e);
-	      var movementX = (0, _conversions.pixelsToSeconds)(e.movementX, this.samplesPerPixel, this.sampleRate);
-	      if (this.action == "dragginghandle") {
-	        // console.log(mousepos,this.clip.getStartTime(),this.clip.startTime);
-	        // console.log(mousepos,this.activeClip.duration)
-	        var clampped = Math.min(Math.max(mousepos, 0), this.activeClip.duration);
-	        if (this.hoveringover == "fadein") this.ee.emit('fadein', clampped, this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - clampped, this.activeClip);
-	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
-	        this.updateResizing(e);
-	      } else if (this.action == "shifting") {
-	        var blocklength = 60 / this.activeClip.bpm * this.activeClip.quantize; //in seconds
-	        this.bufferedMovement += movementX; //in seconds
-	        var snaps = Math.round(this.bufferedMovement / blocklength);
-	        if (snaps != 0) {
-	          this.ee.emit("shift", snaps * blocklength, this.activeClip);
-	          this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
-	        }
-	      } else if (this.action == "split") {
-	        document.body.style.cursor = "text";
-	      } else if (e.target.classList.contains('fadehandle')) {
-	        this.action = "fadedraggable";
-	        this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
-	
-	        document.body.style.cursor = "pointer";
-	      }
-	      // else if (this.action == "scrolldragging" || this.action == "scrolldraggingcandidate"){
-	      //   this.ee.emit("scrolldragging",e.movementX);
-	      //   this.action = "scrolldragging";
-	      // }
-	      else if (e.target.className == "handleContainer right") {
-	          this.action = "resizeableright";
-	          document.body.style.cursor = "e-resize";
-	        } else if (e.target.className == "handleContainer left") {
-	          this.action = "resizeableleft";
-	          document.body.style.cursor = "w-resize";
-	        } else if (e.target.className == "clip") {
-	          this.action = "shiftable";
-	          document.body.style.cursor = "grab";
-	        }
-	        // else if (e.target.className == "waveform"){
-	        //   document.body.style.cursor = "auto";
-	        //   this.action = "scrolldraggable";
-	        // }
-	        else {
-	            this.action = null;
-	            document.body.style.cursor = "auto";
-	          }
-	      // console.log(this.action);
-	    }
-	  }, {
-	    key: 'seekTo',
-	    value: function seekTo(e) {
-	      e.preventDefault();
-	      // console.log("seek");
-	      var startTime = this.getMousepos(e);
-	      // const startTime = pixelsToSeconds(startX, this.samplesPerPixel, this.sampleRate);
-	      this.clip.ee.emit('select', startTime, startTime, this.clip);
-	    }
-	  }, {
-	    key: 'getMousepos',
-	    value: function getMousepos(e) {
-	      var waveform = document.body.querySelector(".waveform");
-	      if (!waveform) return null;
-	      var relative = e.pageX - waveform.getBoundingClientRect().left;
-	      var seconds = (0, _conversions.pixelsToSeconds)(relative, this.samplesPerPixel, this.sampleRate);
-	      // console.log(relative, this.samplesPerPixel, this.sampleRate);
-	      return seconds - this.activeClip.startTime;
-	    }
-	  }, {
-	    key: 'updateResizing',
-	    value: function updateResizing(e) {
-	      var mousepos = this.getMousepos(e) - this.startAt;
-	      // console.log("mousepos",mousepos,this.startAt);
-	      var activeClip = this.activeClip;
-	      if (activeClip.quantize) {
-	        var blocklength = 60 / activeClip.bpm * activeClip.quantize;
-	        mousepos = Math.round(mousepos / blocklength) * blocklength;
-	      }
-	      if (this.action == "resizingleft") {
-	        // console.log(activeClip.cueIn + mousepos);
-	        if (activeClip.cueIn + mousepos <= 0) mousepos = -activeClip.cueIn;
-	        if (activeClip.cueIn + mousepos - activeClip.cueOut >= -4) mousepos = -4 + activeClip.cueOut - activeClip.cueIn;
-	        var oldStartTime = activeClip.startTime;
-	        var oldCueIn = activeClip.cueIn;
-	        activeClip.startTime = oldStartTime + mousepos;
-	        activeClip.cueIn = oldCueIn + mousepos;
-	      }
-	      if (this.action == "resizingright") {
-	        if (this.oldCueOutForResising + mousepos > activeClip.buffer.duration) mousepos = activeClip.buffer.duration - this.oldCueOutForResising;
-	        if (this.oldCueOutForResising + mousepos - activeClip.cueIn < 4) mousepos = 4 + activeClip.cueIn - this.oldCueOutForResising;
-	
-	        activeClip.cueOut = this.oldCueOutForResising + mousepos;
-	        var fadeout = activeClip.fades[activeClip.fadeOut];
-	        var duration = fadeout.end - fadeout.start;
-	        activeClip.fades[activeClip.fadeOut].start = activeClip.endTime - duration;
-	        activeClip.fades[activeClip.fadeOut].end = activeClip.endTime;
-	      }
-	
-	      activeClip.ee.emit("interactive", activeClip);
-	    }
-	  }, {
-	    key: 'mouseup',
-	    value: function mouseup(e) {
-	      if (this.action == "split") {
-	        if (e.target.className == 'clip') {
-	          var time = this.getMousepos(e);
-	          this.ee.emit('splitAt', { clip: this.activeClip, at: time });
-	        }
-	
-	        this.action = null;
-	      } else if (this.action == "dragginghandle" || this.action == "shifting") {
-	        this.action = null;
-	        this.bufferedMovement = 0;
-	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
-	        e.preventDefault();
-	        this.updateResizing(e);
-	        this.action = null;
-	        // console.log("dropped");
-	      }
-	    }
-	  }, {
-	    key: 'activeClip',
-	    set: function set(clip) {
-	      if (!this.action || this.action == 'none' || this.action.includes('able')) this._activeClip = clip;
-	    },
-	    get: function get() {
-	      return this._activeClip;
-	    }
-	  }], [{
-	    key: 'getClass',
-	    value: function getClass() {
-	      return '.state-interactive';
-	    }
-	  }, {
-	    key: 'getEvents',
-	    value: function getEvents() {
-	      return [];
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
-
-/***/ }),
-/* 415 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * virtual-dom hook for drawing to the canvas element.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
-	
-	
-	var _conversions = __webpack_require__(389);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var CanvasHook = function () {
-	  function CanvasHook(peaks, offset, bits, color, cueIn, resolution, sampleRate, image) {
-	    _classCallCheck(this, CanvasHook);
-	
-	    this.cueIn = cueIn;
-	    this.resolution = resolution;
-	    this.sampleRate = sampleRate;
-	    this.peaks = peaks;
-	    // http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
-	    this.offset = offset;
-	    this.color = color;
-	    this.bits = bits;
-	    this.bufferedwaveform = image;
-	    this.bwc = undefined; // BufferedWaveformContext
-	  }
-	
-	  _createClass(CanvasHook, [{
-	    key: 'drawCanvas',
-	    value: function drawCanvas(cc, len, h2) {
-	      var maxValue = Math.pow(2, this.bits - 1);
-	
-	      cc.clearRect(0, 0, len, h2 * 2);
-	      // cc.fillStyle = "black";
-	      // cc.fillRect(0,0,len,h2*2);
-	      cc.fillStyle = this.color;
-	      // console.log(this.color);
-	      for (var i = 0; i < len; i += 1) {
-	        var minPeak = this.peaks[i * 2] / maxValue;
-	        var maxPeak = this.peaks[i * 2 + 1] / maxValue;
-	        CanvasHook.drawFrame(cc, h2, i, minPeak, maxPeak);
-	      }
-	    }
-	  }, {
-	    key: 'getImage',
-	    value: function getImage() {
-	      return this.bufferedwaveform;
-	    }
-	  }, {
-	    key: 'setupImage',
-	    value: function setupImage(width, height) {
-	      this.bufferedwaveform = document.createElement('canvas');
-	      this.bufferedwaveform.width = width;
-	      this.bufferedwaveform.height = height;
-	      // console.log(this.bufferedwaveform);
-	      console.log("new canvas");
-	      this.bwc = this.bufferedwaveform.getContext('2d');
-	      this.drawCanvas(this.bwc, width, height / 2);
-	      return this.bufferedwaveform;
-	    }
-	  }, {
-	    key: 'hook',
-	    value: function hook(canvas, prop, prev) {
-	      // canvas is up to date
-	
-	      var len = canvas.width;
-	      var cc = canvas.getContext('2d');
-	      var h2 = canvas.height / 2;
-	
-	      if (!this.bufferedwaveform) this.setupImage(this.peaks.length, h2 * 2);
-	
-	      cc.clearRect(0, 0, canvas.width, canvas.height);
-	      var offsettotal = (0, _conversions.secondsToPixels)(-this.cueIn, this.resolution, this.sampleRate);
-	
-	      cc.drawImage(this.bufferedwaveform, offsettotal, 0);
-	    }
-	  }], [{
-	    key: 'drawFrame',
-	    value: function drawFrame(cc, h2, x, minPeak, maxPeak) {
-	      var min = Math.abs(minPeak * h2);
-	      var max = Math.abs(maxPeak * h2);
-	
-	      // draw max
-	      cc.fillRect(x, 0, 1, h2 - max);
-	      // draw min
-	      cc.fillRect(x, h2 + min, 1, h2 - min);
-	    }
-	  }]);
-	
-	  return CanvasHook;
-	}();
-	
-	exports.default = CanvasHook;
-
-/***/ }),
-/* 416 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _fadeMaker = __webpack_require__(406);
-	
-	var _fadeCurves = __webpack_require__(407);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/*
-	* virtual-dom hook for drawing the fade curve to the canvas element.
-	*/
-	var FadeCanvasHook = function () {
-	  function FadeCanvasHook(type, shape, duration, samplesPerPixel) {
-	    _classCallCheck(this, FadeCanvasHook);
-	
-	    this.type = type;
-	    this.shape = shape;
-	    this.duration = duration;
-	    this.samplesPerPixel = samplesPerPixel;
-	  }
-	
-	  _createClass(FadeCanvasHook, [{
-	    key: 'hook',
-	    value: function hook(canvas, prop, prev) {
-	      // node is up to date.
-	      if (prev !== undefined && prev.shape === this.shape && prev.type === this.type && prev.duration === this.duration && prev.samplesPerPixel === this.samplesPerPixel) {
-	        return;
-	      }
-	
-	      var ctx = canvas.getContext('2d');
-	      var width = canvas.width;
-	      var height = canvas.height;
-	
-	      var curve = FadeCanvasHook.createCurve(this.shape, this.type, width);
-	      var len = curve.length;
-	      var y = height - curve[0] * height;
-	
-	      ctx.strokeStyle = 'black';
-	      ctx.beginPath();
-	      ctx.moveTo(0, y);
-	
-	      for (var i = 1; i < len; i += 1) {
-	        y = height - curve[i] * height;
-	        ctx.lineTo(i, y);
-	      }
-	      ctx.stroke();
-	    }
-	  }], [{
-	    key: 'createCurve',
-	    value: function createCurve(shape, type, width) {
-	      var reflection = void 0;
-	      var curve = void 0;
-	
-	      switch (type) {
-	        case _fadeMaker.FADEIN:
-	          {
-	            reflection = 1;
-	            break;
-	          }
-	        case _fadeMaker.FADEOUT:
-	          {
-	            reflection = -1;
-	            break;
-	          }
-	        default:
-	          {
-	            throw new Error('Unsupported fade type.');
-	          }
-	      }
-	
-	      switch (shape) {
-	        case _fadeMaker.SCURVE:
-	          {
-	            curve = (0, _fadeCurves.sCurve)(width, reflection);
-	            break;
-	          }
-	        case _fadeMaker.LINEAR:
-	          {
-	            curve = (0, _fadeCurves.linear)(width, reflection);
-	            break;
-	          }
-	        case _fadeMaker.EXPONENTIAL:
-	          {
-	            curve = (0, _fadeCurves.exponential)(width, reflection);
-	            break;
-	          }
-	        case _fadeMaker.LOGARITHMIC:
-	          {
-	            curve = (0, _fadeCurves.logarithmic)(width, 10, reflection);
-	            break;
-	          }
-	        default:
-	          {
-	            throw new Error('Unsupported fade shape');
-	          }
-	      }
-	
-	      return curve;
-	    }
-	  }]);
-	
-	  return FadeCanvasHook;
-	}();
-	
-	exports.default = FadeCanvasHook;
-
-/***/ }),
-/* 417 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _fadeMaker = __webpack_require__(406);
-	
-	var _tunajs = __webpack_require__(388);
-	
-	var _tunajs2 = _interopRequireDefault(_tunajs);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _class = function () {
-	  function _class(ac, buffer) {
-	    _classCallCheck(this, _class);
-	
-	    this.ac = ac;
-	    this.tuna = new _tunajs2.default(this.ac);
-	    this.gain = 1;
-	    this.buffer = buffer;
-	    this.destination = this.ac.destination;
-	
-	    this.delay = new this.tuna.Delay({
-	      feedback: 0.45, //0 to 1+
-	      delayTime: 150, //1 to 10000 milliseconds
-	      wetLevel: 0.25, //0 to 1+
-	      dryLevel: 1, //0 to 1+
-	      cutoff: 2000, //cutoff frequency of the built in lowpass-filter. 20 to 22050
-	      bypass: 0
-	    });
-	
-	    this.lowpass = new this.tuna.Filter({
-	      frequency: 440, //20 to 22050
-	      Q: 1, //0.001 to 100
-	      gain: 0, //-40 to 40 (in decibels)
-	      filterType: "lowpass", //lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass
-	      bypass: 0
-	    });
-	
-	    this.phaser = new this.tuna.Phaser({
-	      rate: 1.2, //0.01 to 8 is a decent range, but higher values are possible
-	      depth: 0.3, //0 to 1
-	      feedback: 0.2, //0 to 1+
-	      stereoPhase: 30, //0 to 180
-	      baseModulationFrequency: 700, //500 to 1500
-	      bypass: 0
-	    });
-	  }
-	
-	  _createClass(_class, [{
-	    key: 'applyFade',
-	    value: function applyFade(type, start, duration) {
-	      var shape = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'logarithmic';
-	
-	      if (type === _fadeMaker.FADEIN) {
-	        (0, _fadeMaker.createFadeIn)(this.fadeGain.gain, shape, start, duration);
-	      } else if (type === _fadeMaker.FADEOUT) {
-	        (0, _fadeMaker.createFadeOut)(this.fadeGain.gain, shape, start, duration);
-	      } else {
-	        throw new Error('Unsupported fade type');
-	      }
-	    }
-	  }, {
-	    key: 'applyFadeIn',
-	    value: function applyFadeIn(start, duration) {
-	      var shape = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'logarithmic';
-	
-	      this.applyFade(_fadeMaker.FADEIN, start, duration, shape);
-	    }
-	  }, {
-	    key: 'applyFadeOut',
-	    value: function applyFadeOut(start, duration) {
-	      var shape = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'logarithmic';
-	
-	      this.applyFade(_fadeMaker.FADEOUT, start, duration, shape);
-	    }
-	  }, {
-	    key: 'isPlaying',
-	    value: function isPlaying() {
-	      return this.source !== undefined;
-	    }
-	  }, {
-	    key: 'getDuration',
-	    value: function getDuration() {
-	      return this.buffer.duration;
-	    }
-	  }, {
-	    key: 'setAudioContext',
-	    value: function setAudioContext(audioContext) {
-	      this.ac = audioContext;
-	      this.destination = this.ac.destination;
-	    }
-	  }, {
-	    key: 'setUpSource',
-	    value: function setUpSource() {
-	      var _this = this;
-	
-	      this.source = this.ac.createBufferSource();
-	      this.source.buffer = this.buffer;
-	
-	      var sourcePromise = new Promise(function (resolve) {
-	        // keep track of the buffer state.
-	        _this.source.onended = function () {
-	          _this.source.disconnect();
-	          _this.fadeGain.disconnect();
-	          _this.volumeGain.disconnect();
-	          _this.shouldPlayGain.disconnect();
-	          _this.masterGain.disconnect();
-	          _this.panner.disconnect();
-	
-	          _this.source = undefined;
-	          _this.fadeGain = undefined;
-	          _this.volumeGain = undefined;
-	          _this.shouldPlayGain = undefined;
-	          _this.masterGain = undefined;
-	          _this.panner = undefined;
-	
-	          resolve();
-	        };
-	      });
-	
-	      this.fadeGain = this.ac.createGain();
-	      // used for track volume slider
-	      this.volumeGain = this.ac.createGain();
-	      // used for solo/mute
-	      this.shouldPlayGain = this.ac.createGain();
-	
-	      this.panner = this.ac.createStereoPanner();
-	
-	      console.log('playout', this.delay);
-	
-	      this.masterGain = this.ac.createGain();
-	
-	      this.source.connect(this.fadeGain).connect(this.panner);
-	
-	      var tunachain = this.panner;
-	      if (this.toggleDelay) {
-	        tunachain.connect(this.delay);
-	        tunachain = this.delay;
-	      }
-	      if (this.togglePhaser) {
-	        tunachain.connect(this.phaser);
-	        tunachain = this.phaser;
-	      }
-	      if (this.toggleLowpass) {
-	        tunachain.connect(this.lowpass);
-	        tunachain = this.lowpass;
-	      }
-	      tunachain.connect(this.volumeGain);
-	
-	      this.volumeGain.connect(this.shouldPlayGain).connect(this.masterGain).connect(this.destination);
-	
-	      return sourcePromise;
-	    }
-	  }, {
-	    key: 'setVolumeGainLevel',
-	    value: function setVolumeGainLevel(level) {
-	      if (this.volumeGain) {
-	        this.volumeGain.gain.value = level;
-	      }
-	    }
-	  }, {
-	    key: 'setShouldPlay',
-	    value: function setShouldPlay(bool) {
-	      if (this.shouldPlayGain) {
-	        this.shouldPlayGain.gain.value = bool ? 1 : 0;
-	      }
-	    }
-	  }, {
-	    key: 'setMasterGainLevel',
-	    value: function setMasterGainLevel(level) {
-	      if (this.masterGain) {
-	        this.masterGain.gain.value = level;
-	      }
-	    }
-	  }, {
-	    key: 'setPan',
-	    value: function setPan(pan) {
-	      if (this.panner) {
-	        this.panner.pan.value = pan;
-	      }
-	    }
-	
-	    /*
-	      source.start is picky when passing the end time.
-	      If rounding error causes a number to make the source think
-	      it is playing slightly more samples than it has it won't play at all.
-	      Unfortunately it doesn't seem to work if you just give it a start time.
-	    */
-	
-	  }, {
-	    key: 'play',
-	    value: function play(when, start, duration) {
-	      this.source.start(when, start, duration);
-	    }
-	  }, {
-	    key: 'stop',
-	    value: function stop() {
-	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-	
-	      if (this.source) {
-	        this.source.stop(when);
-	      }
-	    }
-	  }]);
-
-	  return _class;
-	}();
-
-	exports.default = _class;
 
 /***/ }),
 /* 418 */
@@ -20839,7 +20850,7 @@ var WaveformPlaylist =
 	
 	var _aeneas4 = _interopRequireDefault(_aeneas3);
 	
-	var _conversions = __webpack_require__(389);
+	var _conversions = __webpack_require__(388);
 	
 	var _DragInteraction = __webpack_require__(421);
 	
@@ -21139,7 +21150,7 @@ var WaveformPlaylist =
 	  return annotation;
 	};
 	
-	var _uuid = __webpack_require__(403);
+	var _uuid = __webpack_require__(402);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 
@@ -21177,7 +21188,7 @@ var WaveformPlaylist =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _conversions = __webpack_require__(389);
+	var _conversions = __webpack_require__(388);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
