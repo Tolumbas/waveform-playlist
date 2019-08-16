@@ -11312,12 +11312,11 @@ var WaveformPlaylist =
 	            at = _ref.at;
 	
 	        var info = clip.getTrackDetails();
-	        info.track = info.track.name;
 	        info.name = "Copy of " + info.name;
 	        info.start = clip.startTime + at;
 	        info.cuein = clip.cueIn + at;
 	        info.cueout = clip.cueOut;
-	        _this2.createClip(clip.buffer, info);
+	        _this2.createClip(clip.buffer, info, false, clip.peaks);
 	
 	        clip.endTime = clip.startTime + at;
 	
@@ -11329,7 +11328,7 @@ var WaveformPlaylist =
 	        info.name = "Copy of " + info.name;
 	        info.start = clip.endTime;
 	        info.end = clip.endTime + clip.duration;
-	        _this2.createClip(clip.buffer, info);
+	        _this2.createClip(clip.buffer, info, false, clip.peaks);
 	        _this2.ee.emit('interactive');
 	      });
 	      ee.on('delete', function (clip) {
@@ -11371,6 +11370,9 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'createClip',
 	    value: function createClip(audioBuffer, info) {
+	      var removeSilences = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+	      var readypeaks = arguments[3];
+	
 	      var name = info.name || 'Untitled';
 	      var start = info.start || 0;
 	      var states = info.states || {};
@@ -11429,8 +11431,6 @@ var WaveformPlaylist =
 	        clip.setFadeOut(0.01, "logarithmic");
 	      }
 	
-	      if (peaks !== undefined) clip.setPeakData(peaks);
-	
 	      // clip.setState(this.getState());
 	      clip.setStartTime(start);
 	      clip.setPlayout(playout);
@@ -11438,32 +11438,65 @@ var WaveformPlaylist =
 	      clip.setGainLevel(gain);
 	
 	      // extract peaks with AudioContext for now.
-	      clip.calculatePeaks(this.samplesPerPixel, this.sampleRate);
-	      /*
-	      
-	          let curPeak = clip.peaks.data[0];
-	          let startX = 0;
-	          for (let i = 0; i < clip.peaks.length; i += 1) {
-	            if(curPeak[i * 2] != 0) {
-	              startX = i; break;
-	            }
-	          }
-	          if (startX > 0) {
-	            let startSec = pixelsToSeconds(startX, this.resolution, this.sampleRate);
-	            console.log('startX',clip.name, startX, startSec, startSec, cueOut,clip.peaks);
-	            console.log('(startSec + start + cueIn)', startSec, start, cueIn, startSec + start + cueIn);
-	            // if(start < startSec) {
-	              // clip.setStartTime(startSec + start);
-	              // clip.setStartTime(start);
-	              clip.startTime = startSec + start;
-	              clip.cueIn = startSec + cueIn;
-	              // clip.setCues(startSec + cueIn, cueOut);          
-	              // clip.calculatePeaks(this.samplesPerPixel, this.sampleRate);
-	            // }
-	      
-	          }
-	          */
+	      if (readypeaks !== undefined) clip.peaks = readypeaks;else clip.calculatePeaks(this.samplesPerPixel, this.sampleRate);
+	
+	      if (removeSilences) {
+	        this.removeSilences(clip);
+	      }
+	      this.clips.push(clip);
 	      return clip;
+	    }
+	  }, {
+	    key: 'removeSilences',
+	    value: function removeSilences(clip) {
+	      var track = clip.track;
+	      var bpm = track.bpm;
+	      var minimumSilence = 5 * this.sampleRate;
+	      var buffer = clip.buffer;
+	      var samples = buffer.getChannelData(0);
+	      var startofSilence = NaN;
+	      var threshhold = 0.01;
+	      // debugger;
+	      for (var a = 0; a < samples.length; a++) {
+	        if (!isNaN(startofSilence) && Math.abs(samples[a]) > threshhold) {
+	          if (a - startofSilence > minimumSilence) this.removeSamples(clip, startofSilence, a);
+	          startofSilence = NaN;
+	        } else if (isNaN(startofSilence) && Math.abs(samples[a]) <= threshhold) {
+	          startofSilence = a;
+	        }
+	      }
+	      if (!isNaN(startofSilence) && samples.length - startofSilence > minimumSilence) {
+	        this.removeSamples(clip, startofSilence, samples.length);
+	      }
+	    }
+	  }, {
+	    key: 'removeSamples',
+	    value: function removeSamples(clip, start, end) {
+	      var startSec = (0, _conversions.samplesToSeconds)(start, this.sampleRate);
+	      var endSec = (0, _conversions.samplesToSeconds)(end, this.sampleRate);
+	      if (start == 0) {
+	        clip.cueIn += endSec;
+	        clip.startTime += endSec;
+	      } else if (end == clip.buffer.length) {
+	        clip.cueOut = startSec;
+	      } else {
+	
+	        var info = clip.getTrackDetails();
+	
+	        info.cueout = startSec;
+	        console.log(clip.name, this.secondsToMinutes(info.start), this.secondsToMinutes(info.start + info.cueout - info.cuein));
+	        if (info.cueout - info.cuein >= 0.2) this.createClip(clip.buffer, info, false, clip.peaks);
+	
+	        clip.startTime += endSec - clip.cueIn;
+	        clip.cueIn = endSec;
+	      }
+	    }
+	  }, {
+	    key: 'secondsToMinutes',
+	    value: function secondsToMinutes(sec) {
+	      var min = sec / 60 | 0;
+	      var secs = sec - min * 60 | 0;
+	      return min + ':' + (secs / 10 | 0) + secs % 10;
 	    }
 	  }, {
 	    key: 'load',
@@ -11471,7 +11504,7 @@ var WaveformPlaylist =
 	      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(clipList) {
 	        var _this3 = this;
 	
-	        var loadPromises, audioBuffers, clips;
+	        var loadPromises, audioBuffers;
 	        return regeneratorRuntime.wrap(function _callee$(_context) {
 	          while (1) {
 	            switch (_context.prev = _context.next) {
@@ -11496,18 +11529,16 @@ var WaveformPlaylist =
 	
 	                this.ee.emit('audiosourcesloaded');
 	
-	                clips = audioBuffers.map(function (audioBuffer, index) {
+	                audioBuffers.forEach(function (audioBuffer, index) {
 	                  return _this3.createClip(audioBuffer, clipList[index]);
 	                });
-	
-	                this.clips = this.clips.concat(clips);
 	                this.reasignClips();
 	                this.adjustDuration();
 	                this.draw(this.render());
 	
 	                this.ee.emit('audiosourcesrendered');
 	
-	              case 12:
+	              case 11:
 	              case 'end':
 	                return _context.stop();
 	            }
@@ -11515,7 +11546,7 @@ var WaveformPlaylist =
 	        }, _callee, this);
 	      }));
 	
-	      function load(_x) {
+	      function load(_x2) {
 	        return _ref2.apply(this, arguments);
 	      }
 	
@@ -16332,8 +16363,6 @@ var WaveformPlaylist =
 	    this.images = []; // Clip
 	
 	    this.showMenu = false;
-	
-	    console.log(this);
 	  }
 	
 	  _createClass(_class, [{
@@ -16947,7 +16976,7 @@ var WaveformPlaylist =
 	        start: this.startTime,
 	        end: this.endTime,
 	        name: this.name,
-	        track: this.track,
+	        track: this.track.name,
 	
 	        customClass: this.customClass,
 	        cuein: this.cueIn,
