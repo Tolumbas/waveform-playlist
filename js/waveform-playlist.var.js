@@ -11459,7 +11459,9 @@ var WaveformPlaylist =
 	      // debugger;
 	      for (var a = 0; a < samples.length; a++) {
 	        if (!isNaN(startofSilence) && Math.abs(samples[a]) > threshhold) {
-	          if (a - startofSilence > minimumSilence) this.removeSamples(clip, startofSilence, a);
+	          if (a - startofSilence > minimumSilence) {
+	            this.removeSamples(clip, startofSilence, a);
+	          }
 	          startofSilence = NaN;
 	        } else if (isNaN(startofSilence) && Math.abs(samples[a]) <= threshhold) {
 	          startofSilence = a;
@@ -11753,8 +11755,15 @@ var WaveformPlaylist =
 	      this.zoomIndex = this.zoomLevels.indexOf(zoom);
 	      this.stateObj.setup(this.samplesPerPixel, this.sampleRate);
 	      this.tracks.forEach(function (track) {
-	        track.clips.forEach(function (clip) {
-	          return clip.calculatePeaks(zoom, _this5.sampleRate);
+	        track.clips.forEach(function (clip, index) {
+	          var a = void 0;
+	          for (a = 0; a < index; a++) {
+	            if (track.clips[a].buffer === clip.buffer) {
+	              clip.setPeaks(track.clips[a].peaks);
+	              break;
+	            }
+	          }
+	          if (a == index) clip.calculatePeaks(zoom, _this5.sampleRate);
 	        });
 	      });
 	    }
@@ -11880,6 +11889,19 @@ var WaveformPlaylist =
 	        return this.restartPlayFrom(start, end);
 	      }
 	
+	      /*
+	      this.tracks.forEach((track) => {
+	        track.clips.forEach(clip=>{
+	          clip.setOfflinePlayout(new Playout(this.offlineAudioContext, clip.buffer));
+	          clip.schedulePlay(currentTime, 0, 0, {
+	            shouldPlay: this.shouldTrackPlay(clip),
+	            masterGain: 1,
+	            isOffline: true,
+	          });
+	        })
+	      });
+	      */
+	
 	      this.tracks.forEach(function (track) {
 	        // track.setState('cursor');
 	        playoutPromises.push(track.schedulePlay(currentTime, start, end, {
@@ -11887,8 +11909,11 @@ var WaveformPlaylist =
 	          masterGain: _this7.masterGain
 	        }));
 	      });
+	      this.tracks.forEach(function (track) {
+	        return track.play(_this7.ac.currentTime, start, end);
+	      });
 	
-	      this.lastPlay = currentTime;
+	      this.lastPlay = this.ac.currentTime;
 	      // use these to track when the playlist has fully stopped.
 	      this.playoutPromises = playoutPromises;
 	      this.startAnimation(start);
@@ -12134,8 +12159,14 @@ var WaveformPlaylist =
 	    value: function renderTrackSection() {
 	      var _this15 = this;
 	
+	      var globalEndTime = this.tracks.map(function (tr) {
+	        return tr.getEndTime();
+	      }).reduce(function (a, b) {
+	        return Math.max(a, b);
+	      }, 0);
 	      var trackElements = this.tracks.map(function (track) {
 	        return track.render(_this15.getTrackRenderData({
+	          globalEndTime: globalEndTime,
 	          isActive: _this15.isActiveTrack(track),
 	          shouldPlay: _this15.shouldTrackPlay(track),
 	          soloed: _this15.soloedTracks.indexOf(track) > -1,
@@ -15074,8 +15105,6 @@ var WaveformPlaylist =
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var _class = function () {
@@ -15113,35 +15142,26 @@ var WaveformPlaylist =
 	
 	  }, {
 	    key: 'schedulePlay',
-	    value: function () {
-	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	          args[_key] = arguments[_key];
-	        }
-	
-	        return regeneratorRuntime.wrap(function _callee$(_context) {
-	          while (1) {
-	            switch (_context.prev = _context.next) {
-	              case 0:
-	                _context.next = 2;
-	                return Promise.all(this.clips.map(function (c) {
-	                  return c.schedulePlay.apply(c, args);
-	                }));
-	
-	              case 2:
-	              case 'end':
-	                return _context.stop();
-	            }
-	          }
-	        }, _callee, this);
-	      }));
-	
-	      function schedulePlay() {
-	        return _ref.apply(this, arguments);
+	    value: function schedulePlay() {
+	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
 	      }
 	
-	      return schedulePlay;
-	    }()
+	      return Promise.all(this.clips.map(function (c) {
+	        return c.schedulePlay.apply(c, args);
+	      }));
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        args[_key2] = arguments[_key2];
+	      }
+	
+	      this.clips.forEach(function (clip) {
+	        return clip.play.apply(clip, args);
+	      });
+	    }
 	  }, {
 	    key: 'scheduleStop',
 	    value: function scheduleStop(when) {
@@ -15387,7 +15407,7 @@ var WaveformPlaylist =
 	
 	      var grid = (0, _h2.default)('canvas.grid', {
 	        attributes: {
-	          width: width,
+	          width: convert(data.globalEndTime),
 	          height: data.height,
 	          style: 'position:absolute;pointer-events:none'
 	        },
@@ -15415,7 +15435,7 @@ var WaveformPlaylist =
 	
 	      var waveform = (0, _h2.default)('div.waveform', {
 	        attributes: {
-	          style: 'height: ' + data.height + 'px; position: relative;'
+	          style: 'height: ' + data.height + 'px; position: relative;width:' + width + 'px'
 	        }
 	      }, waveformChildren);
 	
@@ -16694,10 +16714,17 @@ var WaveformPlaylist =
 	      playoutSystem.setShouldPlay(options.shouldPlay);
 	      playoutSystem.setMasterGainLevel(options.masterGain);
 	      playoutSystem.setPan(this.pan);
-	      console.log(when, start, duration);
-	      playoutSystem.play(when, start, duration);
+	      this.readyPlayout = playoutSystem;
+	      // console.log(when,start,duration);
+	      // for (var a=0,b=false;a<100000000;a++)if (a%13==0)a+=1;
+	      // playoutSystem.play(when, start, duration);
 	
 	      return sourcePromise;
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play(now, startTime, endTime) {
+	      this.readyPlayout.play(now, startTime, endTime);
 	    }
 	  }, {
 	    key: 'scheduleStop',
@@ -18113,6 +18140,7 @@ var WaveformPlaylist =
 	        this.oldCueOutForResising = this.activeClip.cueOut;
 	        this.action = "resizingright";
 	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
+	        console.log('seek');
 	        this.seekTo(e);
 	      }
 	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
@@ -18634,7 +18662,8 @@ var WaveformPlaylist =
 	
 	      this.panner = this.ac.createStereoPanner();
 	
-	      console.log('playout', this.delay);
+	      // console.log('playout', this.delay);
+	
 	
 	      this.masterGain = this.ac.createGain();
 	
