@@ -11124,13 +11124,30 @@ var WaveformPlaylist =
 	
 	      var ee = this.ee;
 	
+	      ee.on('showMenu', function (clip) {
+	
+	        clip.showMenu = true;
+	        if (_this2.openedMenuClip) {
+	          _this2.openedMenuClip.showMenu = false;
+	        }
+	        _this2.openedMenuClip = clip;
+	
+	        _this2.drawRequest();
+	      });
+	      ee.on('playlistmousedown', function () {
+	        if (_this2.openedMenuClip) {
+	          _this2.openedMenuClip.showMenu = false;
+	          delete _this2.openedMenuClip;
+	        }
+	      });
+	
 	      ee.on('interactive', function (track) {
-	        // track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
 	        _this2.drawRequest();
 	      });
 	
 	      ee.on('activeclip', function (clip) {
-	        console.log(clip.name);
+	        var segment = 60 / clip.bpm;
+	        console.log(clip.name, clip.startTime / segment);
 	        _this2.stateObj.activeClip = clip;
 	      });
 	
@@ -11181,8 +11198,8 @@ var WaveformPlaylist =
 	        _this2.drawRequest();
 	      });
 	
-	      ee.on('shift', function (deltaTime, track) {
-	        track.setStartTime(track.getStartTime() + deltaTime);
+	      ee.on('shift', function (deltaTime, clip) {
+	        clip.setStartTime(clip.getStartTime() + deltaTime);
 	        _this2.adjustDuration();
 	        _this2.drawRequest();
 	      });
@@ -11454,17 +11471,43 @@ var WaveformPlaylist =
 	      var minimumSilence = 5 * this.sampleRate;
 	      var buffer = clip.buffer;
 	      var samples = buffer.getChannelData(0);
+	      var startTime = clip.startTime;
+	      var cueIn = clip.cueIn;
+	      var cueOut = clip.cueOut;
+	      var cueInSamp = (0, _conversions.secondsToSamples)(cueIn, this.sampleRate);
+	      var cueOutSamp = (0, _conversions.secondsToSamples)(cueOut, this.sampleRate);
+	      var secsperbeat = 60 / bpm;
 	      var startofSilence = NaN;
+	      var endofSilenece = NaN;
 	      var threshhold = 0.01;
-	      // debugger;
-	      for (var a = 0; a < samples.length; a++) {
+	
+	      for (var a = cueInSamp; a < cueOutSamp; a++) {
 	        if (!isNaN(startofSilence) && Math.abs(samples[a]) > threshhold) {
 	          if (a - startofSilence > minimumSilence) {
-	            this.removeSamples(clip, startofSilence, a);
+	            var qpoint = a;
+	            while (qpoint > 0) {
+	              var secs = (0, _conversions.samplesToSeconds)(qpoint, this.sampleRate) + startTime - cueIn;
+	              var secsprev = (0, _conversions.samplesToSeconds)(qpoint - 1, this.sampleRate) + startTime - cueIn;
+	              if (Math.floor(secs / secsperbeat) > Math.floor(secsprev / secsperbeat)) {
+	                this.removeSamples(clip, startofSilence, qpoint);
+	                break;
+	              }
+	              qpoint--;
+	            }
 	          }
 	          startofSilence = NaN;
 	        } else if (isNaN(startofSilence) && Math.abs(samples[a]) <= threshhold) {
-	          startofSilence = a;
+	          if (!track.bpm) {
+	            startofSilence = a;
+	          } else {
+	            var _secs = (0, _conversions.samplesToSeconds)(a, this.sampleRate) + startTime - cueIn;
+	            var _secsprev = (0, _conversions.samplesToSeconds)(a - 1, this.sampleRate) + startTime - cueIn;
+	
+	            var beatNumber = _secs / secsperbeat;
+	            if (Math.floor(_secs / secsperbeat) > Math.floor(_secsprev / secsperbeat)) {
+	              startofSilence = a;
+	            }
+	          }
 	        }
 	      }
 	      if (!isNaN(startofSilence) && samples.length - startofSilence > minimumSilence) {
@@ -11476,7 +11519,8 @@ var WaveformPlaylist =
 	    value: function removeSamples(clip, start, end) {
 	      var startSec = (0, _conversions.samplesToSeconds)(start, this.sampleRate);
 	      var endSec = (0, _conversions.samplesToSeconds)(end, this.sampleRate);
-	      if (start == 0) {
+	      var cueInSamp = (0, _conversions.samplesToSeconds)(clip.cueIn, this.sampleRate);
+	      if (start == cueInSamp) {
 	        clip.cueIn += endSec;
 	        clip.startTime += endSec;
 	      } else if (end == clip.buffer.length) {
@@ -16162,13 +16206,18 @@ var WaveformPlaylist =
 	    _createClass(_class, [{
 	        key: 'draw',
 	        value: function draw(g, canvas) {
-	            var step = (0, _conversions.secondsToPixels)(60 / this.bpm * this.quantizeValue, this.resolution, this.sampleRate);
+	            // const step = secondsToPixels(60/this.bpm*this.quantizeValue,this.resolution,this.sampleRate);
 	            g.clearRect(0, 0, canvas.width, canvas.height);
 	            g.strokeStyle = this.color;
 	            g.beginPath();
-	            for (var a = 0; a < canvas.width; a += step) {
-	                g.moveTo(a, 0);
-	                g.lineTo(a, canvas.height);
+	            var step = 60 / this.bpm;
+	            for (var a = 1; a < canvas.width; a++) {
+	                var secs = (0, _conversions.pixelsToSeconds)(a, this.resolution, this.sampleRate);
+	                var prevsecs = (0, _conversions.pixelsToSeconds)(a - 1, this.resolution, this.sampleRate);
+	                if (Math.floor(secs / step) > Math.floor(prevsecs / step)) {
+	                    g.moveTo(a, 0);
+	                    g.lineTo(a, canvas.height);
+	                }
 	            }
 	            g.stroke();
 	        }
@@ -16724,7 +16773,15 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'play',
 	    value: function play(now, startTime, endTime) {
-	      this.readyPlayout.play(now, startTime, endTime);
+	      var diff = this.startTime - startTime;
+	      if (diff > 0) {
+	        this.readyPlayout.play(now + diff, this.cueIn, endTime);
+	      } else if (this.endTime > startTime) {
+	        if (this.cueIn < 0) {
+	          debugger;
+	        }
+	        this.readyPlayout.play(now, this.cueIn - diff, endTime);
+	      }
 	    }
 	  }, {
 	    key: 'scheduleStop',
@@ -16909,8 +16966,7 @@ var WaveformPlaylist =
 	      return (0, _h2.default)('div.menuButton', {
 	        onclick: function onclick(e) {
 	          console.log('showMenu', _this4.showMenu);
-	          _this4.showMenu = !_this4.showMenu;
-	          _this4.ee.emit('interactive');
+	          _this4.ee.emit('showMenu', _this4);
 	        },
 	        attributes: {
 	          style: '\n          z-index:3;\n          text-align:center;\n          font-size:1em;\n          line-height:7px;\n          color:white;\n          background-color:black;\n          position:absolute;\n          bottom:10px;\n          left: 10px;\n          width:15px;\n          height:15px;\n          border-radius:15px;\n          user-select: none;\n          cursor:pointer;\n        '
@@ -16931,7 +16987,6 @@ var WaveformPlaylist =
 	      }, [(0, _h2.default)('div.buttonSplit', {
 	        onclick: function onclick(e) {
 	          _this5.ee.emit('splitStart', _this5);
-	          _this5.showMenu = false;
 	          _this5.ee.emit('interactive');
 	        },
 	        attributes: {
@@ -16940,7 +16995,6 @@ var WaveformPlaylist =
 	      }, "Split"), (0, _h2.default)('div.buttonDuplicate', {
 	        onclick: function onclick(e) {
 	          _this5.ee.emit('duplicate', _this5);
-	          _this5.showMenu = false;
 	          _this5.ee.emit('interactive');
 	        },
 	        attributes: {
@@ -16949,7 +17003,6 @@ var WaveformPlaylist =
 	      }, "Duplicate"), (0, _h2.default)('div.buttonDelete', {
 	        onclick: function onclick(e) {
 	          _this5.ee.emit('delete', _this5);
-	          _this5.showMenu = false;
 	          _this5.ee.emit('interactive');
 	        },
 	        attributes: {
@@ -17004,7 +17057,7 @@ var WaveformPlaylist =
 	        end: this.endTime,
 	        name: this.name,
 	        track: this.track.name,
-	
+	        bpm: this.bpm,
 	        customClass: this.customClass,
 	        cuein: this.cueIn,
 	        cueout: this.cueOut
@@ -18141,6 +18194,7 @@ var WaveformPlaylist =
 	        this.action = "resizingright";
 	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
 	        console.log('seek');
+	
 	        this.seekTo(e);
 	      }
 	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
