@@ -10886,27 +10886,27 @@ var WaveformPlaylist =
 	
 	var _Track2 = _interopRequireDefault(_Track);
 	
-	var _Clip = __webpack_require__(402);
+	var _Clip = __webpack_require__(404);
 	
 	var _Clip2 = _interopRequireDefault(_Clip);
 	
-	var _Playout = __webpack_require__(417);
+	var _Playout = __webpack_require__(419);
 	
 	var _Playout2 = _interopRequireDefault(_Playout);
 	
-	var _AnnotationList = __webpack_require__(419);
+	var _AnnotationList = __webpack_require__(421);
 	
 	var _AnnotationList2 = _interopRequireDefault(_AnnotationList);
 	
-	var _recorderWorker = __webpack_require__(425);
+	var _recorderWorker = __webpack_require__(427);
 	
 	var _recorderWorker2 = _interopRequireDefault(_recorderWorker);
 	
-	var _exportWavWorker = __webpack_require__(426);
+	var _exportWavWorker = __webpack_require__(428);
 	
 	var _exportWavWorker2 = _interopRequireDefault(_exportWavWorker);
 	
-	var _states = __webpack_require__(408);
+	var _states = __webpack_require__(410);
 	
 	var _states2 = _interopRequireDefault(_states);
 	
@@ -11098,7 +11098,7 @@ var WaveformPlaylist =
 	          var newTrack = new _Track2.default(this.tracksids++);
 	          newTrack.setName(name);
 	          newTrack.quantize = this.quantize;
-	          newTrack.bpm = this.bpm;
+	          newTrack.bpm = this._bpm;
 	          newTrack.setEventEmitter(this.ee);
 	          this.tracks.push(newTrack);
 	        }
@@ -11259,12 +11259,12 @@ var WaveformPlaylist =
 	
 	      ee.on('fadein', function (duration, clip) {
 	        clip.setFadeIn(duration, _this2.fadeType);
-	        _this2.drawRequest();
+	        // this.drawRequest();
 	      });
 	
 	      ee.on('fadeout', function (duration, clip) {
 	        clip.setFadeOut(duration, _this2.fadeType);
-	        _this2.drawRequest();
+	        // this.drawRequest();
 	      });
 	
 	      ee.on('fadetype', function (type) {
@@ -11412,6 +11412,7 @@ var WaveformPlaylist =
 	      var track = this.getTrackByName(trackname);
 	      if (!track) {
 	        track = new _Track2.default(this.tracksids++);
+	        track.analyzer = this.ac.createAnalyser();
 	        track.name = trackname;
 	        track.quantize = this.quantize;
 	        track.bpm = this.bpm;
@@ -12118,6 +12119,9 @@ var WaveformPlaylist =
 	
 	        this.playbackSeconds = playbackSeconds;
 	        this.draw(this.render());
+	        this.tracks.forEach(function (tr) {
+	          return tr.updatedBMeter();
+	        });
 	        this.lastDraw = currentTime;
 	      } else {
 	        if (cursorPos + elapsed >= (this.isSegmentSelection() ? selection.end : this.duration)) {
@@ -12278,6 +12282,21 @@ var WaveformPlaylist =
 	      });
 	
 	      return info;
+	    }
+	  }, {
+	    key: 'bpm',
+	    set: function set(bpm) {
+	      this._bpm = bpm;
+	      this.tracks.forEach(function (track) {
+	        track.bpm = bpm;
+	        track.clips.forEach(function (clip) {
+	          clip.bpm = bpm;
+	        });
+	      });
+	      this.ee.emit('interactive');
+	    },
+	    get: function get() {
+	      return this._bpm;
 	    }
 	  }]);
 
@@ -15147,6 +15166,8 @@ var WaveformPlaylist =
 	
 	var _EffectKnobHook2 = _interopRequireDefault(_EffectKnobHook);
 	
+	var _path = __webpack_require__(402);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -15165,6 +15186,9 @@ var WaveformPlaylist =
 	    this.id = id;
 	    this.quantize = 1;
 	
+	    this.analyzer = undefined;
+	    this.analyzerHook = new _VolumeSliderHook2.default(this);
+	
 	    this.delay = 1;
 	    this.bitcrusher = 1;
 	    this.lowpass = 10;
@@ -15173,6 +15197,11 @@ var WaveformPlaylist =
 	  }
 	
 	  _createClass(_class, [{
+	    key: 'updatedBMeter',
+	    value: function updatedBMeter() {
+	      this.analyzerHook.update();
+	    }
+	  }, {
 	    key: 'unasignAll',
 	    value: function unasignAll() {
 	      return this.clips = [];
@@ -15217,6 +15246,11 @@ var WaveformPlaylist =
 	    key: 'assign',
 	    value: function assign(clip) {
 	      return this.clips.push(clip);
+	    }
+	  }, {
+	    key: 'registerPlayout',
+	    value: function registerPlayout(source) {
+	      source.connect(this.analyzer);
 	    }
 	  }, {
 	    key: 'setEventEmitter',
@@ -15295,6 +15329,7 @@ var WaveformPlaylist =
 	    key: 'setGainLevel',
 	    value: function setGainLevel(level) {
 	      this.gain = level;
+	      this.analyzerHook.update();
 	      this.clips.forEach(function (clip) {
 	        clip.gain = level;
 	        clip.playout.setVolumeGainLevel(level);
@@ -15393,26 +15428,33 @@ var WaveformPlaylist =
 	      }, 10, 440))]);
 	    }
 	  }, {
-	    key: 'renderControls',
-	    value: function renderControls(data) {
+	    key: 'renderVolumeSlider',
+	    value: function renderVolumeSlider(data) {
 	      var _this4 = this;
 	
+	      var width = 100;
+	      return (0, _h2.default)('canvas.volume-slider', {
+	        attributes: {
+	          width: width,
+	          height: 30
+	        },
+	        onclick: function onclick(e) {
+	          var relativeX = e.layerX;
+	          //canvas is larger than the slider with 7 pixels on each side, so:
+	          var clamped = Math.min(Math.max(relativeX, 7), width - 14);
+	          _this4.setGainLevel((clamped - 7) / (100 - 14));
+	        },
+	        hook: this.analyzerHook
+	      });
+	    }
+	  }, {
+	    key: 'renderControls',
+	    value: function renderControls(data) {
 	      return (0, _h2.default)('div.controls', {
 	        attributes: {
 	          style: '\n            height: ' + data.height + 'px; \n            width: ' + data.controls.width + 'px; \n            position: absolute; \n            overflow:visible;\n            left: 0; \n            z-index: ' + (30 - this.id) + ';'
 	        }
-	      }, [(0, _h2.default)('header', [this.name]), this.renderButtons(data), this.renderEffects(data), (0, _h2.default)('label', [(0, _h2.default)('input.volume-slider', {
-	        attributes: {
-	          type: 'range',
-	          min: 0,
-	          max: 100,
-	          value: 100
-	        },
-	        hook: new _VolumeSliderHook2.default(this.gain),
-	        oninput: function oninput(e) {
-	          _this4.ee.emit('volumechange', e.target.value, _this4);
-	        }
-	      })])]);
+	      }, [(0, _h2.default)('header', [this.name]), this.renderButtons(data), this.renderEffects(data), this.renderVolumeSlider(data)]);
 	    }
 	  }, {
 	    key: 'getEndTime',
@@ -15429,7 +15471,7 @@ var WaveformPlaylist =
 	        return (0, _conversions.secondsToPixels)(seconds, data.resolution, data.sampleRate);
 	      }
 	
-	      var width = convert(this.getEndTime());
+	      var width = convert(data.globalEndTime);
 	      var playbackX = convert(data.playbackSeconds);
 	      var startX = convert(this.startTime);
 	      var endX = convert(this.endTime);
@@ -16043,7 +16085,7 @@ var WaveformPlaylist =
 /* 398 */
 /***/ (function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -16055,18 +16097,75 @@ var WaveformPlaylist =
 	
 	/*
 	* virtual-dom hook for setting the volume input programmatically.
+	* ... AND dB METER
 	*/
 	var _class = function () {
-	  function _class(gain) {
+	  function _class(track) {
 	    _classCallCheck(this, _class);
 	
-	    this.gain = gain;
+	    this.track = track;
 	  }
 	
 	  _createClass(_class, [{
-	    key: 'hook',
-	    value: function hook(volumeInput) {
-	      volumeInput.setAttribute('value', this.gain * 100);
+	    key: "update",
+	    value: function update() {
+	      var NLazar = this.track.analyzer;
+	      if (!this.dataarray) this.dataarray = new Float32Array(NLazar.fftSize);
+	      NLazar.getFloatTimeDomainData(this.dataarray);
+	      // const step = canvas.width/NLazar.fftSize;
+	
+	      var max = 0;
+	      for (var a = 0; a < NLazar.fftSize; a++) {
+	        if (Math.abs(this.dataarray[a]) > max) {
+	          max = Math.abs(this.dataarray[a]);
+	        }
+	      }
+	      this.draw(max);
+	    }
+	  }, {
+	    key: "draw",
+	    value: function draw(max) {
+	      /* dB Meter */
+	      var g = this.g;
+	
+	      g.lineWidth = 10;
+	      g.lineCap = "round";
+	
+	      //background
+	      g.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	
+	      g.strokeStyle = "darkgray";
+	      g.beginPath();
+	      g.moveTo(12, this.canvas.height / 2);
+	      g.lineTo(this.canvas.width - 12, this.canvas.height / 2);
+	      g.stroke();
+	
+	      //foreground
+	      if (max > 0) {
+	        g.globalCompositeOperation = "source-atop";
+	        g.lineCap = "butt";
+	        g.strokeStyle = "orange";
+	        g.beginPath();
+	        g.moveTo(7, this.canvas.height / 2);
+	        g.lineTo(max * (this.canvas.width - 7), this.canvas.height / 2);
+	        g.stroke();
+	        g.globalCompositeOperation = "source-over";
+	      }
+	
+	      /* VolumeSlider */
+	      g.fillStyle = "gray";
+	      g.beginPath();
+	      g.moveTo(this.track.gain * (this.canvas.width - 14) + 14, this.canvas.height / 2);
+	      g.arc(this.track.gain * (this.canvas.width - 14) + 7, this.canvas.height / 2, 7, 0, Math.PI * 2);
+	      g.fill();
+	    }
+	  }, {
+	    key: "hook",
+	    value: function hook(canvas) {
+	      var g = canvas.getContext('2d');
+	      this.canvas = canvas;
+	      this.g = g;
+	      this.draw(0);
 	    }
 	  }]);
 
@@ -16355,6 +16454,427 @@ var WaveformPlaylist =
 /* 402 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+	
+	// resolves . and .. elements in a path array with directory names there
+	// must be no slashes, empty elements, or device names (c:\) in the array
+	// (so also no leading and trailing slashes - it does not distinguish
+	// relative and absolute paths)
+	function normalizeArray(parts, allowAboveRoot) {
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = parts.length - 1; i >= 0; i--) {
+	    var last = parts[i];
+	    if (last === '.') {
+	      parts.splice(i, 1);
+	    } else if (last === '..') {
+	      parts.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      parts.splice(i, 1);
+	      up--;
+	    }
+	  }
+	
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (allowAboveRoot) {
+	    for (; up--; up) {
+	      parts.unshift('..');
+	    }
+	  }
+	
+	  return parts;
+	}
+	
+	// Split a filename into [root, dir, basename, ext], unix version
+	// 'root' is just a slash, or nothing.
+	var splitPathRe =
+	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+	var splitPath = function(filename) {
+	  return splitPathRe.exec(filename).slice(1);
+	};
+	
+	// path.resolve([from ...], to)
+	// posix version
+	exports.resolve = function() {
+	  var resolvedPath = '',
+	      resolvedAbsolute = false;
+	
+	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+	    var path = (i >= 0) ? arguments[i] : process.cwd();
+	
+	    // Skip empty and invalid entries
+	    if (typeof path !== 'string') {
+	      throw new TypeError('Arguments to path.resolve must be strings');
+	    } else if (!path) {
+	      continue;
+	    }
+	
+	    resolvedPath = path + '/' + resolvedPath;
+	    resolvedAbsolute = path.charAt(0) === '/';
+	  }
+	
+	  // At this point the path should be resolved to a full absolute path, but
+	  // handle relative paths to be safe (might happen when process.cwd() fails)
+	
+	  // Normalize the path
+	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+	    return !!p;
+	  }), !resolvedAbsolute).join('/');
+	
+	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+	};
+	
+	// path.normalize(path)
+	// posix version
+	exports.normalize = function(path) {
+	  var isAbsolute = exports.isAbsolute(path),
+	      trailingSlash = substr(path, -1) === '/';
+	
+	  // Normalize the path
+	  path = normalizeArray(filter(path.split('/'), function(p) {
+	    return !!p;
+	  }), !isAbsolute).join('/');
+	
+	  if (!path && !isAbsolute) {
+	    path = '.';
+	  }
+	  if (path && trailingSlash) {
+	    path += '/';
+	  }
+	
+	  return (isAbsolute ? '/' : '') + path;
+	};
+	
+	// posix version
+	exports.isAbsolute = function(path) {
+	  return path.charAt(0) === '/';
+	};
+	
+	// posix version
+	exports.join = function() {
+	  var paths = Array.prototype.slice.call(arguments, 0);
+	  return exports.normalize(filter(paths, function(p, index) {
+	    if (typeof p !== 'string') {
+	      throw new TypeError('Arguments to path.join must be strings');
+	    }
+	    return p;
+	  }).join('/'));
+	};
+	
+	
+	// path.relative(from, to)
+	// posix version
+	exports.relative = function(from, to) {
+	  from = exports.resolve(from).substr(1);
+	  to = exports.resolve(to).substr(1);
+	
+	  function trim(arr) {
+	    var start = 0;
+	    for (; start < arr.length; start++) {
+	      if (arr[start] !== '') break;
+	    }
+	
+	    var end = arr.length - 1;
+	    for (; end >= 0; end--) {
+	      if (arr[end] !== '') break;
+	    }
+	
+	    if (start > end) return [];
+	    return arr.slice(start, end - start + 1);
+	  }
+	
+	  var fromParts = trim(from.split('/'));
+	  var toParts = trim(to.split('/'));
+	
+	  var length = Math.min(fromParts.length, toParts.length);
+	  var samePartsLength = length;
+	  for (var i = 0; i < length; i++) {
+	    if (fromParts[i] !== toParts[i]) {
+	      samePartsLength = i;
+	      break;
+	    }
+	  }
+	
+	  var outputParts = [];
+	  for (var i = samePartsLength; i < fromParts.length; i++) {
+	    outputParts.push('..');
+	  }
+	
+	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+	
+	  return outputParts.join('/');
+	};
+	
+	exports.sep = '/';
+	exports.delimiter = ':';
+	
+	exports.dirname = function(path) {
+	  var result = splitPath(path),
+	      root = result[0],
+	      dir = result[1];
+	
+	  if (!root && !dir) {
+	    // No dirname whatsoever
+	    return '.';
+	  }
+	
+	  if (dir) {
+	    // It has a dirname, strip trailing slash
+	    dir = dir.substr(0, dir.length - 1);
+	  }
+	
+	  return root + dir;
+	};
+	
+	
+	exports.basename = function(path, ext) {
+	  var f = splitPath(path)[2];
+	  // TODO: make this comparison case-insensitive on windows?
+	  if (ext && f.substr(-1 * ext.length) === ext) {
+	    f = f.substr(0, f.length - ext.length);
+	  }
+	  return f;
+	};
+	
+	
+	exports.extname = function(path) {
+	  return splitPath(path)[3];
+	};
+	
+	function filter (xs, f) {
+	    if (xs.filter) return xs.filter(f);
+	    var res = [];
+	    for (var i = 0; i < xs.length; i++) {
+	        if (f(xs[i], i, xs)) res.push(xs[i]);
+	    }
+	    return res;
+	}
+	
+	// String.prototype.substr - negative index don't work in IE8
+	var substr = 'ab'.substr(-1) === 'b'
+	    ? function (str, start, len) { return str.substr(start, len) }
+	    : function (str, start, len) {
+	        if (start < 0) start = str.length + start;
+	        return str.substr(start, len);
+	    }
+	;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(403)))
+
+/***/ }),
+/* 403 */
+/***/ (function(module, exports) {
+
+	// shim for using process in browser
+	var process = module.exports = {};
+	
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+	
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+	
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
+	(function () {
+	    try {
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
+	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
+	    }
+	    try {
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
+	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+	
+	
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+	
+	
+	
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = runTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    runClearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        runTimeout(drainQueue);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+	
+	process.listeners = function (name) { return [] }
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 404 */
+/***/ (function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -16371,7 +16891,7 @@ var WaveformPlaylist =
 	
 	var _lodash4 = _interopRequireDefault(_lodash3);
 	
-	var _uuid = __webpack_require__(403);
+	var _uuid = __webpack_require__(405);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
@@ -16379,23 +16899,23 @@ var WaveformPlaylist =
 	
 	var _h2 = _interopRequireDefault(_h);
 	
-	var _webaudioPeaks = __webpack_require__(405);
+	var _webaudioPeaks = __webpack_require__(407);
 	
 	var _webaudioPeaks2 = _interopRequireDefault(_webaudioPeaks);
 	
-	var _fadeMaker = __webpack_require__(406);
+	var _fadeMaker = __webpack_require__(408);
 	
 	var _conversions = __webpack_require__(388);
 	
-	var _states = __webpack_require__(408);
+	var _states = __webpack_require__(410);
 	
 	var _states2 = _interopRequireDefault(_states);
 	
-	var _CanvasHook = __webpack_require__(415);
+	var _CanvasHook = __webpack_require__(417);
 	
 	var _CanvasHook2 = _interopRequireDefault(_CanvasHook);
 	
-	var _FadeCanvasHook = __webpack_require__(416);
+	var _FadeCanvasHook = __webpack_require__(418);
 	
 	var _FadeCanvasHook2 = _interopRequireDefault(_FadeCanvasHook);
 	
@@ -16617,7 +17137,7 @@ var WaveformPlaylist =
 	        this.samplesPerPixel = samplesPerPixel;
 	      }
 	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono));
-	      console.log(this.peaks);
+	      console.log("peaks", this.peaks);
 	    }
 	  }, {
 	    key: 'setPeaks',
@@ -16723,6 +17243,7 @@ var WaveformPlaylist =
 	      start += this.cueIn;
 	      var relPos = startTime - this.startTime;
 	      var sourcePromise = playoutSystem.setUpSource();
+	      this.track.registerPlayout(playoutSystem.dBSource);
 	
 	      // param relPos: cursor position in seconds relative to this track.
 	      // can be negative if the cursor is placed before the start of this track etc.
@@ -17105,7 +17626,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 403 */
+/* 405 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -17116,7 +17637,7 @@ var WaveformPlaylist =
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(404);
+	var _rng = __webpack_require__(406);
 	
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -17294,7 +17815,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 404 */
+/* 406 */
 /***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -17333,7 +17854,7 @@ var WaveformPlaylist =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 405 */
+/* 407 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -17492,7 +18013,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 406 */
+/* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17504,7 +18025,7 @@ var WaveformPlaylist =
 	exports.createFadeIn = createFadeIn;
 	exports.createFadeOut = createFadeOut;
 	
-	var _fadeCurves = __webpack_require__(407);
+	var _fadeCurves = __webpack_require__(409);
 	
 	var SCURVE = exports.SCURVE = "sCurve";
 	var LINEAR = exports.LINEAR = "linear";
@@ -17594,7 +18115,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 407 */
+/* 409 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -17674,7 +18195,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 408 */
+/* 410 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17683,27 +18204,27 @@ var WaveformPlaylist =
 	  value: true
 	});
 	
-	var _CursorState = __webpack_require__(409);
+	var _CursorState = __webpack_require__(411);
 	
 	var _CursorState2 = _interopRequireDefault(_CursorState);
 	
-	var _SelectState = __webpack_require__(410);
+	var _SelectState = __webpack_require__(412);
 	
 	var _SelectState2 = _interopRequireDefault(_SelectState);
 	
-	var _ShiftState = __webpack_require__(411);
+	var _ShiftState = __webpack_require__(413);
 	
 	var _ShiftState2 = _interopRequireDefault(_ShiftState);
 	
-	var _FadeInState = __webpack_require__(412);
+	var _FadeInState = __webpack_require__(414);
 	
 	var _FadeInState2 = _interopRequireDefault(_FadeInState);
 	
-	var _FadeOutState = __webpack_require__(413);
+	var _FadeOutState = __webpack_require__(415);
 	
 	var _FadeOutState2 = _interopRequireDefault(_FadeOutState);
 	
-	var _InteractiveState = __webpack_require__(414);
+	var _InteractiveState = __webpack_require__(416);
 	
 	var _InteractiveState2 = _interopRequireDefault(_InteractiveState);
 	
@@ -17719,7 +18240,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 409 */
+/* 411 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17781,7 +18302,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 410 */
+/* 412 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17879,7 +18400,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 411 */
+/* 413 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17997,7 +18518,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 412 */
+/* 414 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18053,7 +18574,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 413 */
+/* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18109,7 +18630,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 414 */
+/* 416 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18216,8 +18737,8 @@ var WaveformPlaylist =
 	        // console.log(mousepos,this.activeClip.duration)
 	        var fadeout = this.activeClip.fades[this.activeClip.fadeOut];
 	        var fadein = this.activeClip.fades[this.activeClip.fadeIn];
-	
 	        if (this.hoveringover == "fadein") this.ee.emit('fadein', Math.min(Math.max(mousepos, 0), this.activeClip.duration - fadeout.getDuration() - 0.5), this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - Math.min(Math.max(mousepos, fadein.getDuration() + 0.5), this.activeClip.duration), this.activeClip);
+	        this.ee.emit('interactive');
 	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
 	        this.updateResizing(e);
 	      } else if (this.action == "shifting") {
@@ -18363,7 +18884,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 415 */
+/* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18425,7 +18946,7 @@ var WaveformPlaylist =
 	      this.bufferedwaveform.width = width;
 	      this.bufferedwaveform.height = height;
 	      // console.log(this.bufferedwaveform);
-	      console.log("new canvas");
+	      console.log("redraw");
 	      this.bwc = this.bufferedwaveform.getContext('2d');
 	      this.drawCanvas(this.bwc, width, height / 2);
 	      return this.bufferedwaveform;
@@ -18465,7 +18986,7 @@ var WaveformPlaylist =
 	exports.default = CanvasHook;
 
 /***/ }),
-/* 416 */
+/* 418 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18476,9 +18997,9 @@ var WaveformPlaylist =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _fadeMaker = __webpack_require__(406);
+	var _fadeMaker = __webpack_require__(408);
 	
-	var _fadeCurves = __webpack_require__(407);
+	var _fadeCurves = __webpack_require__(409);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -18581,7 +19102,7 @@ var WaveformPlaylist =
 	exports.default = FadeCanvasHook;
 
 /***/ }),
-/* 417 */
+/* 419 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18592,9 +19113,9 @@ var WaveformPlaylist =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _fadeMaker = __webpack_require__(406);
+	var _fadeMaker = __webpack_require__(408);
 	
-	var _tunajs = __webpack_require__(418);
+	var _tunajs = __webpack_require__(420);
 	
 	var _tunajs2 = _interopRequireDefault(_tunajs);
 	
@@ -18794,6 +19315,11 @@ var WaveformPlaylist =
 	        } catch (e) {}
 	      }
 	    }
+	  }, {
+	    key: 'dBSource',
+	    get: function get() {
+	      return this.masterGain;
+	    }
 	  }]);
 
 	  return _class;
@@ -18802,7 +19328,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 418 */
+/* 420 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
@@ -21087,7 +21613,7 @@ var WaveformPlaylist =
 
 
 /***/ }),
-/* 419 */
+/* 421 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21102,25 +21628,25 @@ var WaveformPlaylist =
 	
 	var _h2 = _interopRequireDefault(_h);
 	
-	var _aeneas = __webpack_require__(420);
+	var _aeneas = __webpack_require__(422);
 	
 	var _aeneas2 = _interopRequireDefault(_aeneas);
 	
-	var _aeneas3 = __webpack_require__(421);
+	var _aeneas3 = __webpack_require__(423);
 	
 	var _aeneas4 = _interopRequireDefault(_aeneas3);
 	
 	var _conversions = __webpack_require__(388);
 	
-	var _DragInteraction = __webpack_require__(422);
+	var _DragInteraction = __webpack_require__(424);
 	
 	var _DragInteraction2 = _interopRequireDefault(_DragInteraction);
 	
-	var _ScrollTopHook = __webpack_require__(423);
+	var _ScrollTopHook = __webpack_require__(425);
 	
 	var _ScrollTopHook2 = _interopRequireDefault(_ScrollTopHook);
 	
-	var _timeformat = __webpack_require__(424);
+	var _timeformat = __webpack_require__(426);
 	
 	var _timeformat2 = _interopRequireDefault(_timeformat);
 	
@@ -21389,7 +21915,7 @@ var WaveformPlaylist =
 	exports.default = AnnotationList;
 
 /***/ }),
-/* 420 */
+/* 422 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21410,14 +21936,14 @@ var WaveformPlaylist =
 	  return annotation;
 	};
 	
-	var _uuid = __webpack_require__(403);
+	var _uuid = __webpack_require__(405);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 421 */
+/* 423 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -21437,7 +21963,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 422 */
+/* 424 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21528,7 +22054,7 @@ var WaveformPlaylist =
 	exports.default = _class;
 
 /***/ }),
-/* 423 */
+/* 425 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -21554,7 +22080,7 @@ var WaveformPlaylist =
 	exports.default = Hook;
 
 /***/ }),
-/* 424 */
+/* 426 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -21602,7 +22128,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 425 */
+/* 427 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -21717,7 +22243,7 @@ var WaveformPlaylist =
 	};
 
 /***/ }),
-/* 426 */
+/* 428 */
 /***/ (function(module, exports) {
 
 	'use strict';
