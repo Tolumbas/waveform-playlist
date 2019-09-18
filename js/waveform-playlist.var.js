@@ -11258,12 +11258,12 @@ var WaveformPlaylist =
 	      });
 	
 	      ee.on('fadein', function (duration, clip) {
-	        clip.setFadeIn(duration, _this2.fadeType);
+	        clip.setFadeIn(duration, clip.fades[clip.fadeIn].shape);
 	        // this.drawRequest();
 	      });
 	
 	      ee.on('fadeout', function (duration, clip) {
-	        clip.setFadeOut(duration, _this2.fadeType);
+	        clip.setFadeOut(duration, clip.fades[clip.fadeOut].shape);
 	        // this.drawRequest();
 	      });
 	
@@ -11340,8 +11340,9 @@ var WaveformPlaylist =
 	        _this2.ee.emit('interactive');
 	      });
 	      ee.on('duplicate', function (clip) {
+	
 	        var info = clip.getTrackDetails();
-	        info.track = info.track.name;
+	        // info.track;
 	        info.name = "Copy of " + info.name;
 	        info.start = clip.endTime;
 	        info.end = clip.endTime + clip.duration;
@@ -11440,13 +11441,13 @@ var WaveformPlaylist =
 	      if (fadeIn !== undefined) {
 	        clip.setFadeIn(fadeIn.duration, fadeIn.shape);
 	      } else if (this.getState() == 'interactive') {
-	        clip.setFadeIn(0.01, "logarithmic");
+	        clip.setFadeIn(0.01, "linear");
 	      }
 	
 	      if (fadeOut !== undefined) {
 	        clip.setFadeOut(fadeOut.duration, fadeOut.shape);
 	      } else if (this.getState() == 'interactive') {
-	        clip.setFadeOut(0.01, "logarithmic");
+	        clip.setFadeOut(0.01, "linear");
 	      }
 	
 	      // clip.setState(this.getState());
@@ -11485,15 +11486,19 @@ var WaveformPlaylist =
 	      for (var a = cueInSamp; a < cueOutSamp; a++) {
 	        if (!isNaN(startofSilence) && Math.abs(samples[a]) > threshhold) {
 	          if (a - startofSilence > minimumSilence) {
-	            var qpoint = a;
-	            while (qpoint > 0) {
-	              var secs = (0, _conversions.samplesToSeconds)(qpoint, this.sampleRate) + startTime - cueIn;
-	              var secsprev = (0, _conversions.samplesToSeconds)(qpoint - 1, this.sampleRate) + startTime - cueIn;
-	              if (Math.floor(secs / secsperbeat) > Math.floor(secsprev / secsperbeat)) {
-	                this.removeSamples(clip, startofSilence, qpoint);
-	                break;
+	            if (!clip.bpm) {
+	              this.removeSamples(clip, startofSilence, a);
+	            } else {
+	              var qpoint = a;
+	              while (qpoint > 0) {
+	                var secs = (0, _conversions.samplesToSeconds)(qpoint, this.sampleRate) + startTime - cueIn;
+	                var secsprev = (0, _conversions.samplesToSeconds)(qpoint - 1, this.sampleRate) + startTime - cueIn;
+	                if (Math.floor(secs / secsperbeat) > Math.floor(secsprev / secsperbeat)) {
+	                  this.removeSamples(clip, startofSilence, qpoint);
+	                  break;
+	                }
+	                qpoint--;
 	              }
-	              qpoint--;
 	            }
 	          }
 	          startofSilence = NaN;
@@ -11572,7 +11577,7 @@ var WaveformPlaylist =
 	              case 3:
 	                audioBuffers = _context.sent;
 	
-	                console.log(audioBuffers);
+	                // console.log(audioBuffers);
 	
 	                this.ee.emit('audiosourcesloaded');
 	
@@ -11585,7 +11590,7 @@ var WaveformPlaylist =
 	
 	                this.ee.emit('audiosourcesrendered');
 	
-	              case 11:
+	              case 10:
 	              case 'end':
 	                return _context.stop();
 	            }
@@ -11703,12 +11708,15 @@ var WaveformPlaylist =
 	
 	      var currentTime = this.offlineAudioContext.currentTime;
 	
+	      var compressor = this.offlineAudioContext.createDynamicsCompressor();
+	
 	      this.tracks.forEach(function (track) {
 	        track.clips.forEach(function (clip) {
 	          clip.setOfflinePlayout(new _Playout2.default(_this4.offlineAudioContext, clip.buffer));
 	          clip.schedulePlay(currentTime, 0, 0, {
 	            shouldPlay: _this4.shouldTrackPlay(clip),
 	            masterGain: 1,
+	            compressor: compressor,
 	            isOffline: true
 	          });
 	        });
@@ -11946,12 +11954,13 @@ var WaveformPlaylist =
 	        })
 	      });
 	      */
-	
+	      var compressor = this.ac.createDynamicsCompressor();
 	      this.tracks.forEach(function (track) {
 	        // track.setState('cursor');
 	        playoutPromises.push(track.schedulePlay(currentTime, start, end, {
 	          shouldPlay: _this7.shouldTrackPlay(track),
-	          masterGain: _this7.masterGain
+	          masterGain: _this7.masterGain,
+	          compressor: compressor
 	        }));
 	      });
 	      this.tracks.forEach(function (track) {
@@ -12032,6 +12041,8 @@ var WaveformPlaylist =
 	
 	      return this.stop().then(function () {
 	        _this10.tracks = [];
+	        _this10.clips = [];
+	        _this10.buffers = new Map();
 	        _this10.soloedTracks = [];
 	        _this10.mutedTracks = [];
 	        _this10.playoutPromises = [];
@@ -12297,6 +12308,20 @@ var WaveformPlaylist =
 	    },
 	    get: function get() {
 	      return this._bpm;
+	    }
+	  }, {
+	    key: 'quantize',
+	    set: function set(q) {
+	      this._quantize = q;
+	      this.tracks.forEach(function (tr) {
+	        tr.quantize = q;
+	        tr.clips.forEach(function (clip) {
+	          clip.quantize = q;
+	        });
+	      });
+	    },
+	    get: function get() {
+	      return this._quantize;
 	    }
 	  }]);
 
@@ -15250,7 +15275,9 @@ var WaveformPlaylist =
 	  }, {
 	    key: 'registerPlayout',
 	    value: function registerPlayout(source) {
-	      source.connect(this.analyzer);
+	      if (source.context.constructor.name != "OfflineAudioContext") {
+	        source.connect(this.analyzer);
+	      }
 	    }
 	  }, {
 	    key: 'setEventEmitter',
@@ -16119,6 +16146,14 @@ var WaveformPlaylist =
 	        if (Math.abs(this.dataarray[a]) > max) {
 	          max = Math.abs(this.dataarray[a]);
 	        }
+	      }
+	      //compressor
+	      if (max < 0.3) {
+	        max *= 1.4;
+	      } else if (max < 0.4) {
+	        max *= 1.3;
+	      } else if (max <= 0.6) {
+	        max *= 1.2;
 	      }
 	      this.draw(max);
 	    }
@@ -17137,7 +17172,7 @@ var WaveformPlaylist =
 	        this.samplesPerPixel = samplesPerPixel;
 	      }
 	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono));
-	      console.log("peaks", this.peaks);
+	      // console.log("peaks",this.peaks);
 	    }
 	  }, {
 	    key: 'setPeaks',
@@ -17242,7 +17277,7 @@ var WaveformPlaylist =
 	
 	      start += this.cueIn;
 	      var relPos = startTime - this.startTime;
-	      var sourcePromise = playoutSystem.setUpSource();
+	      var sourcePromise = playoutSystem.setUpSource(config.compressor);
 	      this.track.registerPlayout(playoutSystem.dBSource);
 	
 	      // param relPos: cursor position in seconds relative to this track.
@@ -17356,7 +17391,7 @@ var WaveformPlaylist =
 	        onmouseup: function onmouseup(e) {
 	          console.log(fadeOut.end - fadeOut.start);
 	          if (_this2.clickhandle && fadeOut.end - fadeOut.start < 0.2) {
-	            _this2.setFadeOut(2);
+	            _this2.setFadeOut(2, _this2.fades[_this2.fadeOut].shape);
 	            _this2.ee.emit("interactive", _this2);
 	          }
 	        },
@@ -17399,7 +17434,7 @@ var WaveformPlaylist =
 	        onmouseup: function onmouseup(e) {
 	          console.log(fadeIn.end - fadeIn.start);
 	          if (_this3.clickhandle && fadeIn.end - fadeIn.start < 0.2) {
-	            _this3.setFadeIn(2);
+	            _this3.setFadeIn(2, _this3.fades[_this3.fadeIn].shape);
 	            _this3.ee.emit("interactive", _this3);
 	          }
 	        },
@@ -18713,55 +18748,48 @@ var WaveformPlaylist =
 	        this.startAt = this.getMousepos(e);
 	        this.oldCueOutForResising = this.activeClip.cueOut;
 	        this.action = "resizingright";
-	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") {
-	        console.log('seek');
-	
-	        this.seekTo(e);
+	      } else if (this.action == "shiftable") this.action = "shifting";else if (e.target.className == "waveform") this.seekTo(e);
+	    }
+	  }, {
+	    key: 'updateDraggingFadeHandle',
+	    value: function updateDraggingFadeHandle(mousepos) {
+	      var fadeout = this.activeClip.fades[this.activeClip.fadeOut];
+	      var fadein = this.activeClip.fades[this.activeClip.fadeIn];
+	      if (this.hoveringover == "fadein") this.ee.emit('fadein', Math.min(Math.max(mousepos, 0), this.activeClip.duration - fadeout.getDuration() - 0.5), this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - Math.min(Math.max(mousepos, fadein.getDuration() + 0.5), this.activeClip.duration), this.activeClip);
+	      this.ee.emit('interactive');
+	    }
+	  }, {
+	    key: 'updateShifting',
+	    value: function updateShifting(movementX) {
+	      var blocklength = 60 / this.activeClip.bpm * this.activeClip.quantize; //in seconds
+	      this.bufferedMovement += movementX; //in seconds
+	      var snaps = Math.round(this.bufferedMovement / blocklength);
+	      if (snaps != 0) {
+	        this.ee.emit("shift", snaps * blocklength, this.activeClip);
+	        this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
 	      }
-	      // else if (this.action == "scrolldraggable" && e.target.className == "waveform"){
-	      //this.action = "scrolldraggingcandidate";
-	      //this.clip.ee.emit("scrolldraggingstart");
-	      // }
-	      // console.log(this.clip);
 	    }
 	  }, {
 	    key: 'mousemove',
 	    value: function mousemove(e) {
-	      // const mousepos = pixelsToSeconds(this.correctOffset(e), this.samplesPerPixel, this.sampleRate);
-	      // if (!mousepos)return;
 	      // console.log(this.action);
 	      var mousepos = this.getMousepos(e);
 	      var movementX = (0, _conversions.pixelsToSeconds)(e.movementX, this.samplesPerPixel, this.sampleRate);
 	      if (this.action == "dragginghandle") {
-	        // console.log(mousepos,this.clip.getStartTime(),this.clip.startTime);
-	        // console.log(mousepos,this.activeClip.duration)
-	        var fadeout = this.activeClip.fades[this.activeClip.fadeOut];
-	        var fadein = this.activeClip.fades[this.activeClip.fadeIn];
-	        if (this.hoveringover == "fadein") this.ee.emit('fadein', Math.min(Math.max(mousepos, 0), this.activeClip.duration - fadeout.getDuration() - 0.5), this.activeClip);else this.ee.emit('fadeout', this.activeClip.duration - Math.min(Math.max(mousepos, fadein.getDuration() + 0.5), this.activeClip.duration), this.activeClip);
-	        this.ee.emit('interactive');
+	        this.updateDraggingFadeHandle(mousepos);
 	      } else if (this.action == "resizingleft" || this.action == "resizingright") {
 	        this.updateResizing(e);
 	      } else if (this.action == "shifting") {
-	        var blocklength = 60 / this.activeClip.bpm * this.activeClip.quantize; //in seconds
-	        this.bufferedMovement += movementX; //in seconds
-	        var snaps = Math.round(this.bufferedMovement / blocklength);
-	        if (snaps != 0) {
-	          this.ee.emit("shift", snaps * blocklength, this.activeClip);
-	          this.bufferedMovement = this.bufferedMovement - snaps * blocklength;
-	        }
-	      } else if (this.action == "split") {
-	        document.body.style.cursor = "text";
-	      } else if (e.target.classList.contains('fadehandle')) {
-	        this.action = "fadedraggable";
-	        this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
-	
-	        document.body.style.cursor = "pointer";
+	        this.updateShifting(movementX);
 	      }
-	      // else if (this.action == "scrolldragging" || this.action == "scrolldraggingcandidate"){
-	      //   this.ee.emit("scrolldragging",e.movementX);
-	      //   this.action = "scrolldragging";
-	      // }
-	      else if (e.target.className == "handleContainer right") {
+	      //Hovering Over:
+	      else if (this.action == "split") {
+	          document.body.style.cursor = "text";
+	        } else if (e.target.classList.contains('fadehandle')) {
+	          this.action = "fadedraggable";
+	          this.hoveringover = e.target.classList.contains('fadein') ? "fadein" : "fadeout";
+	          document.body.style.cursor = "pointer";
+	        } else if (e.target.className == "handleContainer right") {
 	          this.action = "resizeableright";
 	          document.body.style.cursor = "e-resize";
 	        } else if (e.target.className == "handleContainer left") {
@@ -18770,16 +18798,10 @@ var WaveformPlaylist =
 	        } else if (e.target.className == "clip") {
 	          this.action = "shiftable";
 	          document.body.style.cursor = "grab";
+	        } else {
+	          this.action = null;
+	          document.body.style.cursor = "auto";
 	        }
-	        // else if (e.target.className == "waveform"){
-	        //   document.body.style.cursor = "auto";
-	        //   this.action = "scrolldraggable";
-	        // }
-	        else {
-	            this.action = null;
-	            document.body.style.cursor = "auto";
-	          }
-	      // console.log(this.action);
 	    }
 	  }, {
 	    key: 'seekTo',
@@ -18929,10 +18951,28 @@ var WaveformPlaylist =
 	      cc.fillStyle = this.color;
 	      // console.log(this.color);
 	      for (var i = 0; i < len; i += 1) {
-	        var minPeak = this.peaks[i * 2] / maxValue;
-	        var maxPeak = this.peaks[i * 2 + 1] / maxValue;
+	        var minPeak = this.compressValue(this.peaks[i * 2] / maxValue);
+	        var maxPeak = this.compressValue(this.peaks[i * 2 + 1] / maxValue);
+	
 	        CanvasHook.drawFrame(cc, h2, i, minPeak, maxPeak);
 	      }
+	    }
+	  }, {
+	    key: 'compressValue',
+	    value: function compressValue(val) {
+	
+	      if (Math.abs(val) < 0.1) {
+	        val *= 1.6;
+	      } else if (Math.abs(val) < 0.2) {
+	        val *= 1.5;
+	      } else if (Math.abs(val) < 0.3) {
+	        val *= 1.4;
+	      } else if (Math.abs(val) < 0.4) {
+	        val *= 1.3;
+	      } else if (Math.abs(val) <= 0.6) {
+	        val *= 1.2;
+	      }
+	      return val;
 	    }
 	  }, {
 	    key: 'getImage',
@@ -19064,7 +19104,6 @@ var WaveformPlaylist =
 	            throw new Error('Unsupported fade type.');
 	          }
 	      }
-	
 	      switch (shape) {
 	        case _fadeMaker.SCURVE:
 	          {
@@ -19202,7 +19241,7 @@ var WaveformPlaylist =
 	    }
 	  }, {
 	    key: 'setUpSource',
-	    value: function setUpSource() {
+	    value: function setUpSource(compressor) {
 	      var _this = this;
 	
 	      this.source = this.ac.createBufferSource();
@@ -19259,7 +19298,7 @@ var WaveformPlaylist =
 	      }
 	      tunachain.connect(this.volumeGain);
 	
-	      this.volumeGain.connect(this.shouldPlayGain).connect(this.masterGain).connect(this.destination);
+	      this.volumeGain.connect(this.shouldPlayGain).connect(this.masterGain).connect(compressor).connect(this.destination);
 	
 	      return sourcePromise;
 	    }
